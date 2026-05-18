@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espacio.M — Rúbricas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --court:       #1e3d18;
+  --court-mid:   #2d5a1b;
+  --court-light: #3d7a26;
+  --ball:        #c8d42b;
+  --clay:        #c2784a;
+  --bg:          #f5f3ec;
+  --surface:     #ffffff;
+  --surface2:    #ede9df;
+  --border:      rgba(0,0,0,0.07);
+  --text:        #1a1a14;
+  --muted:       #7a7868;
+  --hint:        #b5b0a0;
+  --green:       #1e6640;
+  --green-bg:    #d4edda;
+  --amber:       #92520a;
+  --amber-bg:    #fdefd3;
+  --red:         #b91c1c;
+  --red-bg:      #fde8e8;
+  --r1:          #dc2626;  /* nivel 1 — a desarrollar */
+  --r2:          #d97706;  /* nivel 2 — funcional */
+  --r3:          #16a34a;  /* nivel 3 — arma */
+  --radius:      16px;
+  --radius-sm:   10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── LANDING ── */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;overflow:hidden;}
+.landing-bg{position:absolute;inset:0;background:linear-gradient(150deg,#0f2409 0%,#1e3d18 45%,#152d10 100%);}
+.court-lines{position:absolute;inset:0;opacity:.06;}
+.court-lines::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,.6) 59px,rgba(255,255,255,.6) 61px);}
+.court-lines::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,.6) 59px,rgba(255,255,255,.6) 61px);}
+.landing-content{position:relative;z-index:2;text-align:center;max-width:540px;width:100%;}
+.logo-ball{width:56px;height:56px;border-radius:50%;background:var(--ball);margin:0 auto 1.4rem;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(200,212,43,.15),0 8px 28px rgba(200,212,43,.3);}
+.logo-ball svg{width:32px;height:32px;}
+.landing-title{font-family:'Syne',sans-serif;font-size:clamp(30px,7vw,50px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.02em;margin-bottom:6px;}
+.landing-title span{color:var(--ball);}
+.landing-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:2.5rem;letter-spacing:.03em;}
+.select-card{background:rgba(255,255,255,.07);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:1.5rem;width:100%;}
+.select-label{font-size:11px;font-weight:500;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;text-align:left;}
+.player-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.player-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;text-align:left;}
+.player-btn:hover{background:rgba(255,255,255,.13);border-color:rgba(200,212,43,.35);transform:translateY(-2px);}
+.pb-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+.pb-name{font-size:13px;font-weight:500;color:#fff;}
+.pb-meta{font-size:11px;color:rgba(255,255,255,.38);}
+.loading-state{color:rgba(255,255,255,.5);font-size:13px;padding:1rem;text-align:center;}
+
+/* ── APP ── */
+.app{display:none;min-height:100vh;flex-direction:column;}
+.app.visible{display:flex;}
+
+/* HEADER */
+.app-header{background:var(--court);position:sticky;top:0;z-index:100;}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;}
+.header-back{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(255,255,255,.7);font-size:12px;font-family:'DM Sans',sans-serif;transition:background .15s;}
+.header-back:hover{background:rgba(255,255,255,.16);}
+.header-player{display:flex;align-items:center;gap:10px;}
+.header-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.header-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+.header-meta{font-size:11px;color:rgba(255,255,255,.5);}
+.app-tabs{display:flex;padding:10px 20px 0;gap:0;overflow-x:auto;scrollbar-width:none;}
+.app-tabs::-webkit-scrollbar{display:none;}
+.tab-btn{padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.tab-btn.active{color:var(--ball);border-bottom-color:var(--ball);font-weight:500;}
+.tab-btn:hover:not(.active){color:rgba(255,255,255,.75);}
+
+/* CONTENT */
+.app-content{flex:1;padding:20px 16px 48px;}
+.tab-view{display:none;}
+.tab-view.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* FICHA */
+.ficha-grid{display:flex;flex-wrap:wrap;gap:14px 24px;}
+.ficha-item label{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+.ficha-item span{font-size:14px;font-weight:500;color:var(--text);}
+
+/* MÉTRICAS TOP */
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
+.metric-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.metric-icon{font-size:22px;margin-bottom:4px;}
+.nivel-badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;letter-spacing:.02em;}
+.n1{background:var(--red-bg);color:var(--r1);}
+.n2{background:var(--amber-bg);color:var(--amber);}
+.n3{background:var(--green-bg);color:var(--green);}
+
+/* ── RÚBRICA PRINCIPAL ── */
+.rubrica-section{margin-bottom:18px;}
+.rubrica-header{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.rubrica-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:8px;}
+.rubrica-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.rubrica-name{font-size:13px;font-weight:500;color:var(--text);}
+.rubrica-nivel{display:flex;gap:6px;}
+.nivel-pip{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid transparent;transition:all .2s;}
+.nivel-pip.active-1{background:var(--r1);color:#fff;border-color:var(--r1);}
+.nivel-pip.active-2{background:var(--amber);color:#fff;border-color:var(--amber);}
+.nivel-pip.active-3{background:var(--r3);color:#fff;border-color:var(--r3);}
+.nivel-pip.inactive{background:var(--surface2);color:var(--hint);}
+.rubrica-desc{font-size:11px;color:var(--muted);line-height:1.55;border-left:3px solid var(--surface2);padding-left:10px;}
+.rubrica-desc.lv1{border-color:var(--r1);}
+.rubrica-desc.lv2{border-color:var(--amber);}
+.rubrica-desc.lv3{border-color:var(--r3);}
+
+/* CONTEXTO BADGE */
+.ctx-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.ctx-libre{background:#dbeafe;color:#1d4ed8;}
+.ctx-ejercicio{background:#ede9fe;color:#6d28d9;}
+.ctx-partido{background:var(--amber-bg);color:var(--amber);}
+.ctx-torneo{background:var(--red-bg);color:var(--r1);}
+
+/* BRECHA */
+.brecha-card{background:linear-gradient(135deg,#fff8ed,#fffbf2);border:1px solid #fde68a;border-radius:var(--radius);padding:14px;margin-bottom:14px;}
+.brecha-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin-bottom:10px;}
+.brecha-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.brecha-item:last-child{margin-bottom:0;}
+.brecha-name{font-size:12px;color:var(--text);width:110px;flex-shrink:0;}
+.brecha-track{flex:1;display:flex;gap:4px;}
+.brecha-seg{height:8px;border-radius:4px;transition:width .6s ease;}
+.brecha-labels{font-size:10px;font-family:'DM Mono',monospace;color:var(--hint);white-space:nowrap;}
+
+/* HISTORIAL */
+.session-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
+.session-item:last-child{border-bottom:none;padding-bottom:0;}
+.session-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.session-date{font-size:11px;color:var(--hint);font-family:'DM Mono',monospace;}
+.session-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+.session-pill{font-size:10px;padding:2px 8px;border-radius:5px;font-family:'DM Mono',monospace;}
+.pill-tec{background:#dbeafe;color:#1e40af;}
+.pill-fis{background:var(--green-bg);color:var(--green);}
+.pill-men{background:#ede9fe;color:#5b21b6;}
+.pill-ctx{background:var(--surface2);color:var(--muted);}
+
+/* FEEDBACK */
+.feedback-block{background:var(--surface2);border-left:3px solid var(--court-light);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 13px;font-size:12px;color:var(--text);line-height:1.6;margin-top:8px;}
+.feedback-coach{border-color:var(--ball);}
+
+/* PROGRESO */
+.chart-wrap{position:relative;width:100%;height:220px;}
+
+/* AUTOPERCEPCIÓN */
+.auto-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.auto-row:last-child{margin-bottom:0;}
+.auto-label{font-size:12px;color:var(--text);width:120px;flex-shrink:0;}
+.auto-stars{display:flex;gap:3px;}
+.star{font-size:14px;}
+
+/* EMPTY / SPINNER */
+.empty{text-align:center;padding:2rem;color:var(--hint);font-size:13px;}
+.spinner{width:30px;height:30px;border:3px solid var(--surface2);border-top-color:var(--court);border-radius:50%;animation:spin .8s linear infinite;margin:2rem auto;}
+.loading-view{text-align:center;padding:3rem 1rem;}
+.loading-view p{font-size:13px;color:var(--muted);margin-top:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* NOTA INFO */
+.nota{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;border-radius:var(--radius-sm);padding:10px 13px;font-size:12px;color:#2e7d32;margin-bottom:14px;line-height:1.55;}
+
+@media(min-width:480px){.metrics-row{grid-template-columns:repeat(3,1fr);}.app-content{padding:24px 24px 48px;}}
+@media(min-width:700px){.player-grid{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- ═══ LANDING ═══ -->
+<div class="landing" id="landing">
+  <div class="landing-bg"></div>
+  <div class="court-lines"></div>
+  <div class="landing-content">
+    <div class="logo-ball">
+      <svg viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#1a3a0e" stroke-width="2"/>
+        <path d="M2 16 Q8 8 16 16 Q24 24 30 16" stroke="#1a3a0e" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
+    <div class="landing-title">Espacio.<span>M</span></div>
+    <div class="landing-sub">SISTEMA DE RÚBRICAS · TEMPORADA 2026</div>
+    <div class="select-card">
+      <div class="select-label">Seleccioná un jugador</div>
+      <div class="player-grid" id="player-grid">
+        <div class="loading-state">Cargando jugadores…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div class="app" id="app">
+  <header class="app-header">
+    <div class="header-top">
+      <button class="header-back" onclick="goBack()">← Volver</button>
+      <div class="header-player">
+        <div class="header-avatar" id="h-avatar"></div>
+        <div>
+          <div class="header-name" id="h-name"></div>
+          <div class="header-meta" id="h-meta"></div>
+        </div>
+      </div>
+      <div style="width:60px;"></div>
+    </div>
+    <nav class="app-tabs">
+      <button class="tab-btn active" onclick="switchTab('resumen',this)">Resumen</button>
+      <button class="tab-btn" onclick="switchTab('rubrica',this)">Rúbrica</button>
+      <button class="tab-btn" onclick="switchTab('progreso',this)">Progreso</button>
+      <button class="tab-btn" onclick="switchTab('historial',this)">Historial</button>
+    </nav>
+  </header>
+
+  <main class="app-content">
+    <div class="tab-view active" id="tab-resumen">
+      <div class="loading-view" id="loading-resumen"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-resumen" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-rubrica">
+      <div class="loading-view" id="loading-rubrica"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-rubrica" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-progreso">
+      <div class="loading-view" id="loading-progreso"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-progreso" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-historial">
+      <div class="loading-view" id="loading-historial"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-historial" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ══════════════════════════════════════
+// CONFIG — misma planilla, mismas columnas
+// ══════════════════════════════════════
+const SHEET_ID   = '1Frlg1Kcl1SZ9qsC7G0NvcxziGua2wZrCE8LIRpg7CJk';
+const SHEET_NAME = 'Registro de sesión';
+const INFO_SHEET = 'informacion';
+
+// Columnas idénticas al index.html original
+const COL = {
+  fecha:0, alumno:1, tipo:2,
+  drive:3, reves:4, saque:5, volea:6, resto:7,
+  resistencia:8, velocidad:9, agilidad:10, fuerza:11,
+  concentracion:12, actitud:13, errores:14,
+  obs_profe:15, descripcion:16
+};
+const INFO = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetivo:5 };
+
+const COLORS = ['#1e3d18','#c2784a','#2563eb','#7c3aed','#b45309','#dc2626','#0891b2','#059669'];
+
+// ══════════════════════════════════════
+// DEFINICIÓN DE RÚBRICAS
+// Cada dimensión: { key, nombre, descripcion:[lv1,lv2,lv3] }
+// ══════════════════════════════════════
+const RUBRICAS = {
+  tecnica: [
+    {
+      key:'drive', nombre:'Drive',
+      desc:[
+        'Error frecuente bajo presión o mecánica inconsistente',
+        'Estable en situación controlada, falla cuando apuran',
+        'Arma ofensiva: contacto y dirección confiables en partido'
+      ]
+    },
+    {
+      key:'reves', nombre:'Revés',
+      desc:[
+        'Se abre o acorta el swing al recibir bolas difíciles',
+        'Confiable en intercambio largo, falla en bola corta',
+        'Golpe de construcción sólido; slice con control táctico'
+      ]
+    },
+    {
+      key:'saque', nombre:'Saque',
+      desc:[
+        '% bajo o sin dirección; segundo saque invita al ataque',
+        'Entra con regularidad pero predecible, sin variación',
+        'Varía zona y velocidad; segundo saque con efecto y profundidad'
+      ]
+    },
+    {
+      key:'volea', nombre:'Volea',
+      desc:[
+        'No sube a la red o pierde el punto por técnica',
+        'Sube en situaciones obvias; devuelve sin terminar el punto',
+        'Lee el punto y sube con propósito; cierra la volea con dirección'
+      ]
+    },
+    {
+      key:'resto', nombre:'Resto',
+      desc:[
+        'Reacción tardía, posición de espera incorrecta',
+        'Neutraliza el saque pero sin intención de dirección',
+        'Genera presión desde el resto; varía largo y cruzado'
+      ]
+    }
+  ],
+  fisico: [
+    {
+      key:'resistencia', nombre:'Resistencia',
+      desc:[
+        'Baja intensidad y errores no forzados aumentan en el 3er set',
+        'Mantiene nivel hasta el 2do set, cae perceptiblemente al final',
+        'Igual o más intenso en sets largos; no pierde velocidad de golpe'
+      ]
+    },
+    {
+      key:'velocidad', nombre:'Velocidad / 1er paso',
+      desc:[
+        'No llega a bolas que debería alcanzar',
+        'Llega pero sin tiempo para preparar bien el golpe',
+        'Llega con equilibrio y tiempo de preparación cómodo'
+      ]
+    },
+    {
+      key:'agilidad', nombre:'Agilidad',
+      desc:[
+        'Pierde balance en cambios de dirección cortos',
+        'Recupera posición central con demora visible',
+        'Recuperación rápida; posición central siempre lista'
+      ]
+    },
+    {
+      key:'fuerza', nombre:'Fuerza funcional',
+      desc:[
+        'Golpes se acortan notablemente bajo fatiga',
+        'Leve pérdida de velocidad al final de la práctica',
+        'Mantiene velocidad y profundidad durante toda la sesión'
+      ]
+    }
+  ],
+  mental: [
+    {
+      key:'concentracion', nombre:'Concentración',
+      desc:[
+        'Se distrae con ruido externo o jugadores de otros campos',
+        'Irregular: viene y va durante el mismo set',
+        'Presente durante sets completos; resetea rápido entre puntos'
+      ]
+    },
+    {
+      key:'actitud', nombre:'Tolerancia al error',
+      desc:[
+        'Se cierra o cambia el juego tras 2 errores seguidos',
+        'Se recupera pero tarda 1–2 games para estabilizarse',
+        'Resetea entre puntos, sin arrastre emocional visible'
+      ]
+    },
+    {
+      key:'errores', nombre:'Presión en momentos clave',
+      desc:[
+        'Se apura y acorta el swing en puntos importantes',
+        'Juega seguro pero sin arriesgar en break points',
+        'Mantiene o sube el nivel en momentos decisivos'
+      ]
+    }
+  ]
+};
+
+// ══════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════
+let allRows=[], infoRows=[], currentPlayer=null, playerSessions=[], charts={};
+
+// ══════════════════════════════════════
+// FETCH
+// ══════════════════════════════════════
+async function fetchSheet(name){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error(`Error al cargar: ${name}`);
+  return parseCSV(await res.text());
+}
+function parseCSV(text){
+  return text.trim().split('\n').slice(1).map(line=>{
+    const cols=[]; let cur='',inQ=false;
+    for(const ch of line){
+      if(ch==='"'){inQ=!inQ;continue;}
+      if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;
+    }
+    cols.push(cur.trim()); return cols;
+  }).filter(r=>r[0]&&r[0].length>0);
+}
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function num(v){ return parseFloat((v+'').replace(',','.'))||0; }
+function parseDate(s){ if(!s)return null; const p=s.split('/'); return p.length===3?`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`:s; }
+function fmtDate(s){ const d=new Date(parseDate(s)+'T12:00:00'); return isNaN(d)?s:d.toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'}); }
+function getInfo(name){ return infoRows.find(r=>r[INFO.alumno]?.trim()===name.trim())||null; }
+
+// Convierte valor 1–10 → nivel 1–3
+function toLvl(v){
+  const n=num(v);
+  if(n<=0) return 0;
+  if(n<=3) return 1;
+  if(n<=6) return 2;
+  return 3;
+}
+function lvlLabel(l){ return l===1?'A desarrollar':l===2?'Funcional':'Arma'; }
+function lvlClass(l){ return l===1?'n1':l===2?'n2':l===3?'n3':''; }
+
+// Promedio de niveles de un set de rúbricas
+function avgLvl(sess, keys){
+  const vals = keys.map(k=>toLvl(sess[COL[k]])).filter(v=>v>0);
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+}
+
+function ctxClass(tipo=''){
+  const t=tipo.toLowerCase();
+  if(t.includes('torneo')) return 'ctx-torneo';
+  if(t.includes('partido')) return 'ctx-partido';
+  if(t.includes('ejercicio')||t.includes('presión')||t.includes('presion')) return 'ctx-ejercicio';
+  return 'ctx-libre';
+}
+function ctxLabel(tipo=''){
+  const t=tipo.toLowerCase();
+  if(t.includes('torneo')) return '🏆 Torneo';
+  if(t.includes('partido')) return '⚔️ Partido';
+  if(t.includes('físic')||t.includes('fisic')) return '💪 Físico';
+  if(t.includes('mental')) return '🧠 Mental';
+  return '🎾 Entrenamiento';
+}
+
+function nivelPips(lv){
+  return [1,2,3].map(i=>{
+    let cls = 'inactive';
+    if(i<=lv) cls = `active-${lv}`;
+    return `<div class="nivel-pip ${cls}">${i}</div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+async function init(){
+  try{
+    [allRows,infoRows] = await Promise.all([
+      fetchSheet(SHEET_NAME),
+      fetchSheet(INFO_SHEET).catch(()=>[])
+    ]);
+    const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean).sort();
+    const grid=document.getElementById('player-grid');
+    if(!players.length){ grid.innerHTML='<div class="loading-state">No hay jugadores cargados.</div>'; return; }
+    grid.innerHTML=players.map((name,i)=>{
+      const init=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const color=COLORS[i%COLORS.length];
+      const n=allRows.filter(r=>r[COL.alumno]===name).length;
+      return `<button class="player-btn" onclick="selectPlayer('${name.replace(/'/g,"\\'")}')">
+        <div class="pb-avatar" style="background:${color};">${init}</div>
+        <div><div class="pb-name">${name}</div><div class="pb-meta">${n} sesión${n!==1?'es':''}</div></div>
+      </button>`;
+    }).join('');
+  } catch(e){
+    document.getElementById('player-grid').innerHTML=`<div class="loading-state" style="color:#ffaaaa;">Error: ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════
+// SELECT PLAYER
+// ══════════════════════════════════════
+function selectPlayer(name){
+  currentPlayer=name;
+  playerSessions=allRows.filter(r=>r[COL.alumno]===name).sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
+  const idx=[...new Set(allRows.map(r=>r[COL.alumno]))].sort().indexOf(name);
+  const color=COLORS[idx%COLORS.length];
+  const init=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const info=getInfo(name);
+  document.getElementById('h-avatar').style.background=color;
+  document.getElementById('h-avatar').textContent=init;
+  document.getElementById('h-name').textContent=name;
+  document.getElementById('h-meta').textContent=info
+    ?[info[INFO.edad]?info[INFO.edad]+' años':'',info[INFO.categoria]||'',playerSessions.length+' sesiones'].filter(Boolean).join(' · ')
+    :`${playerSessions.length} sesiones`;
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn').classList.add('active');
+  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('tab-resumen').classList.add('active');
+  Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});
+  charts={};
+  buildResumen();
+  buildRubrica();
+  buildProgreso();
+  buildHistorial();
+}
+function goBack(){ document.getElementById('landing').style.display=''; document.getElementById('app').classList.remove('visible'); }
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ══════════════════════════════════════
+// RESUMEN
+// ══════════════════════════════════════
+function buildResumen(){
+  const el=document.getElementById('content-resumen');
+  const loadEl=document.getElementById('loading-resumen');
+  const info=getInfo(currentPlayer);
+  const sess=playerSessions;
+
+  const infoHTML = info ? `<div class="card"><div class="card-title">Ficha del jugador</div>
+    <div class="ficha-grid">
+      ${info[INFO.brazo]?`<div class="ficha-item"><label>Brazo hábil</label><span>${info[INFO.brazo]}</span></div>`:''}
+      ${info[INFO.altura]?`<div class="ficha-item"><label>Altura</label><span>${info[INFO.altura]}</span></div>`:''}
+      ${info[INFO.edad]?`<div class="ficha-item"><label>Edad</label><span>${info[INFO.edad]} años</span></div>`:''}
+      ${info[INFO.categoria]?`<div class="ficha-item"><label>Categoría</label><span>${info[INFO.categoria]}</span></div>`:''}
+      ${info[INFO.objetivo]?`<div class="ficha-item" style="flex-basis:100%;"><label>Objetivo</label><span style="font-size:13px;">${info[INFO.objetivo]}</span></div>`:''}
+    </div></div>` : '';
+
+  if(!sess.length){
+    loadEl.style.display='none'; el.style.display='block';
+    el.innerHTML=infoHTML+'<div class="empty">No hay sesiones registradas.</div>'; return;
+  }
+
+  const last=sess[sess.length-1];
+  const tecKeys=['drive','reves','saque','volea','resto'];
+  const fisKeys=['resistencia','velocidad','agilidad','fuerza'];
+  const menKeys=['concentracion','actitud','errores'];
+  const tLvl=avgLvl(last,tecKeys);
+  const fLvl=avgLvl(last,fisKeys);
+  const mLvl=avgLvl(last,menKeys);
+  const tRound=Math.round(tLvl); const fRound=Math.round(fLvl); const mRound=Math.round(mLvl);
+
+  el.innerHTML = infoHTML + `
+  <div class="nota">📌 Este prototipo usa rúbricas de <strong>3 niveles</strong> en lugar de puntuaciones 1–10. Los niveles reflejan conductas observables en cancha, no números abstractos.</div>
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-label">Técnica</div>
+      <div class="metric-icon">🎾</div>
+      <div class="nivel-badge ${lvlClass(tRound)}">${lvlLabel(tRound)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Físico</div>
+      <div class="metric-icon">⚡</div>
+      <div class="nivel-badge ${lvlClass(fRound)}">${lvlLabel(fRound)}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Mental</div>
+      <div class="metric-icon">🧠</div>
+      <div class="nivel-badge ${lvlClass(mRound)}">${lvlLabel(mRound)}</div>
+    </div>
+  </div>
+  ${buildBrechaCard(sess)}
+  <div style="font-size:10px;color:var(--hint);text-align:right;margin-bottom:14px;">Última sesión: ${fmtDate(last[COL.fecha])} · ${last[COL.tipo]||'Sesión'}</div>
+  ${last[COL.descripcion]?`<div class="card"><div class="card-title">Descripción de la sesión</div><div class="feedback-block">${last[COL.descripcion]}</div></div>`:''}
+  ${last[COL.obs_profe]?`<div class="card"><div class="card-title">Observación del coach</div><div class="feedback-block feedback-coach">${last[COL.obs_profe]}</div></div>`:''}
+  `;
+
+  loadEl.style.display='none'; el.style.display='block';
+}
+
+// Brecha libre vs torneo
+function buildBrechaCard(sess){
+  const libres=sess.filter(s=>!s[COL.tipo]?.toLowerCase().includes('torneo')&&!s[COL.tipo]?.toLowerCase().includes('partido'));
+  const partidos=sess.filter(s=>s[COL.tipo]?.toLowerCase().includes('torneo')||s[COL.tipo]?.toLowerCase().includes('partido'));
+  if(!libres.length||!partidos.length) return '';
+  const lastLibre=libres[libres.length-1];
+  const lastPartido=partidos[partidos.length-1];
+  const dims=[
+    {n:'Drive',k:'drive'},{n:'Revés',k:'reves'},{n:'Saque',k:'saque'},
+    {n:'Concentración',k:'concentracion'},{n:'Presión',k:'errores'}
+  ];
+  const rows=dims.map(d=>{
+    const lv=toLvl(lastLibre[COL[d.k]])||0;
+    const pv=toLvl(lastPartido[COL[d.k]])||0;
+    if(!lv&&!pv) return '';
+    const brecha=lv-pv;
+    const color=brecha>0?'var(--amber)':brecha<0?'var(--green)':'var(--hint)';
+    return `<div class="brecha-item">
+      <span class="brecha-name">${d.n}</span>
+      <div class="brecha-track">
+        ${[1,2,3].map(i=>`<div style="width:26px;height:8px;border-radius:4px;background:${i<=lv?'var(--r3)':'var(--surface2)'};margin-right:2px;"></div>`).join('')}
+        <span style="font-size:10px;color:var(--muted);margin:0 6px;">vs</span>
+        ${[1,2,3].map(i=>`<div style="width:26px;height:8px;border-radius:4px;background:${i<=pv?'var(--amber)':'var(--surface2)'};margin-right:2px;"></div>`).join('')}
+      </div>
+      <span class="brecha-labels" style="color:${color};">${brecha>0?'↓'+brecha:brecha<0?'↑'+Math.abs(brecha):'='}</span>
+    </div>`;
+  }).filter(Boolean).join('');
+  if(!rows) return '';
+  return `<div class="brecha-card">
+    <div class="brecha-title">⚡ Brecha: Entrenamiento libre vs Partido/Torneo</div>
+    <div style="display:flex;gap:16px;font-size:10px;color:var(--muted);margin-bottom:10px;">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--r3);margin-right:4px;vertical-align:middle;"></span>Libre</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--amber);margin-right:4px;vertical-align:middle;"></span>Partido/Torneo</span>
+    </div>
+    ${rows}
+    <div style="font-size:11px;color:var(--amber);margin-top:10px;">La brecha indica qué tan automatizada está la técnica bajo presión real.</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// RÚBRICA DETALLE
+// ══════════════════════════════════════
+function buildRubrica(){
+  const el=document.getElementById('content-rubrica');
+  const loadEl=document.getElementById('loading-rubrica');
+  const sess=playerSessions;
+  if(!sess.length){
+    loadEl.style.display='none'; el.style.display='block';
+    el.innerHTML='<div class="empty">No hay sesiones para mostrar.</div>'; return;
+  }
+  const last=sess[sess.length-1];
+  const ctx=last[COL.tipo]||'';
+
+  const renderSection=(titulo, emoji, items)=>{
+    return `<div class="rubrica-section">
+      <div class="rubrica-header">${emoji} ${titulo}</div>
+      ${items.map(item=>{
+        const lv=toLvl(last[COL[item.key]]);
+        if(!lv) return '';
+        const lvc=lv===1?'lv1':lv===2?'lv2':'lv3';
+        return `<div class="rubrica-row">
+          <div class="rubrica-top">
+            <span class="rubrica-name">${item.nombre}</span>
+            <div class="rubrica-nivel">${nivelPips(lv)}</div>
+          </div>
+          <div class="rubrica-desc ${lvc}">${item.desc[lv-1]}</div>
+        </div>`;
+      }).filter(Boolean).join('')}
+    </div>`;
+  };
+
+  el.innerHTML = `
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <span class="ctx-badge ${ctxClass(ctx)}">${ctxLabel(ctx)}</span>
+    <span style="font-size:12px;color:var(--hint);">Última sesión · ${fmtDate(last[COL.fecha])}</span>
+  </div>
+  <div class="nota">Los descriptores muestran <strong>la conducta exacta observada</strong> en esa sesión. El nivel refleja lo que se vio, no una opinión.</div>
+  <div style="display:flex;gap:6px;margin-bottom:14px;font-size:11px;flex-wrap:wrap;">
+    <span style="background:var(--red-bg);color:var(--r1);padding:3px 8px;border-radius:6px;font-weight:600;">1 — A desarrollar</span>
+    <span style="background:var(--amber-bg);color:var(--amber);padding:3px 8px;border-radius:6px;font-weight:600;">2 — Funcional</span>
+    <span style="background:var(--green-bg);color:var(--green);padding:3px 8px;border-radius:6px;font-weight:600;">3 — Arma</span>
+  </div>
+  ${renderSection('Técnica','🎾',RUBRICAS.tecnica)}
+  ${renderSection('Físico','⚡',RUBRICAS.fisico)}
+  ${renderSection('Mental','🧠',RUBRICAS.mental)}
+  `;
+
+  loadEl.style.display='none'; el.style.display='block';
+}
+
+// ══════════════════════════════════════
+// PROGRESO
+// ══════════════════════════════════════
+function buildProgreso(){
+  const el=document.getElementById('content-progreso');
+  const loadEl=document.getElementById('loading-progreso');
+  const sess=playerSessions;
+  if(sess.length<2){
+    loadEl.style.display='none'; el.style.display='block';
+    el.innerHTML='<div class="empty">Necesitás al menos 2 sesiones para ver la evolución.</div>'; return;
+  }
+  const labels=sess.map(s=>fmtDate(s[COL.fecha]));
+  el.innerHTML=`
+  <div class="nota">Los gráficos muestran la evolución de niveles (1=A desarrollar · 2=Funcional · 3=Arma) a lo largo del tiempo.</div>
+  <div class="card"><div class="card-title">Evolución técnica</div><div class="chart-wrap"><canvas id="chart-tec"></canvas></div></div>
+  <div class="card"><div class="card-title">Evolución física</div><div class="chart-wrap"><canvas id="chart-fis"></canvas></div></div>
+  <div class="card"><div class="card-title">Evolución mental</div><div class="chart-wrap"><canvas id="chart-men"></canvas></div></div>
+  `;
+  loadEl.style.display='none'; el.style.display='block';
+
+  const opts=()=>({
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#7a7868',font:{size:10},boxWidth:8,padding:10}}},
+    scales:{
+      y:{min:0,max:3,ticks:{stepSize:1,color:'#b5b0a0',font:{size:10},callback:v=>v===1?'A dev.':v===2?'Func.':v===3?'Arma':''},grid:{color:'rgba(0,0,0,0.04)'}},
+      x:{ticks:{color:'#b5b0a0',font:{size:10},maxRotation:40,autoSkip:true,maxTicksLimit:6},grid:{color:'rgba(0,0,0,0.04)'}}
+    }
+  });
+
+  charts['tec']=new Chart(document.getElementById('chart-tec'),{type:'line',data:{labels,datasets:[
+    {label:'Drive',data:sess.map(s=>toLvl(s[COL.drive])||null),borderColor:'#2563eb',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Revés',data:sess.map(s=>toLvl(s[COL.reves])||null),borderColor:'#dc2626',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Saque',data:sess.map(s=>toLvl(s[COL.saque])||null),borderColor:'#1e6640',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Volea',data:sess.map(s=>toLvl(s[COL.volea])||null),borderColor:'#b45309',tension:.35,pointRadius:4,spanGaps:true},
+  ]},options:opts()});
+
+  charts['fis']=new Chart(document.getElementById('chart-fis'),{type:'line',data:{labels,datasets:[
+    {label:'Resistencia',data:sess.map(s=>toLvl(s[COL.resistencia])||null),borderColor:'#1e6640',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Velocidad',data:sess.map(s=>toLvl(s[COL.velocidad])||null),borderColor:'#2563eb',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Agilidad',data:sess.map(s=>toLvl(s[COL.agilidad])||null),borderColor:'#b45309',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Fuerza',data:sess.map(s=>toLvl(s[COL.fuerza])||null),borderColor:'#7c3aed',tension:.35,pointRadius:4,spanGaps:true},
+  ]},options:opts()});
+
+  charts['men']=new Chart(document.getElementById('chart-men'),{type:'line',data:{labels,datasets:[
+    {label:'Concentración',data:sess.map(s=>toLvl(s[COL.concentracion])||null),borderColor:'#7c3aed',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Actitud',data:sess.map(s=>toLvl(s[COL.actitud])||null),borderColor:'#dc2626',tension:.35,pointRadius:4,spanGaps:true},
+    {label:'Presión/clave',data:sess.map(s=>toLvl(s[COL.errores])||null),borderColor:'#2563eb',tension:.35,pointRadius:4,spanGaps:true},
+  ]},options:opts()});
+}
+
+// ══════════════════════════════════════
+// HISTORIAL
+// ══════════════════════════════════════
+function buildHistorial(){
+  const el=document.getElementById('content-historial');
+  const loadEl=document.getElementById('loading-historial');
+  const sess=[...playerSessions].reverse();
+  if(!sess.length){
+    loadEl.style.display='none'; el.style.display='block';
+    el.innerHTML='<div class="empty">No hay sesiones registradas.</div>'; return;
+  }
+
+  el.innerHTML=`<div class="card">
+    <div class="card-title">${playerSessions.length} sesiones registradas</div>
+    ${sess.map(s=>{
+      const tipo=s[COL.tipo]||'';
+      const tLvl=Math.round(avgLvl(s,['drive','reves','saque','volea','resto']));
+      const fLvl=Math.round(avgLvl(s,['resistencia','velocidad','agilidad','fuerza']));
+      const mLvl=Math.round(avgLvl(s,['concentracion','actitud','errores']));
+      const dot=tipo.toLowerCase().includes('físic')?'#1e6640':tipo.toLowerCase().includes('mental')?'#7c3aed':tipo.toLowerCase().includes('torneo')?'#dc2626':tipo.toLowerCase().includes('partido')?'#b45309':'#2563eb';
+      return `<div class="session-item">
+        <div class="session-dot" style="background:${dot};margin-top:6px;"></div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span class="ctx-badge ${ctxClass(tipo)}" style="font-size:10px;">${ctxLabel(tipo)}</span>
+            <span class="session-date">${fmtDate(s[COL.fecha])}</span>
+          </div>
+          ${s[COL.descripcion]?`<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${s[COL.descripcion]}</div>`:''}
+          <div class="session-pills">
+            ${tLvl?`<span class="session-pill pill-tec">Téc: ${lvlLabel(tLvl)}</span>`:''}
+            ${fLvl?`<span class="session-pill pill-fis">Fís: ${lvlLabel(fLvl)}</span>`:''}
+            ${mLvl?`<span class="session-pill pill-men">Men: ${lvlLabel(mLvl)}</span>`:''}
+          </div>
+          ${s[COL.obs_profe]?`<div class="feedback-block feedback-coach">${s[COL.obs_profe]}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+  loadEl.style.display='none'; el.style.display='block';
+}
+
+init();
+</script>
+</body>
+</html>
