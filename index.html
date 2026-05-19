@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Academia de Tenis — Rúbricas</title>
+<title>Espacio.M — Rúbricas</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -187,8 +187,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <path d="M2 16 Q8 8 16 16 Q24 24 30 16" stroke="#1a3a0e" stroke-width="2" fill="none"/>
       </svg>
     </div>
-    <div class="landing-title">Academia de Tenis<br>Arroyito</div>
-    <div class="landing-sub">Temporada 2026</div>
+    <div class="landing-title">Espacio.<span>M</span></div>
+    <div class="landing-sub">SISTEMA DE RÚBRICAS · TEMPORADA 2026</div>
     <div class="select-card">
       <div class="select-label">Seleccioná un jugador</div>
       <div class="player-grid" id="player-grid">
@@ -246,18 +246,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 // CONFIG — misma planilla, mismas columnas
 // ══════════════════════════════════════
 const SHEET_ID   = '1Frlg1Kcl1SZ9qsC7G0NvcxziGua2wZrCE8LIRpg7CJk';
-const SHEET_NAME = 'Registro - Rubricas;
+const SHEET_NAME = 'Registro de sesión';
 const INFO_SHEET = 'informacion';
 
 // Columnas idénticas al index.html original
 const COL = {
-  fecha:0, alumno:1, tipo:2, (Drive [Preparación]):3, (Drive [Contacto y control]):4,
-  (Drive [Dirección / profundidad]):5,	(Revés  [Estabilidad bajo presión]):6,	
-  (Revés  [Variante slice]):7,	(Saque [Primer saque]):8,	(Saque [Segundo saque]):9, (Saque [Saque en momentos clave]):10,
-  (Volea [Decisión de subir a la red]):11,	(Volea [Ejecución en red]):12,	Construcción del punto:13,	
-  Adaptación al rival:14,	Gestión del marcador:15,	Resistencia:16,	Velocidad:17,	Agilidad:18,	Fuerza:19,
-  Tolerancia al error:20,	Presión en momentos clave:21, 	Comunicación no verbal:22, 	Concentración:23, descripcion:24, 
-  obs_profe:25
+  fecha:0, alumno:1, tipo:2,
+  drive:3, reves:4, saque:5, volea:6, resto:7,
+  resistencia:8, velocidad:9, agilidad:10, fuerza:11,
+  concentracion:12, actitud:13, errores:14,
+  obs_profe:15, descripcion:16
 };
 const INFO = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetivo:5 };
 
@@ -301,33 +299,16 @@ const RUBRICAS = {
         'Lee el punto y sube con propósito; cierra la volea con dirección'
       ]
     },
+    {
+      key:'resto', nombre:'Resto',
+      desc:[
+        'Reacción tardía, posición de espera incorrecta',
+        'Neutraliza el saque pero sin intención de dirección',
+        'Genera presión desde el resto; varía largo y cruzado'
+      ]
+    }
   ],
-   tactico: [
-    {
-      key:'punto', nombre:'Construccion del punto',
-      desc:[
-        'Golpea sin plan, reacciona solo',
-        'Tiene patrón de 2–3 golpes en situación simple',
-        'Construye con variación de ritmo, dirección y profundidad'
-      ]
-    },
-    {
-      key:'rival', nombre:'Adaptacion al rival',
-      desc:[
-        'No ajusta aunque el rival tenga patrón claro',
-        'Ajusta pero tarde (2do o 3er set)',
-        'Detecta y ajusta dentro del mismo set'
-      ]
-    },
-    {
-      key:'marcador', nombre:'Gestion del marcador',
-      desc:[
-        'Juega igual en 40-0 que en 30-40',
-        'Leve cambio, más conservador en puntos clave',
-        'Diferencia claramente cuando arriesgar y cuando construir'
-      ]
-    },
- fisico: [
+  fisico: [
     {
       key:'resistencia', nombre:'Resistencia',
       desc:[
@@ -450,7 +431,7 @@ function ctxLabel(tipo=''){
   const t=tipo.toLowerCase();
   if(t.includes('torneo')) return '🏆 Torneo';
   if(t.includes('partido')) return '⚔️ Partido';
-  if(t.includes('físico')||t.includes('fisico')) return '💪 Físico';
+  if(t.includes('físic')||t.includes('fisic')) return '💪 Físico';
   if(t.includes('mental')) return '🧠 Mental';
   return '🎾 Entrenamiento';
 }
