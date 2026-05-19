@@ -432,7 +432,7 @@ function ctxLabel(tipo=''){
   const t=tipo.toLowerCase();
   if(t.includes('torneo')) return '🏆 Torneo';
   if(t.includes('partido')) return '⚔️ Partido';
-  if(t.includes('físic')||t.includes('fisic')) return '💪 Físico';
+  if(t.includes('físico')||t.includes('fisico')) return '💪 Físico';
   if(t.includes('mental')) return '🧠 Mental';
   return '🎾 Entrenamiento';
 }
@@ -532,9 +532,9 @@ function buildResumen(){
   }
 
   const last=sess[sess.length-1];
-  const tecKeys=['drive','reves','saque','volea','resto'];
+  const tecKeys=['drive','reves','saque','volea'];
   const fisKeys=['resistencia','velocidad','agilidad','fuerza'];
-  const menKeys=['concentracion','actitud','errores'];
+  const menKeys=['concentracion','presion','error','comunicacion'];
   const tLvl=avgLvl(last,tecKeys);
   const fLvl=avgLvl(last,fisKeys);
   const mLvl=avgLvl(last,menKeys);
