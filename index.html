@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Academia de Tenis — Rúbricas</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --court:      #1e3d18;
@@ -31,7 +31,7 @@
   --radius-sm:  10px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 /* LANDING */
 .landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;overflow:hidden;}
@@ -42,7 +42,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .landing-content{position:relative;z-index:2;text-align:center;max-width:540px;width:100%;}
 .logo-ball{width:56px;height:56px;border-radius:50%;background:var(--ball);margin:0 auto 1.4rem;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(200,212,43,.15),0 8px 28px rgba(200,212,43,.3);}
 .logo-ball svg{width:32px;height:32px;}
-.landing-title{font-family:'Syne',sans-serif;font-size:clamp(30px,7vw,50px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.02em;margin-bottom:6px;}
+.landing-title{font-family:'Inter',sans-serif;font-size:clamp(30px,7vw,50px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.02em;margin-bottom:6px;}
 .landing-title span{color:var(--ball);}
 .landing-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:2.5rem;letter-spacing:.03em;}
 .select-card{background:rgba(255,255,255,.07);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:1.5rem;width:100%;}
@@ -62,15 +62,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* HEADER */
 .app-header{background:var(--court);position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.3);}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;}
-.header-back{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(255,255,255,.7);font-size:12px;font-family:'DM Sans',sans-serif;transition:background .15s;}
+.header-back{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(255,255,255,.7);font-size:12px;font-family:'Inter',sans-serif;transition:background .15s;}
 .header-back:hover{background:rgba(255,255,255,.16);}
 .header-player{display:flex;align-items:center;gap:10px;}
 .header-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
-.header-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+.header-name{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#fff;}
 .header-meta{font-size:11px;color:rgba(255,255,255,.5);}
 .app-tabs{display:flex;padding:10px 20px 0;overflow-x:auto;scrollbar-width:none;}
 .app-tabs::-webkit-scrollbar{display:none;}
-.tab-btn{padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.tab-btn{padding:8px 16px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
 .tab-btn.active{color:var(--ball);border-bottom-color:var(--ball);font-weight:500;}
 .tab-btn:hover:not(.active){color:rgba(255,255,255,.75);}
 
@@ -99,7 +99,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .area-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .area-title-wrap{display:flex;align-items:center;gap:8px;}
 .area-emoji{font-size:18px;}
-.area-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.area-name{font-family:'Inter',sans-serif;font-size:16px;font-weight:700;}
 .area-name.tec{color:var(--tec);}
 .area-name.tac{color:var(--tac);}
 .area-name.fis{color:var(--fis);}
@@ -142,8 +142,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .bbar-tag{font-size:9px;color:var(--muted);width:26px;flex-shrink:0;}
 .bbar-track{flex:1;height:5px;background:rgba(0,0,0,.07);border-radius:99px;overflow:hidden;}
 .bbar-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.34,1.2,.64,1);}
-.bbar-val{font-size:9px;font-family:'DM Mono',monospace;color:var(--hint);width:34px;text-align:right;flex-shrink:0;}
-.bench-diff{font-size:10px;font-family:'DM Mono',monospace;width:26px;text-align:right;flex-shrink:0;}
+.bbar-val{font-size:9px;font-family:'Inter',sans-serif;color:var(--hint);width:34px;text-align:right;flex-shrink:0;}
+.bench-diff{font-size:10px;font-family:'Inter',sans-serif;width:26px;text-align:right;flex-shrink:0;}
 
 /* MÉTRICAS RESUMEN TOP */
 .metrics-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
@@ -171,9 +171,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .session-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
 .session-item:last-child{border-bottom:none;padding-bottom:0;}
 .session-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.session-date{font-size:11px;color:var(--hint);font-family:'DM Mono',monospace;}
+.session-date{font-size:11px;color:var(--hint);font-family:'Inter',sans-serif;}
 .session-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
-.session-pill{font-size:10px;padding:2px 8px;border-radius:5px;font-family:'DM Mono',monospace;}
+.session-pill{font-size:10px;padding:2px 8px;border-radius:5px;font-family:'Inter',sans-serif;}
 .pill-tec{background:var(--tec-bg);color:var(--tec);}
 .pill-tac{background:var(--tac-bg);color:var(--tac);}
 .pill-fis{background:var(--fis-bg);color:var(--fis);}
@@ -217,7 +217,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 @media(min-width:700px){.player-grid{grid-template-columns:repeat(3,1fr);}}
 
 /* TENDENCIA */
-.trend{font-size:10px;font-family:'DM Mono',monospace;margin-top:4px;display:inline-block;font-weight:500;}
+.trend{font-size:10px;font-family:'Inter',sans-serif;margin-top:4px;display:inline-block;font-weight:500;}
 .trend.up{color:var(--lv3);}
 .trend.down{color:var(--lv1);}
 .trend.flat{color:var(--hint);}
@@ -249,7 +249,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nivel-dot.t1{color:var(--lv1);} .nivel-dot.t2{color:var(--lv2);} .nivel-dot.t3{color:var(--lv3);} .nivel-dot.t0{color:var(--hint);}
 
 /* DELTA vs categoría */
-.delta{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;padding:1px 6px;border-radius:5px;}
+.delta{font-size:10px;font-family:'Inter',sans-serif;font-weight:500;padding:1px 6px;border-radius:5px;}
 .delta.pos{color:var(--lv3);background:var(--lv3-bg);}
 .delta.neg{color:var(--lv1);background:var(--lv1-bg);}
 .delta.eq{color:var(--hint);background:var(--surf2);}
@@ -264,7 +264,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .acc{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
 .acc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .15s;}
 .acc-head:hover{background:var(--surf2);}
-.acc-title{display:flex;align-items:center;gap:9px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.acc-title{display:flex;align-items:center;gap:9px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;}
 .acc-right{display:flex;align-items:center;gap:12px;}
 .acc-chevron{transition:transform .25s;color:var(--muted);font-size:13px;}
 .acc.open .acc-chevron{transform:rotate(180deg);}
@@ -282,6 +282,47 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .sem-item .dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .sem-item-name{font-size:13px;font-weight:500;color:var(--text);flex:1;}
 .sem-item-area{font-size:10px;color:var(--muted);white-space:nowrap;}
+
+
+/* === v5: Inter, paleta reducida, cards blancas === */
+.ficha-grid{gap:16px 28px;}
+.ficha-item span{font-size:15px;}
+
+/* Filtro por mes */
+.month-filter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.mf-chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;}
+.mf-chip:hover{border-color:var(--court-l);color:var(--text);}
+.mf-chip.active{background:var(--court);color:#fff;border-color:var(--court);}
+
+/* Cards de métrica (Resumen) */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;}
+.mc-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.mc-value{font-size:34px;font-weight:700;line-height:1;color:var(--text);letter-spacing:-.01em;}
+.mc-delta{font-size:12px;font-weight:500;margin-top:9px;}
+.mc-delta.up{color:var(--lv3);} .mc-delta.down{color:var(--lv1);} .mc-delta.flat{color:var(--hint);}
+.mc-cat{font-size:12px;color:var(--hint);margin-top:4px;}
+
+/* dot de categoría */
+.cat-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle;}
+
+/* Rendimiento — barras */
+.perf-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+.perf-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+.perf-card-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.perf-row{margin-bottom:16px;}
+.perf-row:last-child{margin-bottom:0;}
+.perf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;}
+.perf-name{font-size:13px;font-weight:500;color:var(--text);}
+.perf-val{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.perf-delta{font-size:11px;font-weight:600;}
+.perf-delta.pos{color:var(--lv3);} .perf-delta.neg{color:var(--lv1);} .perf-delta.eq{color:var(--hint);}
+.perf-track{position:relative;height:8px;background:var(--surf2);border-radius:999px;}
+.perf-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+.fill-1{background:var(--lv1);} .fill-2{background:var(--lv2);} .fill-3{background:var(--lv3);} .fill-0{background:var(--hint);}
+.perf-tick{position:absolute;top:-3px;width:2px;height:14px;background:var(--text);opacity:.5;border-radius:2px;}
+.perf-cat{font-size:11px;color:var(--hint);margin-top:7px;}
+@media(min-width:760px){.perf-grid{grid-template-columns:1fr 1fr;}}
 
 </style>
 </head>
@@ -546,7 +587,7 @@ const RESUMEN_GROUPS = {
 // ══════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════
-let allRows=[], infoRows=[], currentPlayer=null, playerSessions=[], charts={};
+let allRows=[], infoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all';
 
 // ══════════════════════════════════════
 // FETCH CSV DESDE GOOGLE SHEETS
@@ -725,7 +766,7 @@ function calcBench(playerName){
 // INIT
 // ══════════════════════════════════════
 async function init(){
-  if(window.Chart){ Chart.defaults.font.family="'DM Sans', sans-serif"; Chart.defaults.color='#7a7868'; }
+  if(window.Chart){ Chart.defaults.font.family="'Inter', sans-serif"; Chart.defaults.color='#7a7868'; }
   try{
     const [dataMatrix, infoMatrix] = await Promise.all([
       fetchSheet(DATA_SHEET),
@@ -761,6 +802,7 @@ async function init(){
 // ══════════════════════════════════════
 function selectPlayer(name){
   currentPlayer=name;
+  selectedMonth='all';
   playerSessions=allRows
     .filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
@@ -808,101 +850,114 @@ function toggleAcc(head){
 }
 
 // ══════════════════════════════════════
-// RESUMEN — pantallazo general
+// RESUMEN — pantallazo con filtro por mes
 // ══════════════════════════════════════
+function monthKey(s){ const d=parseDate(s[COL.fecha])||''; return d?d.slice(0,7):''; }
+function monthLabel(key){
+  if(!key) return '';
+  const a=key.split('-'); const d=new Date(Number(a[0]),Number(a[1])-1,1);
+  const l=d.toLocaleDateString('es-AR',{month:'short',year:'numeric'});
+  return l.charAt(0).toUpperCase()+l.slice(1);
+}
+function areaAvgForSessions(list, areaId){
+  const v=list.map(s=>avgLvlKeys(s,AREA_KEYS[areaId])).filter(x=>x>0);
+  return v.length? v.reduce((a,b)=>a+b,0)/v.length : 0;
+}
+function catColor(cat){
+  const t=(cat||'').toLowerCase();
+  if(t.includes('verde')) return 'var(--lv3)';
+  if(t.includes('naranja')||t.includes('amar')) return 'var(--lv2)';
+  if(t.includes('roj')) return 'var(--lv1)';
+  if(t.includes('azul')) return '#1a5fb4';
+  return 'var(--muted)';
+}
+function setMonth(m){
+  selectedMonth=m;
+  if(charts['radar']){ try{charts['radar'].destroy();}catch(e){} delete charts['radar']; }
+  try{ buildResumen(); }catch(e){ const ct=document.getElementById('content-resumen'); if(ct) ct.innerHTML='<div class="err-box"><strong>Error.</strong>'+(e.message||e)+'</div>'; }
+}
+
 function buildResumen(){
   const el=document.getElementById('content-resumen');
   const ldEl=document.getElementById('loading-resumen');
   const info=getInfo(currentPlayer);
   const sess=playerSessions;
 
+  const catName=info?info[INFO.categoria]:'';
+  const catDot=catName?`<span class="cat-dot" style="background:${catColor(catName)};"></span>`:'';
   const fichaHTML=info?`<div class="card">
-    <div class="card-title">Ficha del jugador</div>
     <div class="ficha-grid">
       ${info[INFO.brazo]?`<div class="ficha-item"><label>Brazo hábil</label><span>${info[INFO.brazo]}</span></div>`:''}
       ${info[INFO.altura]?`<div class="ficha-item"><label>Altura</label><span>${info[INFO.altura]}</span></div>`:''}
       ${info[INFO.edad]?`<div class="ficha-item"><label>Edad</label><span>${info[INFO.edad]} años</span></div>`:''}
-      ${info[INFO.categoria]?`<div class="ficha-item"><label>Categoría</label><span>${info[INFO.categoria]}</span></div>`:''}
+      ${catName?`<div class="ficha-item"><label>Categoría</label><span>${catDot}${catName}</span></div>`:''}
       ${info[INFO.objetivo]?`<div class="ficha-item" style="flex-basis:100%;"><label>Objetivo</label><span style="font-size:13px;font-weight:400;">${info[INFO.objetivo]}</span></div>`:''}
     </div>
   </div>`:'';
 
   if(!sess.length){
     ldEl.style.display='none'; el.style.display='block';
-    el.innerHTML=fichaHTML+'<div class="empty">No hay sesiones registradas.</div>';
-    return;
+    el.innerHTML=fichaHTML+'<div class="empty">No hay sesiones registradas.</div>'; return;
   }
 
-  const last=sess[sess.length-1];
-  const prev=sess.length>=2?sess[sess.length-2]:null;
+  const months=[...new Set(sess.map(monthKey).filter(Boolean))].sort();
+  const curMonth=(selectedMonth==='all'||!months.includes(selectedMonth))?months[months.length-1]:selectedMonth;
+  const curIdx=months.indexOf(curMonth);
+  const prevMonth=curIdx>0?months[curIdx-1]:null;
+  const curSess=sess.filter(s=>monthKey(s)===curMonth);
+  const prevSess=prevMonth?sess.filter(s=>monthKey(s)===prevMonth):[];
+  const prevLbl=prevMonth?monthLabel(prevMonth):'';
+
+  const chips=`<div class="card"><div class="card-title">Filtrar por mes</div><div class="month-filter">
+    <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonth('all')">Todos</button>
+    ${months.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonth('${m}')">${monthLabel(m)}</button>`).join('')}
+  </div></div>`;
+
   const bench=calcBench(currentPlayer);
+  const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
+  const curAvgs={}, prevAvgs={};
+  areas.forEach(a=>{ curAvgs[a.id]=areaAvgForSessions(curSess,a.id); prevAvgs[a.id]=areaAvgForSessions(prevSess,a.id); });
 
-  const rawTec=avgLvlKeys(last,AREA_KEYS.tecnica), rawTac=avgLvlKeys(last,AREA_KEYS.tactica), rawFis=avgLvlKeys(last,AREA_KEYS.fisico), rawMen=avgLvlKeys(last,AREA_KEYS.mental);
-  const pTec=prev?avgLvlKeys(prev,AREA_KEYS.tecnica):0, pTac=prev?avgLvlKeys(prev,AREA_KEYS.tactica):0, pFis=prev?avgLvlKeys(prev,AREA_KEYS.fisico):0, pMen=prev?avgLvlKeys(prev,AREA_KEYS.mental):0;
-  const dlt=(cur,prv)=> (prev && cur>0 && prv>0) ? (cur-prv) : null;
-
-  const radarHTML=`<div class="card">
-    <div class="card-title">Perfil — pantallazo de las 4 áreas</div>
-    <div class="chart-wrap" style="height:360px;"><canvas id="ch-radar"></canvas></div>
-  </div>`;
-
-  const areaConfig=[
-    {id:'tecnica', emoji:'🎾', cls:'tec', raw:rawTec, prv:pTec},
-    {id:'tactica', emoji:'♟️', cls:'tac', raw:rawTac, prv:pTac},
-    {id:'fisico',  emoji:'⚡', cls:'fis', raw:rawFis, prv:pFis},
-    {id:'mental',  emoji:'🧠', cls:'men', raw:rawMen, prv:pMen}
-  ];
-
-  const areaCards=areaConfig.map(({id,emoji,cls,raw,prv})=>{
-    const grupos=RESUMEN_GROUPS[id];
-    const rows=grupos.map(g=>{
-      const lvls=g.keys.map(k=>toLvl(last[COL[k]])).filter(v=>v>0);
-      if(!lvls.length) return '';
-      const pRaw=lvls.reduce((a,b)=>a+b,0)/lvls.length;
-      const pRound=Math.round(pRaw);
-      let cRaw=0;
-      if(bench){
-        const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0);
-        cRaw=cv.length?cv.reduce((a,b)=>a+b,0)/cv.length:0;
-      }
-      const d=cRaw>0?(pRaw-cRaw):null;
-      const deltaHTML = d===null ? '' :
-        (d>=0.05?`<span class="delta pos" title="vs promedio de la categoría">+${d.toFixed(1)}</span>`
-        :d<=-0.05?`<span class="delta neg" title="vs promedio de la categoría">${d.toFixed(1)}</span>`
-        :`<span class="delta eq" title="igual al promedio de la categoría">=</span>`);
-      return `<div class="skill-row">
-        <span class="skill-name">${g.nombre}</span>
-        <span class="skill-right">${deltaHTML}<span class="nivel-dot t${pRound}"><span class="dot dot-${pRound}"></span>${lvlLabel(pRound)}</span></span>
-      </div>`;
-    }).filter(Boolean).join('');
-    if(!rows) return '';
-    const aRound=Math.round(raw);
-    const aTrend=trendArrow(dlt(raw,prv));
-    return `<div class="area-card area-${cls}">
-      <div class="area-header">
-        <div class="area-title-wrap"><span class="area-emoji">${emoji}</span><span class="area-name ${cls}">${AREA_META[id].nombre}</span></div>
-        <div class="area-avg-wrap">
-          <span class="nivel-dot t${aRound}"><span class="dot dot-${aRound}"></span>${aRound>0?lvlLabel(aRound):'Sin datos'}</span>
-          ${aTrend?`<div style="margin-top:3px;">${aTrend}</div>`:''}
-        </div>
-      </div>
-      ${rows}
+  const cards=areas.map(a=>{
+    const v=curAvgs[a.id], pv=prevAvgs[a.id];
+    const d=(prevMonth&&v>0&&pv>0)?(v-pv):null;
+    const deltaHTML = d===null ? `<div class="mc-delta flat">—</div>`
+      : (d>=0.05?`<div class="mc-delta up">↑ +${d.toFixed(1)} vs ${prevLbl}</div>`
+        :d<=-0.05?`<div class="mc-delta down">↓ ${d.toFixed(1)} vs ${prevLbl}</div>`
+        :`<div class="mc-delta flat">= vs ${prevLbl}</div>`);
+    const cat=bench?(bench['avg_'+a.id]||0):0;
+    return `<div class="metric-card">
+      <div class="mc-label">${a.nombre}</div>
+      <div class="mc-value">${v>0?v.toFixed(1):'—'}</div>
+      ${deltaHTML}
+      ${cat>0?`<div class="mc-cat">Cat.: ${cat.toFixed(1)}</div>`:''}
     </div>`;
   }).join('');
 
-  el.innerHTML = fichaHTML
-    + `<div class="nota">📌 Última sesión: <strong>${fmtDate(last[COL.fecha])}</strong> · ${last[COL.tipo]||'Sesión'}${bench?` · vs categoría ${bench.cat}`:''}</div>`
-    + radarHTML
-    + areaCards;
+  const totVals=areas.map(a=>curAvgs[a.id]).filter(v=>v>0);
+  const tot=totVals.length?totVals.reduce((x,y)=>x+y,0)/totVals.length:0;
+  const totalCard=`<div class="metric-card">
+    <div class="mc-label">Promedio total</div>
+    <div class="mc-value">${tot>0?tot.toFixed(1):'—'}</div>
+    <div class="mc-cat">${monthLabel(curMonth)} · ${curSess.length} ses.</div>
+  </div>`;
 
+  const radarHTML=`<div class="card">
+    <div class="card-title">Perfil — ${monthLabel(curMonth)}${prevMonth?` vs ${prevLbl}`:''}</div>
+    <div class="chart-wrap" style="height:360px;"><canvas id="ch-radar"></canvas></div>
+  </div>`;
+
+  el.innerHTML = fichaHTML + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + radarHTML;
   ldEl.style.display='none'; el.style.display='block';
 
   if(document.getElementById('ch-radar')){
+    const cur=[curAvgs.tecnica,curAvgs.tactica,curAvgs.fisico,curAvgs.mental];
+    const prv=[prevAvgs.tecnica,prevAvgs.tactica,prevAvgs.fisico,prevAvgs.mental];
     charts['radar']=new Chart(document.getElementById('ch-radar'),{
       type:'radar',
       data:{labels:['Técnica','Táctica','Físico','Mental'],datasets:[
-        ...(prev?[{label:'Sesión anterior',data:[pTec,pTac,pFis,pMen],borderColor:'#b5b0a0',backgroundColor:'rgba(181,176,160,0.10)',borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#b5b0a0'}]:[]),
-        {label:'Última sesión',data:[rawTec,rawTac,rawFis,rawMen],borderColor:'#1e3d18',backgroundColor:'rgba(45,90,27,0.20)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#c8d42b',pointBorderColor:'#1e3d18'}
+        ...(prevMonth?[{label:prevLbl,data:prv,borderColor:'#b5b0a0',backgroundColor:'rgba(181,176,160,0.10)',borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#b5b0a0'}]:[]),
+        {label:monthLabel(curMonth),data:cur,borderColor:'#1e3d18',backgroundColor:'rgba(45,90,27,0.18)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#c8d42b',pointBorderColor:'#1e3d18'}
       ]},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:true,position:'bottom',labels:{font:{size:12},boxWidth:10,padding:14}},
@@ -914,7 +969,7 @@ function buildResumen(){
 }
 
 // ══════════════════════════════════════
-// RENDIMIENTO — detalle por área (acordeón)
+// RENDIMIENTO — barras por habilidad vs categoría
 // ══════════════════════════════════════
 function buildRubrica(){
   const el=document.getElementById('content-rubrica');
@@ -925,51 +980,48 @@ function buildRubrica(){
     el.innerHTML='<div class="empty">No hay sesiones para mostrar.</div>'; return;
   }
   const last=sess[sess.length-1];
-  const ctx=last[COL.tipo]||'';
+  const bench=calcBench(currentPlayer);
+  const info=getInfo(currentPlayer);
+  const catName=info?info[INFO.categoria]:'';
 
-  const areas=[
-    {id:'tecnica', emoji:'🎾', items:RUBRICAS.tecnica},
-    {id:'tactica', emoji:'♟️', items:RUBRICAS.tactica},
-    {id:'fisico',  emoji:'⚡', items:RUBRICAS.fisico},
-    {id:'mental',  emoji:'🧠', items:RUBRICAS.mental}
-  ];
+  const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
 
-  const accs=areas.map((a,i)=>{
-    const rows=a.items.map(item=>{
-      const lv=toLvl(last[COL[item.key]]);
-      if(!lv) return '';
-      return `<div class="rubrica-row">
-        <div class="rubrica-top">
-          <span class="rubrica-name">${item.nombre}</span>
-          <div class="rubrica-nivel">${nivelPips(lv)}</div>
+  const cards=areas.map(a=>{
+    const grupos=RESUMEN_GROUPS[a.id];
+    const rows=grupos.map(g=>{
+      const lv=g.keys.map(k=>toLvl(last[COL[k]])).filter(v=>v>0);
+      if(!lv.length) return '';
+      const p=lv.reduce((x,y)=>x+y,0)/lv.length;
+      const pRound=Math.round(p);
+      let cat=0;
+      if(bench){ const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0); cat=cv.length?cv.reduce((x,y)=>x+y,0)/cv.length:0; }
+      const d=cat>0?(p-cat):null;
+      const deltaHTML = d===null?'' : (d>=0.05?`<span class="perf-delta pos">+${d.toFixed(1)}</span>`:d<=-0.05?`<span class="perf-delta neg">${d.toFixed(1)}</span>`:`<span class="perf-delta eq">=</span>`);
+      const fillPct=Math.max(4,Math.min(100,(p/3)*100));
+      const tickPct=cat>0?Math.min(100,(cat/3)*100):null;
+      return `<div class="perf-row">
+        <div class="perf-top">
+          <span class="perf-name">${g.nombre}</span>
+          <span class="perf-val">${deltaHTML}${p.toFixed(1)}</span>
         </div>
-        <div class="rubrica-desc lv${lv}">${item.desc[lv-1]}</div>
+        <div class="perf-track">
+          <div class="perf-fill fill-${pRound}" style="width:${fillPct}%;"></div>
+          ${tickPct!==null?`<div class="perf-tick" style="left:${tickPct}%;"></div>`:''}
+        </div>
+        ${cat>0?`<div class="perf-cat">Categoría ${catName||''}: ${cat.toFixed(1)}</div>`:''}
       </div>`;
     }).filter(Boolean).join('');
     if(!rows) return '';
-    const aRound=Math.round(avgLvlKeys(last,AREA_KEYS[a.id]));
-    const open=i===0?' open':'';
-    return `<div class="acc${open}">
-      <div class="acc-head" onclick="toggleAcc(this)">
-        <span class="acc-title"><span>${a.emoji}</span><span class="area-name ${AREA_META[a.id].cls}">${AREA_META[a.id].nombre}</span></span>
-        <span class="acc-right"><span class="nivel-dot t${aRound}"><span class="dot dot-${aRound}"></span>${aRound>0?lvlLabel(aRound):'—'}</span><span class="acc-chevron">▾</span></span>
-      </div>
-      <div class="acc-body"><div class="acc-body-inner">${rows}</div></div>
-    </div>`;
+    return `<div class="perf-card"><div class="perf-card-title">${a.nombre}</div>${rows}</div>`;
   }).join('');
 
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-      <span class="ctx-badge ${ctxClass(ctx)}">${ctxLabel(ctx)}</span>
-      <span style="font-size:12px;color:var(--hint);">Última sesión · ${fmtDate(last[COL.fecha])}</span>
-    </div>
-    <div style="display:flex;gap:6px;margin-bottom:14px;font-size:11px;flex-wrap:wrap;">
-      <span style="background:var(--lv1-bg);color:var(--lv1);padding:3px 8px;border-radius:6px;font-weight:600;">1 — A desarrollar</span>
-      <span style="background:var(--lv2-bg);color:var(--lv2);padding:3px 8px;border-radius:6px;font-weight:600;">2 — Funcional</span>
-      <span style="background:var(--lv3-bg);color:var(--lv3);padding:3px 8px;border-radius:6px;font-weight:600;">3 — Arma</span>
-    </div>
-    ${accs}
-  `;
+  const legend=`<div class="sem-legend" style="margin-bottom:14px;">
+    <span class="sem-leg" style="background:var(--lv1-bg);color:var(--lv1);"><span class="dot dot-1"></span> A desarrollar</span>
+    <span class="sem-leg" style="background:var(--lv2-bg);color:var(--lv2);"><span class="dot dot-2"></span> Funcional</span>
+    <span class="sem-leg" style="background:var(--lv3-bg);color:var(--lv3);"><span class="dot dot-3"></span> Arma</span>
+  </div>`;
+
+  el.innerHTML = legend + `<div class="perf-grid">${cards}</div>`;
   ldEl.style.display='none'; el.style.display='block';
 }
 
