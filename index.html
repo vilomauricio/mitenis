@@ -383,6 +383,65 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .prio-area{font-size:10px;color:var(--muted);white-space:nowrap;}
 .prio-row.is-prio{background:var(--pf1-bg);border-color:#e7e08a;}
 
+/* ══════ LIGA / PUNTOS ══════ */
+.lg-mode{display:flex;gap:6px;background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:4px;margin-bottom:12px;}
+.lg-mode button{flex:1;border:none;background:none;padding:8px 10px;border-radius:999px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.lg-mode button.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(81,112,255,.3);}
+.lg-period{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px;}
+.lg-period::-webkit-scrollbar{display:none;}
+.lg-chip{flex-shrink:0;border:1px solid var(--border);background:var(--surf);border-radius:999px;padding:6px 13px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.lg-chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+/* Tarjeta MI PUNTAJE */
+.lg-me{background:linear-gradient(135deg,var(--blue),var(--blue-d));border-radius:var(--radius);padding:18px;margin-bottom:16px;color:#fff;box-shadow:0 10px 30px rgba(81,112,255,.28);}
+.lg-me-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.lg-me-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.8;margin-bottom:2px;}
+.lg-me-rank{font-size:15px;font-weight:700;}
+.lg-me-score{text-align:right;}
+.lg-me-pts{font-size:38px;font-weight:800;line-height:1;}
+.lg-me-pts span{font-size:14px;font-weight:600;opacity:.75;}
+.lg-break{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.lg-bk{background:rgba(255,255,255,.13);border-radius:10px;padding:9px 6px;text-align:center;}
+.lg-bk-ico{font-size:15px;line-height:1;}
+.lg-bk-val{font-size:16px;font-weight:800;margin-top:3px;}
+.lg-bk-lbl{font-size:8.5px;text-transform:uppercase;letter-spacing:.05em;opacity:.78;margin-top:1px;}
+
+/* Podio */
+.lg-podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:6px 0 18px;}
+.lg-pod{flex:1;max-width:104px;text-align:center;}
+.lg-pod-av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin:0 auto 6px;border:3px solid var(--surf);box-shadow:0 4px 10px rgba(32,34,58,.18);}
+.lg-pod-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lg-pod-pts{font-size:12px;font-weight:800;color:var(--blue);}
+.lg-pod-stand{border-radius:10px 10px 0 0;margin-top:7px;display:flex;align-items:flex-start;justify-content:center;padding-top:7px;font-size:18px;font-weight:800;color:#fff;}
+.lg-pod.p1 .lg-pod-stand{background:linear-gradient(180deg,#f3c64b,#e0a200);height:74px;}
+.lg-pod.p2 .lg-pod-stand{background:linear-gradient(180deg,#c7cdda,#9aa3b8);height:56px;}
+.lg-pod.p3 .lg-pod-stand{background:linear-gradient(180deg,#d8a06b,#b97f47);height:42px;}
+.lg-pod.p1 .lg-pod-av{width:54px;height:54px;font-size:16px;}
+
+/* Tabla de posiciones */
+.lg-row{display:flex;align-items:center;gap:11px;padding:10px 8px;border-bottom:1px solid var(--border);}
+.lg-row:last-child{border-bottom:none;}
+.lg-row.me{background:var(--pf1-bg);border-radius:10px;border-bottom:1px solid transparent;}
+.lg-rank{width:24px;text-align:center;font-size:14px;font-weight:800;color:var(--muted);flex-shrink:0;}
+.lg-rank.top{color:var(--blue);}
+.lg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.lg-info{flex:1;min-width:0;}
+.lg-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lg-sub{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.lg-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:5px;vertical-align:middle;}
+.lg-badge.improve{background:var(--pf1);color:#5b5400;}
+.lg-pts{font-size:17px;font-weight:800;color:var(--text);flex-shrink:0;}
+.lg-pts span{font-size:10px;font-weight:600;color:var(--hint);}
+
+/* Medallas por área */
+.lg-medals{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+.lg-medal{display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:12px;padding:10px 11px;background:var(--surf);}
+.lg-medal-ic{font-size:22px;line-height:1;}
+.lg-medal-tx{min-width:0;}
+.lg-medal-area{font-size:12px;font-weight:600;color:var(--text);}
+.lg-medal-tier{font-size:10.5px;color:var(--muted);}
+.lg-medal.none{opacity:.55;}
+
 </style>
 </head>
 <body>
@@ -429,6 +488,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <button class="tab-btn" onclick="switchTab('rubrica',this)">Rendimiento</button>
       <button class="tab-btn" onclick="switchTab('progreso',this)">Progreso</button>
       <button class="tab-btn" onclick="switchTab('historial',this)">Historial</button>
+      <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Liga</button>
       <button class="tab-btn" onclick="switchTab('plan',this)">Plan de acción</button>
     </nav>
   </header>
@@ -452,6 +512,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="tab-view" id="tab-historial">
       <div class="loading-view" id="loading-historial"><div class="spinner"></div><p>Cargando…</p></div>
       <div id="content-historial" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-liga">
+      <div class="loading-view" id="loading-liga"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-liga" style="display:none;"></div>
     </div>
   </main>
 </div>
@@ -918,6 +982,7 @@ function submitPin(){
 function openPlayer(name){
   currentPlayer=name;
   selectedMonth='all';
+  ligaMode='mensual'; ligaPeriod=null;
   playerSessions=allRows
     .filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
@@ -939,7 +1004,7 @@ function openPlayer(name){
   document.getElementById('tab-resumen').classList.add('active');
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});
   charts={};
-  [['resumen',buildResumen],['rubrica',buildRubrica],['plan',buildPlan],['progreso',buildProgreso],['historial',buildHistorial]]
+  [['resumen',buildResumen],['rubrica',buildRubrica],['plan',buildPlan],['progreso',buildProgreso],['historial',buildHistorial],['liga',buildLiga]]
     .forEach(([id,fn])=>{
       try{ fn(); }
       catch(err){
@@ -1286,6 +1351,214 @@ function buildHistorial(){
       </div>`;
     }).join('')}
   </div>`;
+  ldEl.style.display='none'; el.style.display='block';
+}
+
+// ══════════════════════════════════════
+// LIGA / PUNTOS — sistema pro-esfuerzo
+// (se calcula 100% desde las rúbricas ya cargadas)
+// ══════════════════════════════════════
+const LG = {
+  ATTEND:    10,   // por sesión registrada (premia asistir)
+  IMPROVE:   15,   // por cada nivel que sube una variable (premia mejorar)
+  SOLID:      2,   // por variable en nivel 3 (Arma)
+  SOLID_CAP: 20,   // tope de solidez por sesión
+  STREAK:    10,   // por mes consecutivo extra
+  STREAK_CAP:50
+};
+const LG_KEYS=[...AREA_KEYS.tecnica,...AREA_KEYS.tactica,...AREA_KEYS.fisico,...AREA_KEYS.mental];
+let ligaMode='mensual', ligaPeriod=null;
+
+function sessionsOf(name){
+  return allRows.filter(r=>r[COL.alumno]===name)
+    .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
+}
+
+// Contribución de puntos de cada sesión. La "mejora" se mide contra
+// la última sesión que tuvo dato en esa variable (no contra la misma sesión).
+function sessionContribs(name){
+  const sess=sessionsOf(name);
+  const last={};
+  return sess.map((s,i)=>{
+    let mejora=0, solid=0;
+    LG_KEYS.forEach(k=>{
+      const lv=toLvl(s[COL[k]]);
+      if(lv>0){
+        if(last[k]!=null && lv>last[k]) mejora += (lv-last[k])*LG.IMPROVE;
+        if(lv===3) solid += LG.SOLID;
+        last[k]=lv;
+      }
+    });
+    const mk=monthKey(s);
+    return { mk, year:(mk||'').slice(0,4), asistencia:LG.ATTEND, mejora,
+             solid:Math.min(solid,LG.SOLID_CAP), first:i===0 };
+  });
+}
+
+// Racha = meses consecutivos relevantes para el período
+function streakLen(monthsSet, mode, value){
+  const months=[...monthsSet].sort();
+  if(!months.length) return 0;
+  if(mode==='mensual'){
+    if(!months.includes(value)) return 0;
+    let len=1, cur=value;
+    while(true){
+      const [y,m]=cur.split('-').map(Number);
+      const pm=m===1?`${y-1}-12`:`${y}-${String(m-1).padStart(2,'0')}`;
+      if(months.includes(pm)){ len++; cur=pm; } else break;
+    }
+    return len;
+  }
+  let best=1, run=1;
+  for(let i=1;i<months.length;i++){
+    const [ay,am]=months[i-1].split('-').map(Number);
+    const [by,bm]=months[i].split('-').map(Number);
+    run = ((by*12+bm)-(ay*12+am)===1) ? run+1 : 1;
+    if(run>best) best=run;
+  }
+  return best;
+}
+
+function scorePlayer(name, mode, value){
+  const contribs=sessionContribs(name);
+  const inP=c=> mode==='mensual'?c.mk===value : (mode==='anual'?c.year===value:true);
+  const ps=contribs.filter(inP);
+  let asistencia=0, mejora=0, solid=0;
+  ps.forEach(c=>{ asistencia+=c.asistencia; mejora+=c.mejora; solid+=c.solid; });
+  const allMonths=new Set(contribs.map(c=>c.mk).filter(Boolean));
+  const periodMonths = mode==='anual'
+      ? new Set([...allMonths].filter(m=>m.slice(0,4)===value))
+      : allMonths;
+  const sl=streakLen(periodMonths, mode, value);
+  const racha=Math.min(LG.STREAK_CAP, Math.max(0,sl-1)*LG.STREAK);
+  return {name, asistencia, mejora, solid, racha, total:asistencia+mejora+solid+racha,
+          sesiones:ps.length, streak:sl};
+}
+
+// Medalla por área según el último estado conocido
+function areaTier(name, areaId){
+  const sess=sessionsOf(name);
+  const last={};
+  sess.forEach(s=>AREA_KEYS[areaId].forEach(k=>{const lv=toLvl(s[COL[k]]); if(lv>0) last[k]=lv;}));
+  const vals=Object.values(last);
+  if(!vals.length) return {avg:0, tier:0};
+  const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  return {avg, tier: avg>=2.6?3 : avg>=2.0?2 : avg>=1.4?1 : 0};
+}
+const TIER_MEDAL={3:{ic:'🥇',name:'Oro'},2:{ic:'🥈',name:'Plata'},1:{ic:'🥉',name:'Bronce'},0:{ic:'⚪',name:'Sin medalla aún'}};
+
+function ligaPeriods(mode){
+  const set=new Set();
+  allRows.forEach(r=>{ const mk=monthKey(r); if(mk) set.add(mode==='mensual'?mk:mk.slice(0,4)); });
+  return [...set].sort();
+}
+function periodLabel(mode, v){ return mode==='mensual'? monthLabel(v) : v; }
+function setLigaMode(m){
+  ligaMode=m;
+  const ps=ligaPeriods(m);
+  ligaPeriod=ps.length?ps[ps.length-1]:null;
+  buildLiga();
+}
+function setLigaPeriod(v){ ligaPeriod=v; buildLiga(); }
+
+function buildLiga(){
+  const el=document.getElementById('content-liga');
+  const ldEl=document.getElementById('loading-liga');
+  const periods=ligaPeriods(ligaMode);
+  if(!periods.length){
+    ldEl.style.display='none'; el.style.display='block';
+    el.innerHTML='<div class="empty" style="color:var(--muted);">Todavía no hay datos para armar la liga.</div>'; return;
+  }
+  if(!ligaPeriod || !periods.includes(ligaPeriod)) ligaPeriod=periods[periods.length-1];
+
+  const allPlayers=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
+  const sortedPlayers=[...allPlayers].sort();
+  const avatarOf=name=>{ const i=sortedPlayers.indexOf(name); return AVATAR_COLORS[(i<0?0:i)%AVATAR_COLORS.length]; };
+  const iniOf=name=>name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  let board=allPlayers.map(p=>scorePlayer(p, ligaMode, ligaPeriod)).filter(s=>s.sesiones>0);
+  board.sort((a,b)=> b.total-a.total || b.mejora-a.mejora || b.asistencia-a.asistencia);
+
+  let bestImpName=null, bestImp=0;
+  board.forEach(s=>{ if(s.mejora>bestImp){ bestImp=s.mejora; bestImpName=s.name; } });
+
+  const modeCtrl=`<div class="lg-mode">
+    <button class="${ligaMode==='mensual'?'active':''}" onclick="setLigaMode('mensual')">Mensual</button>
+    <button class="${ligaMode==='anual'?'active':''}" onclick="setLigaMode('anual')">Anual</button>
+  </div>`;
+  const periodCtrl=`<div class="lg-period">${periods.map(p=>
+    `<button class="lg-chip ${p===ligaPeriod?'active':''}" onclick="setLigaPeriod('${p}')">${periodLabel(ligaMode,p)}</button>`
+  ).join('')}</div>`;
+
+  const meScore=board.find(s=>s.name===currentPlayer);
+  let meHTML;
+  if(meScore){
+    const rank=board.findIndex(s=>s.name===currentPlayer)+1;
+    meHTML=`<div class="lg-me">
+      <div class="lg-me-top">
+        <div>
+          <div class="lg-me-lbl">Mi puntaje · ${periodLabel(ligaMode,ligaPeriod)}</div>
+          <div class="lg-me-rank">${rank}º de ${board.length} · ${meScore.sesiones} ses.${meScore.name===bestImpName&&bestImp>0?' · 🚀 +Mejorado':''}</div>
+        </div>
+        <div class="lg-me-score"><div class="lg-me-pts">${meScore.total}<span> pts</span></div></div>
+      </div>
+      <div class="lg-break">
+        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asist.</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">📈</div><div class="lg-bk-val">${meScore.mejora}</div><div class="lg-bk-lbl">Mejora</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🎯</div><div class="lg-bk-val">${meScore.solid}</div><div class="lg-bk-lbl">Solidez</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🔥</div><div class="lg-bk-val">${meScore.racha}</div><div class="lg-bk-lbl">Racha</div></div>
+      </div>
+    </div>`;
+  } else {
+    meHTML=`<div class="nota">No tenés sesiones registradas en <strong>${periodLabel(ligaMode,ligaPeriod)}</strong>. Sumá asistencia para entrar a la tabla.</div>`;
+  }
+
+  let podiumHTML='';
+  if(board.length>=2){
+    const order=[1,0,2], cls={0:'p1',1:'p2',2:'p3'}, medal={0:'🥇',1:'🥈',2:'🥉'};
+    podiumHTML='<div class="lg-podium">'+order.filter(i=>board[i]).map(i=>{
+      const s=board[i];
+      return `<div class="lg-pod ${cls[i]}">
+        <div class="lg-pod-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
+        <div class="lg-pod-name">${s.name.split(' ')[0]}</div>
+        <div class="lg-pod-pts">${s.total} pts</div>
+        <div class="lg-pod-stand">${medal[i]}</div>
+      </div>`;
+    }).join('')+'</div>';
+  }
+
+  const rowsHTML=board.map((s,i)=>{
+    const badge=(s.name===bestImpName&&bestImp>0)?'<span class="lg-badge improve">🚀 +Mejorado</span>':'';
+    return `<div class="lg-row ${s.name===currentPlayer?'me':''}">
+      <div class="lg-rank ${i<3?'top':''}">${i+1}</div>
+      <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
+      <div class="lg-info">
+        <div class="lg-name">${s.name}${badge}</div>
+        <div class="lg-sub">📅 ${s.asistencia} · 📈 ${s.mejora} · 🎯 ${s.solid} · 🔥 ${s.racha}</div>
+      </div>
+      <div class="lg-pts">${s.total}<span> pts</span></div>
+    </div>`;
+  }).join('');
+
+  const areas=[['tecnica','Técnica'],['tactica','Táctica'],['fisico','Físico'],['mental','Mental']];
+  const medalsHTML=areas.map(([id,nombre])=>{
+    const t=areaTier(currentPlayer,id), m=TIER_MEDAL[t.tier];
+    return `<div class="lg-medal ${t.tier===0?'none':''}">
+      <div class="lg-medal-ic">${m.ic}</div>
+      <div class="lg-medal-tx">
+        <div class="lg-medal-area">${AREA_META[id].emoji} ${nombre}</div>
+        <div class="lg-medal-tier">${m.name}${t.avg?` · ${t.avg.toFixed(1)}/3`:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML =
+      `<div class="nota">Liga <strong>pro-esfuerzo</strong>: premia <strong>asistir</strong> y <strong>mejorar</strong>, no solo el nivel. Por sesión: asistencia +${LG.ATTEND}, cada subida de nivel +${LG.IMPROVE}, solidez +${LG.SOLID}/variable en Arma (máx ${LG.SOLID_CAP}) y racha +${LG.STREAK} por mes seguido.</div>`
+    + modeCtrl + periodCtrl + meHTML
+    + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${periodLabel(ligaMode,ligaPeriod)}</div>${podiumHTML}</div>`:'')
+    + `<div class="card"><div class="card-title">Tabla de posiciones</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`
+    + `<div class="card"><div class="card-title">Mis medallas por área</div><div class="lg-medals">${medalsHTML}</div></div>`;
+
   ldEl.style.display='none'; el.style.display='block';
 }
 
