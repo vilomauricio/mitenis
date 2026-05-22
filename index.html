@@ -14,7 +14,7 @@
   --court-mid:  #3a52d6;
   --court-l:    #6d86ff;
   --ball:       #f3fe76;
-  --bg:         #f3fe76;
+  --bg:         #5170ff;
   --surf:       #ffffff;
   --surf2:      #eef0ff;
   --border:     rgba(81,112,255,0.14);
@@ -67,19 +67,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .app.visible{display:flex;}
 
 /* HEADER */
-.app-header{background:var(--court);position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.3);}
+.app-header{background:var(--ball);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(32,34,58,.18);}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;}
-.header-back{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(255,255,255,.7);font-size:12px;font-family:'Inter',sans-serif;transition:background .15s;}
-.header-back:hover{background:rgba(255,255,255,.16);}
+.header-back{background:rgba(32,34,58,.07);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(32,34,58,.7);font-size:12px;font-family:'Inter',sans-serif;transition:background .15s;}
+.header-back:hover{background:rgba(32,34,58,.13);}
 .header-player{display:flex;align-items:center;gap:10px;}
 .header-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
-.header-name{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#fff;}
-.header-meta{font-size:11px;color:rgba(255,255,255,.5);}
+.header-name{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.header-meta{font-size:11px;color:var(--muted);}
 .app-tabs{display:flex;padding:10px 20px 0;overflow-x:auto;scrollbar-width:none;}
 .app-tabs::-webkit-scrollbar{display:none;}
-.tab-btn{padding:8px 16px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
-.tab-btn.active{color:var(--ball);border-bottom-color:var(--ball);font-weight:500;}
-.tab-btn:hover:not(.active){color:rgba(255,255,255,.75);}
+.tab-btn{padding:8px 16px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(32,34,58,.5);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600;}
+.tab-btn:hover:not(.active){color:rgba(32,34,58,.8);}
 
 /* CONTENT */
 .app-content{flex:1;padding:20px 16px 48px;}
@@ -197,10 +197,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .nota{background:var(--surf2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;font-size:12px;color:var(--text);margin-bottom:14px;line-height:1.55;}
 
 /* EMPTY / SPINNER */
-.empty{text-align:center;padding:2rem;color:var(--hint);font-size:13px;}
-.spinner{width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--court);border-radius:50%;animation:spin .8s linear infinite;margin:2rem auto;}
+.empty{text-align:center;padding:2rem;color:rgba(255,255,255,.9);font-size:13px;}
+.spinner{width:30px;height:30px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:2rem auto;}
 .loading-view{text-align:center;padding:3rem 1rem;}
-.loading-view p{font-size:13px;color:var(--muted);margin-top:10px;}
+.loading-view p{font-size:13px;color:rgba(255,255,255,.85);margin-top:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* RÚBRICA TAB */
@@ -357,6 +357,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .pin-btn{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;}
 .pin-cancel{background:var(--surf2);color:var(--text);}
 .pin-ok{background:var(--blue);color:#fff;}
+
+
+/* === v8: pelotas Rendimiento + checklist Plan === */
+.ball{display:inline-block;width:16px;height:16px;border-radius:50%;margin-right:5px;border:1px solid rgba(32,34,58,.10);}
+.ball:last-child{margin-right:0;}
+.be{background:#eef0f7;}
+.bf1{background:#9aa0b4;border-color:#9aa0b4;}
+.bf2{background:#5170ff;border-color:#5170ff;}
+.bf3{background:#f3fe76;border-color:#d9e84a;}
+.ball-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.05);}
+.ball-name{font-size:13px;font-weight:500;color:var(--text);}
+.ball-right{display:flex;align-items:center;gap:10px;}
+.balls{display:inline-flex;align-items:center;}
+.ball-label{font-size:12px;font-weight:600;min-width:84px;text-align:right;}
+.lb1{color:var(--muted);} .lb2{color:var(--blue);} .lb3{color:#8a7e00;}
+.ball-cat{font-size:10px;color:var(--hint);margin:-2px 0 8px;}
+
+/* Checklist de prioridad (Plan) */
+.prio-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);border-left:3px solid transparent;margin-bottom:7px;background:var(--surf);cursor:pointer;}
+.prio-row.lv1{border-left-color:var(--lv1);}
+.prio-row.lv2{border-left-color:var(--lv2);}
+.prio-check{width:18px;height:18px;accent-color:var(--blue);flex-shrink:0;cursor:pointer;}
+.prio-name{font-size:13px;font-weight:500;color:var(--text);flex:1;}
+.prio-area{font-size:10px;color:var(--muted);white-space:nowrap;}
+.prio-row.is-prio{background:var(--pf1-bg);border-color:#e7e08a;}
 
 </style>
 </head>
@@ -1033,7 +1058,7 @@ function buildResumen(){
   </div>`;
 
   const radarHTML=`<div class="radar-wrap">
-    <div class="card-title" style="text-align:center;margin-bottom:6px;">Perfil — ${monthLabel(curMonth)}${prevMonth?` vs ${prevLbl}`:''}</div>
+    <div class="card-title" style="text-align:center;margin-bottom:6px;color:#fff;">Perfil — ${monthLabel(curMonth)}${prevMonth?` vs ${prevLbl}`:''}</div>
     <div class="chart-wrap" style="height:380px;"><canvas id="ch-radar"></canvas></div>
   </div>`;
 
@@ -1046,20 +1071,20 @@ function buildResumen(){
     charts['radar']=new Chart(document.getElementById('ch-radar'),{
       type:'radar',
       data:{labels:['Técnica','Táctica','Físico','Mental'],datasets:[
-        ...(prevMonth?[{label:prevLbl,data:prv,borderColor:'#20223a',backgroundColor:'rgba(32,34,58,0.05)',borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#20223a'}]:[]),
-        {label:monthLabel(curMonth),data:cur,borderColor:'#5170ff',backgroundColor:'rgba(81,112,255,0.22)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#5170ff',pointBorderColor:'#5170ff'}
+        ...(prevMonth?[{label:prevLbl,data:prv,borderColor:'rgba(255,255,255,0.7)',backgroundColor:'rgba(255,255,255,0.06)',borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointBackgroundColor:'rgba(255,255,255,0.7)'}]:[]),
+        {label:monthLabel(curMonth),data:cur,borderColor:'#f3fe76',backgroundColor:'rgba(243,254,118,0.28)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#f3fe76',pointBorderColor:'#f3fe76'}
       ]},
       options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:true,position:'bottom',labels:{font:{size:12},boxWidth:10,padding:14}},
+        plugins:{legend:{display:true,position:'bottom',labels:{color:'#ffffff',font:{size:12},boxWidth:10,padding:14}},
           tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${(c.raw||0).toFixed(1)} / 3`}}},
-        scales:{r:{min:0,max:3,ticks:{stepSize:1,backdropColor:'transparent',color:'rgba(32,34,58,0.5)',font:{size:10},callback:v=>['','A desarrollar','Funcional','Arma'][v]||''},grid:{color:'rgba(81,112,255,0.18)'},angleLines:{color:'rgba(81,112,255,0.18)'},pointLabels:{color:'#20223a',font:{size:13,weight:'700'}}}}
+        scales:{r:{min:0,max:3,ticks:{stepSize:1,backdropColor:'transparent',color:'rgba(255,255,255,0.75)',font:{size:10},callback:v=>['','A desarrollar','Funcional','Arma'][v]||''},grid:{color:'rgba(255,255,255,0.22)'},angleLines:{color:'rgba(255,255,255,0.22)'},pointLabels:{color:'#ffffff',font:{size:13,weight:'700'}}}}
       }
     });
   }
 }
 
 // ══════════════════════════════════════
-// RENDIMIENTO — barras por habilidad vs categoría
+// RENDIMIENTO — pelotas por nivel (gris/azul/amarillo)
 // ══════════════════════════════════════
 function buildRubrica(){
   const el=document.getElementById('content-rubrica');
@@ -1073,42 +1098,30 @@ function buildRubrica(){
   const bench=calcBench(currentPlayer);
   const info=getInfo(currentPlayer);
   const catName=info?info[INFO.categoria]:'';
-
   const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
+  const balls=(lv)=>[1,2,3].map(i=>`<span class="ball ${i<=lv?('bf'+lv):'be'}"></span>`).join('');
 
   const cards=areas.map(a=>{
     const grupos=RESUMEN_GROUPS[a.id];
     const rows=grupos.map(g=>{
-      const lv=g.keys.map(k=>toLvl(last[COL[k]])).filter(v=>v>0);
-      if(!lv.length) return '';
-      const p=lv.reduce((x,y)=>x+y,0)/lv.length;
-      const pRound=Math.round(p);
-      let cat=0;
-      if(bench){ const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0); cat=cv.length?cv.reduce((x,y)=>x+y,0)/cv.length:0; }
-      const d=cat>0?(p-cat):null;
-      const deltaHTML = d===null?'' : (d>=0.05?`<span class="perf-delta pos">+${d.toFixed(1)}</span>`:d<=-0.05?`<span class="perf-delta neg">${d.toFixed(1)}</span>`:`<span class="perf-delta eq">=</span>`);
-      const fillPct=Math.max(4,Math.min(100,(p/3)*100));
-      const tickPct=cat>0?Math.min(100,(cat/3)*100):null;
-      return `<div class="perf-row">
-        <div class="perf-top">
-          <span class="perf-name">${g.nombre}</span>
-          <span class="perf-val">${deltaHTML}${p.toFixed(1)}</span>
-        </div>
-        <div class="perf-track">
-          <div class="perf-fill fill-${pRound}" style="width:${fillPct}%;"></div>
-          ${tickPct!==null?`<div class="perf-tick" style="left:${tickPct}%;"></div>`:''}
-        </div>
-        ${cat>0?`<div class="perf-cat">Categoría ${catName||''}: ${cat.toFixed(1)}</div>`:''}
-      </div>`;
+      const arr=g.keys.map(k=>toLvl(last[COL[k]])).filter(v=>v>0);
+      if(!arr.length) return '';
+      const p=arr.reduce((x,y)=>x+y,0)/arr.length;
+      const lv=Math.round(p);
+      let cat=0; if(bench){ const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0); cat=cv.length?cv.reduce((x,y)=>x+y,0)/cv.length:0; }
+      return `<div class="ball-row">
+        <span class="ball-name">${g.nombre}</span>
+        <span class="ball-right"><span class="balls">${balls(lv)}</span><span class="ball-label lb${lv}">${lvlLabel(lv)}</span></span>
+      </div>${cat>0?`<div class="ball-cat">Categoría ${catName||''}: ${cat.toFixed(1)}</div>`:''}`;
     }).filter(Boolean).join('');
     if(!rows) return '';
     return `<div class="perf-card"><div class="perf-card-title">${a.nombre}</div>${rows}</div>`;
   }).join('');
 
   const legend=`<div class="sem-legend" style="margin-bottom:14px;">
-    <span class="sem-leg" style="background:var(--pf1-bg);color:#8a7e00;"><span class="dot" style="background:var(--pf1);"></span> A desarrollar</span>
-    <span class="sem-leg" style="background:var(--pf2-bg);color:var(--blue-d);"><span class="dot" style="background:var(--pf2);"></span> Funcional</span>
-    <span class="sem-leg" style="background:var(--pf3-bg);color:var(--blue);"><span class="dot" style="background:var(--pf3);"></span> Arma</span>
+    <span class="sem-leg" style="background:#eef0f7;color:var(--muted);"><span class="ball bf1" style="margin-right:6px;"></span>A desarrollar</span>
+    <span class="sem-leg" style="background:var(--pf3-bg);color:var(--blue);"><span class="ball bf2" style="margin-right:6px;"></span>Funcional</span>
+    <span class="sem-leg" style="background:var(--pf1-bg);color:#8a7e00;"><span class="ball bf3" style="margin-right:6px;"></span>Arma</span>
   </div>`;
 
   el.innerHTML = legend + `<div class="perf-grid">${cards}</div>`;
@@ -1116,8 +1129,17 @@ function buildRubrica(){
 }
 
 // ══════════════════════════════════════
-// PLAN DE ACCIÓN — semáforo de focos
+// PLAN DE ACCIÓN — objetivo, observación y focos (acordeón + checklist)
 // ══════════════════════════════════════
+function prioStore(){ try{ return JSON.parse(localStorage.getItem('mitenis_prio')||'{}'); }catch(e){ return {}; } }
+function isPrio(player,key){ const s=prioStore(); return !!(s[player] && s[player].indexOf(key)>=0); }
+function togglePrio(player,key,el){
+  const s=prioStore(); s[player]=s[player]||[];
+  const i=s[player].indexOf(key);
+  if(el.checked){ if(i<0) s[player].push(key); } else { if(i>=0) s[player].splice(i,1); }
+  try{ localStorage.setItem('mitenis_prio', JSON.stringify(s)); }catch(e){}
+  const row=el.closest('.prio-row'); if(row) row.classList.toggle('is-prio', el.checked);
+}
 function buildPlan(){
   const el=document.getElementById('content-plan');
   const ldEl=document.getElementById('loading-plan');
@@ -1133,26 +1155,51 @@ function buildPlan(){
   Object.keys(RUBRICAS).forEach(areaId=>{
     RUBRICAS[areaId].forEach(v=>{
       const lv=toLvl(last[COL[v.key]]);
-      if(lv>0) items.push({area:AREA_META[areaId].nombre, emoji:AREA_META[areaId].emoji, nombre:v.nombre, lv});
+      if(lv>0) items.push({key:v.key, area:AREA_META[areaId].nombre, emoji:AREA_META[areaId].emoji, nombre:v.nombre, lv});
     });
   });
-  const g1=items.filter(i=>i.lv===1);
-  const g2=items.filter(i=>i.lv===2);
-  const g3=items.filter(i=>i.lv===3);
-
-  const item=it=>`<div class="sem-item"><span class="dot dot-${it.lv}"></span><span class="sem-item-name">${it.nombre}</span><span class="sem-item-area">${it.emoji} ${it.area}</span></div>`;
-  const group=(arr,dotCls,titulo)=> arr.length?`<div class="sem-group"><div class="sem-group-h"><span class="dot ${dotCls}"></span>${titulo} <span style="color:var(--hint);font-weight:500;">(${arr.length})</span></div>${arr.map(item).join('')}</div>`:'';
+  const g1=items.filter(i=>i.lv===1), g2=items.filter(i=>i.lv===2), g3=items.filter(i=>i.lv===3);
 
   const objetivoHTML = (info && info[INFO.objetivo])
     ? `<div class="card"><div class="card-title">🎯 Objetivo</div><div class="feedback-block feedback-coach">${info[INFO.objetivo]}</div></div>` : '';
+  const obs=last[COL.obs_profe];
+  const obsHTML = `<div class="card"><div class="card-title">Observación del profe · ${fmtDate(last[COL.fecha])}</div><div class="feedback-block feedback-coach">${obs?obs:'Sin observación registrada en la última sesión.'}</div></div>`;
 
-  el.innerHTML = objetivoHTML
-    + `<div class="sem-legend"><span class="sem-leg" style="background:var(--lv1-bg);color:var(--lv1);">🔴 Mejorar primero</span><span class="sem-leg" style="background:var(--lv2-bg);color:var(--lv2);">🟡 En progreso</span><span class="sem-leg" style="background:var(--lv3-bg);color:var(--lv3);">🟢 Fortaleza</span></div>`
-    + `<div class="nota">Vista rápida de focos según la evaluación del <strong>${fmtDate(last[COL.fecha])}</strong>. El detalle y el cómo, con el profe.</div>`
-    + group(g1,'dot-1','Mejorar primero')
-    + group(g2,'dot-2','En progreso')
-    + group(g3,'dot-3','Fortalezas');
+  const legend=`<div class="sem-legend" style="margin-bottom:14px;">
+    <span class="sem-leg" style="background:var(--lv1-bg);color:var(--lv1);">🔴 A mejorar</span>
+    <span class="sem-leg" style="background:var(--lv2-bg);color:var(--lv2);">🟡 En progreso</span>
+    <span class="sem-leg" style="background:var(--lv3-bg);color:var(--lv3);">🟢 Fortaleza</span>
+  </div>`;
 
+  const pl=currentPlayer.replace(/'/g,"\\'");
+  const planAcc=(titulo,arr,dotc,lvc,open)=>{
+    if(!arr.length) return '';
+    const rows=arr.map(it=>{
+      const ck=isPrio(currentPlayer,it.key)?' checked':'';
+      return `<label class="prio-row ${lvc}${ck?' is-prio':''}">
+        <input type="checkbox" class="prio-check" onchange="togglePrio('${pl}','${it.key}',this)"${ck}>
+        <span class="prio-name">${it.nombre}</span>
+        <span class="prio-area">${it.emoji} ${it.area}</span>
+      </label>`;
+    }).join('');
+    return `<div class="acc${open?' open':''}">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span class="acc-title"><span class="dot ${dotc}"></span> ${titulo} <span style="color:var(--hint);font-weight:500;">(${arr.length})</span></span>
+        <span class="acc-chevron">▾</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">${rows}</div></div>
+    </div>`;
+  };
+
+  let fort='';
+  if(g3.length) fort=`<div class="plan-group-title"><span class="dot dot-3"></span> Fortalezas (${g3.length})</div><div class="plan-armas-wrap">`+g3.map(it=>`<span class="plan-arma">${it.emoji} ${it.nombre}</span>`).join('')+`</div>`;
+
+  el.innerHTML = objetivoHTML + obsHTML
+    + `<div class="nota">Marcá con el casillero las variables que vas a priorizar en las próximas semanas.</div>`
+    + legend
+    + planAcc('A mejorar', g1,'dot-1','lv1',true)
+    + planAcc('En progreso', g2,'dot-2','lv2',true)
+    + fort;
   ldEl.style.display='none'; el.style.display='block';
 }
 
