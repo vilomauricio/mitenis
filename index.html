@@ -72,8 +72,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .header-back{background:rgba(32,34,58,.07);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:rgba(32,34,58,.7);font-size:12px;font-family:'Inter',sans-serif;transition:background .15s;}
 .header-back:hover{background:rgba(32,34,58,.13);}
 .header-player{display:flex;align-items:center;gap:10px;}
-.header-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
-.header-name{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.header-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.header-name{font-family:'Inter',sans-serif;font-size:19px;font-weight:800;color:var(--blue);letter-spacing:-.01em;}
 .header-meta{font-size:11px;color:var(--muted);}
 .app-tabs{display:flex;padding:10px 20px 0;overflow-x:auto;scrollbar-width:none;}
 .app-tabs::-webkit-scrollbar{display:none;}
@@ -305,7 +305,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
 .metric-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;}
 .mc-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-.mc-value{font-size:34px;font-weight:700;line-height:1;color:var(--text);letter-spacing:-.01em;}
+.mc-value{font-size:30px;font-weight:700;line-height:1;color:var(--text);letter-spacing:-.01em;}
 .mc-delta{font-size:12px;font-weight:500;margin-top:9px;}
 .mc-delta.up{color:var(--lv3);} .mc-delta.down{color:var(--lv1);} .mc-delta.flat{color:var(--hint);}
 .mc-cat{font-size:12px;color:var(--hint);margin-top:4px;}
@@ -401,6 +401,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .lg-me-pts{font-size:38px;font-weight:800;line-height:1;}
 .lg-me-pts span{font-size:14px;font-weight:600;opacity:.75;}
 .lg-break{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.lg-break-3{grid-template-columns:repeat(3,1fr);}
 .lg-bk{background:rgba(255,255,255,.13);border-radius:10px;padding:9px 6px;text-align:center;}
 .lg-bk-ico{font-size:15px;line-height:1;}
 .lg-bk-val{font-size:16px;font-weight:800;margin-top:3px;}
@@ -441,6 +442,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .lg-medal-area{font-size:12px;font-weight:600;color:var(--text);}
 .lg-medal-tier{font-size:10.5px;color:var(--muted);}
 .lg-medal.none{opacity:.55;}
+
+
+/* === v9: deltas color, pelota-categoría sin choque, foto de perfil === */
+.mc-delta.up{color:var(--lv3);}
+.mc-delta.down{color:var(--lv1);}
+.mc-delta.flat{color:var(--muted);}
+
+.ball-item{padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.ball-item:last-child{border-bottom:none;padding-bottom:0;}
+.ball-row{border-bottom:none;padding:0;}
+.ball-cat{margin:6px 0 0;font-size:11px;color:var(--muted);}
+
+/* Avatares con aspecto de pelota (brillo) */
+.header-avatar,.pb-avatar,.lg-av,.lg-pod-av{box-shadow:inset 0 3px 6px rgba(255,255,255,.32),inset 0 -4px 8px rgba(0,0,0,.16);}
+
+/* Selector de foto de perfil (pelotas) */
+.av-picker{display:flex;gap:11px;flex-wrap:wrap;}
+.av-pick{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer;position:relative;overflow:hidden;box-shadow:inset 0 2px 6px rgba(255,255,255,.45),inset 0 -3px 6px rgba(0,0,0,.14);transition:transform .12s;}
+.av-pick:hover{transform:translateY(-2px);}
+.av-pick::after{content:'';position:absolute;left:-22%;right:-22%;top:17%;height:66%;border:2px solid rgba(255,255,255,.6);border-top:none;border-bottom:none;border-radius:50%;pointer-events:none;}
+.av-pick.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(81,112,255,.25),inset 0 2px 6px rgba(255,255,255,.45);}
 
 </style>
 </head>
@@ -487,9 +509,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <button class="tab-btn active" onclick="switchTab('resumen',this)">Resumen</button>
       <button class="tab-btn" onclick="switchTab('rubrica',this)">Rendimiento</button>
       <button class="tab-btn" onclick="switchTab('progreso',this)">Progreso</button>
-      <button class="tab-btn" onclick="switchTab('historial',this)">Historial</button>
-      <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Liga</button>
       <button class="tab-btn" onclick="switchTab('plan',this)">Plan de acción</button>
+      <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Liga</button>
+      <button class="tab-btn" onclick="switchTab('historial',this)">Historial</button>
     </nav>
   </header>
   <main class="app-content">
@@ -586,6 +608,29 @@ let COL = {...COL_DEFAULT};
 const INFO_DEFAULT = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetivo:5, pin:6 };
 let INFO = {...INFO_DEFAULT};
 const AVATAR_COLORS = ['#5170ff','#3a52d6','#6d86ff','#2f3fb0','#5170ff','#3a52d6','#6d86ff','#2f3fb0'];
+const BALL_COLORS=['#c8d42b','#5170ff','#ff5d5d','#ff9f43','#8e5cff','#17b890','#ff6fb5'];
+function avatarStore(){ try{ return JSON.parse(localStorage.getItem('mitenis_avatar')||'{}'); }catch(e){ return {}; } }
+function avatarColor(name){
+  const s=avatarStore(); if(s[name]) return s[name];
+  const i=[...new Set(allRows.map(r=>r[COL.alumno]))].sort().indexOf(name);
+  return AVATAR_COLORS[(i<0?0:i)%AVATAR_COLORS.length];
+}
+function setAvatarColor(name,color){
+  const s=avatarStore(); s[name]=color;
+  try{ localStorage.setItem('mitenis_avatar', JSON.stringify(s)); }catch(e){}
+  const h=document.getElementById('h-avatar'); if(h) h.style.background=color;
+  try{ renderPlayers(); }catch(e){}
+  try{ buildLiga(); }catch(e){}
+  document.querySelectorAll('.av-pick').forEach(b=>b.classList.toggle('active', b.getAttribute('data-c')===color));
+}
+function avatarPickerHTML(){
+  if(!currentPlayer) return '';
+  const pl=currentPlayer.replace(/'/g,"\\'");
+  const cur=avatarColor(currentPlayer);
+  return `<div class="card"><div class="card-title">Foto de perfil</div><div class="av-picker">`
+    + BALL_COLORS.map(col=>`<button class="av-pick${col===cur?' active':''}" data-c="${col}" style="background:${col};" onclick="setAvatarColor('${pl}','${col}')" aria-label="Elegir color"></button>`).join('')
+    + `</div></div>`;
+}
 
 // Alias de encabezados (se normalizan: minúsculas, sin acentos, solo alfanumérico)
 const HEADER_ALIASES = {
@@ -919,7 +964,7 @@ function renderPlayers(){
   if(!players.length){ grid.innerHTML='<div class="loading-state">No hay jugadores cargados.</div>'; return; }
   grid.innerHTML=players.map((name,i)=>{
     const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const color=AVATAR_COLORS[i%AVATAR_COLORS.length];
+    const color=avatarColor(name);
     const ns=allRows.filter(r=>r[COL.alumno]===name).length;
     return `<button class="player-btn" onclick="selectPlayer('${name.replace(/'/g,"\\'")}')">
       <div class="pb-avatar" style="background:${color};">${ini}</div>
@@ -982,12 +1027,11 @@ function submitPin(){
 function openPlayer(name){
   currentPlayer=name;
   selectedMonth='all';
-  ligaMode='mensual'; ligaPeriod=null;
   playerSessions=allRows
     .filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
   const idx=[...new Set(allRows.map(r=>r[COL.alumno]))].sort().indexOf(name);
-  const color=AVATAR_COLORS[idx%AVATAR_COLORS.length];
+  const color=avatarColor(name);
   const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const info=getInfo(name);
   document.getElementById('h-avatar').style.background=color;
@@ -1002,17 +1046,7 @@ function openPlayer(name){
   document.querySelector('.tab-btn').classList.add('active');
   document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
   document.getElementById('tab-resumen').classList.add('active');
-  Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});
-  charts={};
-  [['resumen',buildResumen],['rubrica',buildRubrica],['plan',buildPlan],['progreso',buildProgreso],['historial',buildHistorial],['liga',buildLiga]]
-    .forEach(([id,fn])=>{
-      try{ fn(); }
-      catch(err){
-        const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id);
-        if(ld) ld.style.display='none';
-        if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; }
-      }
-    });
+  rebuildAll();
 }
 function goBack(){
   document.getElementById('landing').style.display='';
@@ -1051,10 +1085,18 @@ function catColor(cat){
   if(t.includes('azul')) return '#1a5fb4';
   return 'var(--muted)';
 }
-function setMonth(m){
-  selectedMonth=m;
-  if(charts['radar']){ try{charts['radar'].destroy();}catch(e){} delete charts['radar']; }
-  try{ buildResumen(); }catch(e){ const ct=document.getElementById('content-resumen'); if(ct) ct.innerHTML='<div class="err-box"><strong>Error.</strong>'+(e.message||e)+'</div>'; }
+function rebuildAll(){
+  Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}}); charts={};
+  [['resumen',buildResumen],['rubrica',buildRubrica],['plan',buildPlan],['progreso',buildProgreso],['historial',buildHistorial],['liga',buildLiga]].forEach(([id,fn])=>{ try{ fn(); }catch(err){ const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id); if(ld) ld.style.display='none'; if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; } } });
+}
+function setMonth(m){ selectedMonth=m; rebuildAll(); }
+function filterByMonth(list){ if(selectedMonth==='all') return list; const f=list.filter(s=>monthKey(s)===selectedMonth); return f.length?f:list; }
+function monthChipsHTML(){
+  const months=[...new Set(playerSessions.map(monthKey).filter(Boolean))].sort();
+  return `<div class="card"><div class="card-title">Filtrar por mes</div><div class="month-filter">
+    <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonth('all')">Todos</button>
+    ${months.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonth('${m}')">${monthLabel(m)}</button>`).join('')}
+  </div></div>`;
 }
 
 function buildResumen(){
@@ -1088,10 +1130,7 @@ function buildResumen(){
   const prevSess=prevMonth?sess.filter(s=>monthKey(s)===prevMonth):[];
   const prevLbl=prevMonth?monthLabel(prevMonth):'';
 
-  const chips=`<div class="card"><div class="card-title">Filtrar por mes</div><div class="month-filter">
-    <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonth('all')">Todos</button>
-    ${months.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonth('${m}')">${monthLabel(m)}</button>`).join('')}
-  </div></div>`;
+  const chips=monthChipsHTML();
 
   const bench=calcBench(currentPlayer);
   const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
@@ -1127,7 +1166,7 @@ function buildResumen(){
     <div class="chart-wrap" style="height:380px;"><canvas id="ch-radar"></canvas></div>
   </div>`;
 
-  el.innerHTML = fichaHTML + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + radarHTML;
+  el.innerHTML = fichaHTML + avatarPickerHTML() + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + radarHTML;
   ldEl.style.display='none'; el.style.display='block';
 
   if(document.getElementById('ch-radar')){
@@ -1149,7 +1188,7 @@ function buildResumen(){
 }
 
 // ══════════════════════════════════════
-// RENDIMIENTO — pelotas por nivel (gris/azul/amarillo)
+// RENDIMIENTO — pelotas por nivel · 3 niveles
 // ══════════════════════════════════════
 function buildRubrica(){
   const el=document.getElementById('content-rubrica');
@@ -1159,13 +1198,13 @@ function buildRubrica(){
     ldEl.style.display='none'; el.style.display='block';
     el.innerHTML='<div class="empty">No hay sesiones para mostrar.</div>'; return;
   }
-  const last=sess[sess.length-1];
+  const fsess=filterByMonth(sess);
+  const last=fsess[fsess.length-1];
   const bench=calcBench(currentPlayer);
   const info=getInfo(currentPlayer);
   const catName=info?info[INFO.categoria]:'';
   const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
   const balls=(lv)=>[1,2,3].map(i=>`<span class="ball ${i<=lv?('bf'+lv):'be'}"></span>`).join('');
-
   const cards=areas.map(a=>{
     const grupos=RESUMEN_GROUPS[a.id];
     const rows=grupos.map(g=>{
@@ -1174,22 +1213,25 @@ function buildRubrica(){
       const p=arr.reduce((x,y)=>x+y,0)/arr.length;
       const lv=Math.round(p);
       let cat=0; if(bench){ const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0); cat=cv.length?cv.reduce((x,y)=>x+y,0)/cv.length:0; }
-      return `<div class="ball-row">
-        <span class="ball-name">${g.nombre}</span>
-        <span class="ball-right"><span class="balls">${balls(lv)}</span><span class="ball-label lb${lv}">${lvlLabel(lv)}</span></span>
-      </div>${cat>0?`<div class="ball-cat">Categoría ${catName||''}: ${cat.toFixed(1)}</div>`:''}`;
+      const catLv=cat>0?Math.round(cat):0;
+      return `<div class="ball-item">
+        <div class="ball-row">
+          <span class="ball-name">${g.nombre}</span>
+          <span class="ball-right"><span class="balls">${balls(lv)}</span><span class="ball-label lb${lv}">${lvlLabel(lv)}</span></span>
+        </div>
+        ${catLv?`<div class="ball-cat">Promedio categoría ${catName||''}: <strong>${lvlLabel(catLv)}</strong></div>`:''}
+      </div>`;
     }).filter(Boolean).join('');
     if(!rows) return '';
     return `<div class="perf-card"><div class="perf-card-title">${a.nombre}</div>${rows}</div>`;
   }).join('');
-
-  const legend=`<div class="sem-legend" style="margin-bottom:14px;">
-    <span class="sem-leg" style="background:#eef0f7;color:var(--muted);"><span class="ball bf1" style="margin-right:6px;"></span>A desarrollar</span>
-    <span class="sem-leg" style="background:var(--pf3-bg);color:var(--blue);"><span class="ball bf2" style="margin-right:6px;"></span>Funcional</span>
-    <span class="sem-leg" style="background:var(--pf1-bg);color:#8a7e00;"><span class="ball bf3" style="margin-right:6px;"></span>Arma</span>
-  </div>`;
-
-  el.innerHTML = legend + `<div class="perf-grid">${cards}</div>`;
+  const legend=`<div class="nota">El rendimiento se mide en <strong>3 niveles</strong>; se rellenan las pelotas según el nivel alcanzado:</div>
+    <div class="sem-legend" style="margin-bottom:14px;">
+      <span class="sem-leg" style="background:#eef0f7;color:var(--muted);"><span class="ball bf1" style="margin-right:6px;"></span>1 · A desarrollar</span>
+      <span class="sem-leg" style="background:var(--pf3-bg);color:var(--blue);"><span class="ball bf2" style="margin-right:6px;"></span>2 · Funcional</span>
+      <span class="sem-leg" style="background:var(--pf1-bg);color:#8a7e00;"><span class="ball bf3" style="margin-right:6px;"></span>3 · Arma</span>
+    </div>`;
+  el.innerHTML = monthChipsHTML() + legend + `<div class="perf-grid">${cards}</div>`;
   ldEl.style.display='none'; el.style.display='block';
 }
 
@@ -1213,9 +1255,9 @@ function buildPlan(){
     ldEl.style.display='none'; el.style.display='block';
     el.innerHTML='<div class="empty">No hay sesiones para generar el plan.</div>'; return;
   }
-  const last=sess[sess.length-1];
+  const fsess=filterByMonth(sess);
+  const last=fsess[fsess.length-1];
   const info=getInfo(currentPlayer);
-
   const items=[];
   Object.keys(RUBRICAS).forEach(areaId=>{
     RUBRICAS[areaId].forEach(v=>{
@@ -1224,18 +1266,15 @@ function buildPlan(){
     });
   });
   const g1=items.filter(i=>i.lv===1), g2=items.filter(i=>i.lv===2), g3=items.filter(i=>i.lv===3);
-
   const objetivoHTML = (info && info[INFO.objetivo])
     ? `<div class="card"><div class="card-title">🎯 Objetivo</div><div class="feedback-block feedback-coach">${info[INFO.objetivo]}</div></div>` : '';
   const obs=last[COL.obs_profe];
   const obsHTML = `<div class="card"><div class="card-title">Observación del profe · ${fmtDate(last[COL.fecha])}</div><div class="feedback-block feedback-coach">${obs?obs:'Sin observación registrada en la última sesión.'}</div></div>`;
-
   const legend=`<div class="sem-legend" style="margin-bottom:14px;">
     <span class="sem-leg" style="background:var(--lv1-bg);color:var(--lv1);">🔴 A mejorar</span>
     <span class="sem-leg" style="background:var(--lv2-bg);color:var(--lv2);">🟡 En progreso</span>
     <span class="sem-leg" style="background:var(--lv3-bg);color:var(--lv3);">🟢 Fortaleza</span>
   </div>`;
-
   const pl=currentPlayer.replace(/'/g,"\\'");
   const planAcc=(titulo,arr,dotc,lvc,open)=>{
     if(!arr.length) return '';
@@ -1255,11 +1294,9 @@ function buildPlan(){
       <div class="acc-body"><div class="acc-body-inner">${rows}</div></div>
     </div>`;
   };
-
   let fort='';
   if(g3.length) fort=`<div class="plan-group-title"><span class="dot dot-3"></span> Fortalezas (${g3.length})</div><div class="plan-armas-wrap">`+g3.map(it=>`<span class="plan-arma">${it.emoji} ${it.nombre}</span>`).join('')+`</div>`;
-
-  el.innerHTML = objetivoHTML + obsHTML
+  el.innerHTML = monthChipsHTML() + objetivoHTML + obsHTML
     + `<div class="nota">Marcá con el casillero las variables que vas a priorizar en las próximas semanas.</div>`
     + legend
     + planAcc('A mejorar', g1,'dot-1','lv1',true)
@@ -1269,35 +1306,35 @@ function buildPlan(){
 }
 
 // ══════════════════════════════════════
-// PROGRESO — evolución del promedio por área (tonos de azul)
+// PROGRESO — líneas sólidas por área
 // ══════════════════════════════════════
 function buildProgreso(){
   const el=document.getElementById('content-progreso');
   const ldEl=document.getElementById('loading-progreso');
-  const sess=playerSessions;
+  const sess=filterByMonth(playerSessions);
   if(sess.length<2){
     ldEl.style.display='none'; el.style.display='block';
-    el.innerHTML='<div class="empty">Necesitás al menos 2 sesiones para ver la evolución.</div>'; return;
+    el.innerHTML=monthChipsHTML()+'<div class="empty">Necesitás al menos 2 sesiones (en el período elegido) para ver la evolución.</div>'; return;
   }
   const labels=sess.map(s=>fmtDate(s[COL.fecha]));
-  el.innerHTML=`
+  el.innerHTML=monthChipsHTML()+`
     <div class="nota">Evolución del promedio por área · 1 A desarrollar · 2 Funcional · 3 Arma</div>
     <div class="card"><div class="card-title">Evolución por área</div><div class="chart-wrap" style="height:320px;"><canvas id="ch-areas"></canvas></div></div>
   `;
   ldEl.style.display='none'; el.style.display='block';
   const areas=[
-    {id:'tecnica', nombre:'Técnica', color:'#5170ff', dash:[]},
-    {id:'tactica', nombre:'Táctica', color:'#2f3fb0', dash:[6,4]},
-    {id:'fisico',  nombre:'Físico',  color:'#9aa8ff', dash:[]},
-    {id:'mental',  nombre:'Mental',  color:'#20223a', dash:[6,4]}
+    {id:'tecnica', nombre:'Técnica', color:'#5170ff'},
+    {id:'tactica', nombre:'Táctica', color:'#e0a200'},
+    {id:'fisico',  nombre:'Físico',  color:'#16a34a'},
+    {id:'mental',  nombre:'Mental',  color:'#d6336c'}
   ];
   charts['areas']=new Chart(document.getElementById('ch-areas'),{
     type:'line',
     data:{labels, datasets:areas.map(a=>({
       label:a.nombre,
       data:sess.map(s=>{const v=avgLvlKeys(s,AREA_KEYS[a.id]); return v>0?v:null;}),
-      borderColor:a.color, backgroundColor:a.color, borderDash:a.dash,
-      tension:.35, pointRadius:4, pointBackgroundColor:a.color, spanGaps:true, borderWidth:2.5
+      borderColor:a.color, backgroundColor:a.color,
+      tension:.35, pointRadius:4, pointBackgroundColor:a.color, spanGaps:true, borderWidth:3
     }))},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:14,padding:14,usePointStyle:true}},
@@ -1316,14 +1353,13 @@ function buildProgreso(){
 function buildHistorial(){
   const el=document.getElementById('content-historial');
   const ldEl=document.getElementById('loading-historial');
-  const sess=[...playerSessions].reverse();
+  const sess=[...filterByMonth(playerSessions)].reverse();
   if(!sess.length){
     ldEl.style.display='none'; el.style.display='block';
-    el.innerHTML='<div class="empty">No hay sesiones registradas.</div>'; return;
+    el.innerHTML=monthChipsHTML()+'<div class="empty">No hay sesiones registradas.</div>'; return;
   }
-
-  el.innerHTML=`<div class="card">
-    <div class="card-title">${playerSessions.length} sesión${playerSessions.length!==1?'es':''} registradas</div>
+  el.innerHTML=monthChipsHTML()+`<div class="card">
+    <div class="card-title">${sess.length} sesión${sess.length!==1?'es':''} registradas</div>
     ${sess.map(s=>{
       const tipo=s[COL.tipo]||'';
       const tLvl=Math.round(avgLvlKeys(s,AREA_KEYS.tecnica));
@@ -1355,87 +1391,44 @@ function buildHistorial(){
 }
 
 // ══════════════════════════════════════
-// LIGA / PUNTOS — sistema pro-esfuerzo
-// (se calcula 100% desde las rúbricas ya cargadas)
+// LIGA — puntaje: asistencia + mejora mensual + bonus mental
 // ══════════════════════════════════════
-const LG = {
-  ATTEND:    10,   // por sesión registrada (premia asistir)
-  IMPROVE:   15,   // por cada nivel que sube una variable (premia mejorar)
-  SOLID:      2,   // por variable en nivel 3 (Arma)
-  SOLID_CAP: 20,   // tope de solidez por sesión
-  STREAK:    10,   // por mes consecutivo extra
-  STREAK_CAP:50
-};
+const LG = { ATTEND:5, IMPROVE:2, MENTAL_BONUS:10 };
 const LG_KEYS=[...AREA_KEYS.tecnica,...AREA_KEYS.tactica,...AREA_KEYS.fisico,...AREA_KEYS.mental];
-let ligaMode='mensual', ligaPeriod=null;
-
 function sessionsOf(name){
   return allRows.filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
 }
-
-// Contribución de puntos de cada sesión. La "mejora" se mide contra
-// la última sesión que tuvo dato en esa variable (no contra la misma sesión).
-function sessionContribs(name){
-  const sess=sessionsOf(name);
-  const last={};
-  return sess.map((s,i)=>{
-    let mejora=0, solid=0;
-    LG_KEYS.forEach(k=>{
-      const lv=toLvl(s[COL[k]]);
-      if(lv>0){
-        if(last[k]!=null && lv>last[k]) mejora += (lv-last[k])*LG.IMPROVE;
-        if(lv===3) solid += LG.SOLID;
-        last[k]=lv;
-      }
-    });
-    const mk=monthKey(s);
-    return { mk, year:(mk||'').slice(0,4), asistencia:LG.ATTEND, mejora,
-             solid:Math.min(solid,LG.SOLID_CAP), first:i===0 };
-  });
+function playerMonths(name){ return [...new Set(sessionsOf(name).map(monthKey).filter(Boolean))].sort(); }
+function levelInMonth(name, mk, key){
+  const ss=sessionsOf(name).filter(s=>monthKey(s)===mk);
+  for(let i=ss.length-1;i>=0;i--){ const lv=toLvl(ss[i][COL[key]]); if(lv>0) return lv; }
+  return null;
 }
-
-// Racha = meses consecutivos relevantes para el período
-function streakLen(monthsSet, mode, value){
-  const months=[...monthsSet].sort();
-  if(!months.length) return 0;
-  if(mode==='mensual'){
-    if(!months.includes(value)) return 0;
-    let len=1, cur=value;
-    while(true){
-      const [y,m]=cur.split('-').map(Number);
-      const pm=m===1?`${y-1}-12`:`${y}-${String(m-1).padStart(2,'0')}`;
-      if(months.includes(pm)){ len++; cur=pm; } else break;
-    }
-    return len;
-  }
-  let best=1, run=1;
-  for(let i=1;i<months.length;i++){
-    const [ay,am]=months[i-1].split('-').map(Number);
-    const [by,bm]=months[i].split('-').map(Number);
-    run = ((by*12+bm)-(ay*12+am)===1) ? run+1 : 1;
-    if(run>best) best=run;
-  }
-  return best;
+function levelsGainedBetween(name, mk, prevMk){
+  if(!prevMk) return 0;
+  let g=0;
+  LG_KEYS.forEach(k=>{ const a=levelInMonth(name,prevMk,k), b=levelInMonth(name,mk,k); if(a!=null&&b!=null&&b>a) g+=(b-a); });
+  return g;
 }
-
-function scorePlayer(name, mode, value){
-  const contribs=sessionContribs(name);
-  const inP=c=> mode==='mensual'?c.mk===value : (mode==='anual'?c.year===value:true);
-  const ps=contribs.filter(inP);
-  let asistencia=0, mejora=0, solid=0;
-  ps.forEach(c=>{ asistencia+=c.asistencia; mejora+=c.mejora; solid+=c.solid; });
-  const allMonths=new Set(contribs.map(c=>c.mk).filter(Boolean));
-  const periodMonths = mode==='anual'
-      ? new Set([...allMonths].filter(m=>m.slice(0,4)===value))
-      : allMonths;
-  const sl=streakLen(periodMonths, mode, value);
-  const racha=Math.min(LG.STREAK_CAP, Math.max(0,sl-1)*LG.STREAK);
-  return {name, asistencia, mejora, solid, racha, total:asistencia+mejora+solid+racha,
-          sesiones:ps.length, streak:sl};
+function mentalAvgScope(name, period){
+  const ss=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
+  const vals=ss.map(s=>avgLvlKeys(s,AREA_KEYS.mental)).filter(v=>v>0);
+  return vals.length? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 }
-
-// Medalla por área según el último estado conocido
+function scorePlayer(name, period){
+  const months=playerMonths(name);
+  const scope = period==='all' ? months : (months.indexOf(period)>=0?[period]:[]);
+  const sessScope=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
+  const asistencia=sessScope.length*LG.ATTEND;
+  let gained=0;
+  scope.forEach(mk=>{ const idx=months.indexOf(mk); const prev=idx>0?months[idx-1]:null; gained+=levelsGainedBetween(name,mk,prev); });
+  const mejora=gained*LG.IMPROVE;
+  const mAvg=mentalAvgScope(name,period);
+  const mentalLvl=mAvg>0?Math.round(mAvg):0;
+  const mentalBonus=mentalLvl>=2?LG.MENTAL_BONUS:0;
+  return {name, asistencia, mejora, mentalBonus, gained, mentalLvl, sesiones:sessScope.length, total:asistencia+mejora+mentalBonus};
+}
 function areaTier(name, areaId){
   const sess=sessionsOf(name);
   const last={};
@@ -1447,48 +1440,22 @@ function areaTier(name, areaId){
 }
 const TIER_MEDAL={3:{ic:'🥇',name:'Oro'},2:{ic:'🥈',name:'Plata'},1:{ic:'🥉',name:'Bronce'},0:{ic:'⚪',name:'Sin medalla aún'}};
 
-function ligaPeriods(mode){
-  const set=new Set();
-  allRows.forEach(r=>{ const mk=monthKey(r); if(mk) set.add(mode==='mensual'?mk:mk.slice(0,4)); });
-  return [...set].sort();
-}
-function periodLabel(mode, v){ return mode==='mensual'? monthLabel(v) : v; }
-function setLigaMode(m){
-  ligaMode=m;
-  const ps=ligaPeriods(m);
-  ligaPeriod=ps.length?ps[ps.length-1]:null;
-  buildLiga();
-}
-function setLigaPeriod(v){ ligaPeriod=v; buildLiga(); }
-
 function buildLiga(){
   const el=document.getElementById('content-liga');
   const ldEl=document.getElementById('loading-liga');
-  const periods=ligaPeriods(ligaMode);
-  if(!periods.length){
-    ldEl.style.display='none'; el.style.display='block';
-    el.innerHTML='<div class="empty" style="color:var(--muted);">Todavía no hay datos para armar la liga.</div>'; return;
-  }
-  if(!ligaPeriod || !periods.includes(ligaPeriod)) ligaPeriod=periods[periods.length-1];
-
   const allPlayers=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
-  const sortedPlayers=[...allPlayers].sort();
-  const avatarOf=name=>{ const i=sortedPlayers.indexOf(name); return AVATAR_COLORS[(i<0?0:i)%AVATAR_COLORS.length]; };
+  if(!allPlayers.length){
+    ldEl.style.display='none'; el.style.display='block';
+    el.innerHTML=monthChipsHTML()+'<div class="empty">Todavía no hay datos para armar la liga.</div>'; return;
+  }
+  const period=selectedMonth;
+  const periodLbl = period==='all' ? 'General · todos los meses' : monthLabel(period);
+  const avatarOf=name=>avatarColor(name);
   const iniOf=name=>name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-
-  let board=allPlayers.map(p=>scorePlayer(p, ligaMode, ligaPeriod)).filter(s=>s.sesiones>0);
+  let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
   board.sort((a,b)=> b.total-a.total || b.mejora-a.mejora || b.asistencia-a.asistencia);
 
-  let bestImpName=null, bestImp=0;
-  board.forEach(s=>{ if(s.mejora>bestImp){ bestImp=s.mejora; bestImpName=s.name; } });
-
-  const modeCtrl=`<div class="lg-mode">
-    <button class="${ligaMode==='mensual'?'active':''}" onclick="setLigaMode('mensual')">Mensual</button>
-    <button class="${ligaMode==='anual'?'active':''}" onclick="setLigaMode('anual')">Anual</button>
-  </div>`;
-  const periodCtrl=`<div class="lg-period">${periods.map(p=>
-    `<button class="lg-chip ${p===ligaPeriod?'active':''}" onclick="setLigaPeriod('${p}')">${periodLabel(ligaMode,p)}</button>`
-  ).join('')}</div>`;
+  const explain=`<div class="nota">El puntaje premia el <strong>esfuerzo</strong>, no solo el nivel. Suma: <strong>+${LG.ATTEND}</strong> por cada <strong>asistencia</strong> · <strong>+${LG.IMPROVE}</strong> por cada <strong>nivel que sube</strong> de un mes al otro · <strong>+${LG.MENTAL_BONUS}</strong> si el promedio del área <strong>Mental</strong> es Funcional o Arma.</div>`;
 
   const meScore=board.find(s=>s.name===currentPlayer);
   let meHTML;
@@ -1496,21 +1463,17 @@ function buildLiga(){
     const rank=board.findIndex(s=>s.name===currentPlayer)+1;
     meHTML=`<div class="lg-me">
       <div class="lg-me-top">
-        <div>
-          <div class="lg-me-lbl">Mi puntaje · ${periodLabel(ligaMode,ligaPeriod)}</div>
-          <div class="lg-me-rank">${rank}º de ${board.length} · ${meScore.sesiones} ses.${meScore.name===bestImpName&&bestImp>0?' · 🚀 +Mejorado':''}</div>
-        </div>
+        <div><div class="lg-me-lbl">Mi puntaje · ${periodLbl}</div><div class="lg-me-rank">${rank}º de ${board.length} · ${meScore.sesiones} ses.</div></div>
         <div class="lg-me-score"><div class="lg-me-pts">${meScore.total}<span> pts</span></div></div>
       </div>
-      <div class="lg-break">
-        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asist.</div></div>
+      <div class="lg-break lg-break-3">
+        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asistencia</div></div>
         <div class="lg-bk"><div class="lg-bk-ico">📈</div><div class="lg-bk-val">${meScore.mejora}</div><div class="lg-bk-lbl">Mejora</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">🎯</div><div class="lg-bk-val">${meScore.solid}</div><div class="lg-bk-lbl">Solidez</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">🔥</div><div class="lg-bk-val">${meScore.racha}</div><div class="lg-bk-lbl">Racha</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🧠</div><div class="lg-bk-val">${meScore.mentalBonus}</div><div class="lg-bk-lbl">Mental</div></div>
       </div>
     </div>`;
   } else {
-    meHTML=`<div class="nota">No tenés sesiones registradas en <strong>${periodLabel(ligaMode,ligaPeriod)}</strong>. Sumá asistencia para entrar a la tabla.</div>`;
+    meHTML=`<div class="nota">No tenés sesiones en <strong>${periodLbl}</strong>. Sumá asistencia para entrar a la tabla.</div>`;
   }
 
   let podiumHTML='';
@@ -1528,13 +1491,12 @@ function buildLiga(){
   }
 
   const rowsHTML=board.map((s,i)=>{
-    const badge=(s.name===bestImpName&&bestImp>0)?'<span class="lg-badge improve">🚀 +Mejorado</span>':'';
     return `<div class="lg-row ${s.name===currentPlayer?'me':''}">
       <div class="lg-rank ${i<3?'top':''}">${i+1}</div>
       <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
       <div class="lg-info">
-        <div class="lg-name">${s.name}${badge}</div>
-        <div class="lg-sub">📅 ${s.asistencia} · 📈 ${s.mejora} · 🎯 ${s.solid} · 🔥 ${s.racha}</div>
+        <div class="lg-name">${s.name}</div>
+        <div class="lg-sub">📅 ${s.asistencia} · 📈 ${s.mejora} · 🧠 ${s.mentalBonus}</div>
       </div>
       <div class="lg-pts">${s.total}<span> pts</span></div>
     </div>`;
@@ -1547,18 +1509,15 @@ function buildLiga(){
       <div class="lg-medal-ic">${m.ic}</div>
       <div class="lg-medal-tx">
         <div class="lg-medal-area">${AREA_META[id].emoji} ${nombre}</div>
-        <div class="lg-medal-tier">${m.name}${t.avg?` · ${t.avg.toFixed(1)}/3`:''}</div>
+        <div class="lg-medal-tier">${m.name}${t.avg?` · ${lvlLabel(Math.round(t.avg))}`:''}</div>
       </div>
     </div>`;
   }).join('');
 
-  el.innerHTML =
-      `<div class="nota">Liga <strong>pro-esfuerzo</strong>: premia <strong>asistir</strong> y <strong>mejorar</strong>, no solo el nivel. Por sesión: asistencia +${LG.ATTEND}, cada subida de nivel +${LG.IMPROVE}, solidez +${LG.SOLID}/variable en Arma (máx ${LG.SOLID_CAP}) y racha +${LG.STREAK} por mes seguido.</div>`
-    + modeCtrl + periodCtrl + meHTML
-    + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${periodLabel(ligaMode,ligaPeriod)}</div>${podiumHTML}</div>`:'')
+  el.innerHTML = monthChipsHTML() + explain + meHTML
+    + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${periodLbl}</div>${podiumHTML}</div>`:'')
     + `<div class="card"><div class="card-title">Tabla de posiciones</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`
     + `<div class="card"><div class="card-title">Mis medallas por área</div><div class="lg-medals">${medalsHTML}</div></div>`;
-
   ldEl.style.display='none'; el.style.display='block';
 }
 
