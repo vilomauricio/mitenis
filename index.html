@@ -534,6 +534,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .cz-score span{font-size:11px;color:var(--hint);font-weight:600;}
 .cz-at{margin-left:auto;font-size:16px;font-weight:800;}
 .cz-at.ok{color:var(--lv3);} .cz-at.low{color:var(--lv2);}
+
+/* === v19: Modo Profe radar + ranking compacto === */
+.cz-bottom{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
+@media(min-width:760px){.cz-bottom{grid-template-columns:1fr 1fr;}}
+.cz-radar{background:transparent;}
+.cz-ind{margin-left:auto;display:flex;flex-direction:column;gap:4px;}
+.cz-ind-row{display:flex;align-items:baseline;justify-content:flex-end;gap:8px;}
+.cz-ind-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.cz-ind-val{font-size:18px;font-weight:800;color:var(--text);line-height:1;}
+.cz-ind-val span{font-size:10px;color:var(--hint);font-weight:600;}
+.cz-ind-val.ok{color:var(--lv3);} .cz-ind-val.low{color:var(--lv2);}
 </style>
 </head>
 <body>
@@ -1221,6 +1232,7 @@ function buildCoach(){
   const _MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']; const mLabelFull=(key)=>{ if(!key) return ''; const a=key.split('-'); const nm=_MES[Number(a[1])-1]||''; return (nm.charAt(0).toUpperCase()+nm.slice(1))+' '+a[0]; };
   const catOf=p=>{ const i=getInfo(p); return i?(i[INFO.categoria]||'').trim():''; };
   const cats=[...new Set(players.map(catOf).filter(Boolean))].sort();
+  const allPlayersList=players.slice();
   if(coachCat!=='all') players=players.filter(p=>catOf(p)===coachCat);
   const allMonths=[...new Set(allRows.map(monthKey).filter(Boolean))].sort();
   const curMonth=(selectedMonth==='all'||allMonths.indexOf(selectedMonth)<0)?(allMonths[allMonths.length-1]||''):selectedMonth;
@@ -1269,17 +1281,40 @@ function buildCoach(){
     return `<div class="cz-row">
       <div class="cz-av" style="background:${avatarColor(d.p)};"></div>
       <div class="cz-name">${d.p}</div>
-      <div class="cz-score">${d.overall>0?d.overall.toFixed(1):'—'}<span> / 3</span></div>
-      ${a?`<div class="cz-at ${a.met?'ok':'low'}">${a.pct}%</div>`:'<div class="cz-at" style="color:var(--hint);">—</div>'}
+      <div class="cz-ind">
+        <div class="cz-ind-row"><span class="cz-ind-lbl">Promedio total</span><span class="cz-ind-val">${d.overall>0?d.overall.toFixed(1):'—'}<span>/3</span></span></div>
+        <div class="cz-ind-row"><span class="cz-ind-lbl">Asistencia</span><span class="cz-ind-val ${a?(a.met?'ok':'low'):''}">${a?a.pct+'%':'—'}</span></div>
+      </div>
     </div>`;
   }).join('');
 
   const withAt=data.filter(d=>d.at); const metN=withAt.filter(d=>d.at.met).length;
+  const catPalette=['#f3fe76','#ff9f43','#ff5d5d','#5eead4','#a78bfa','#ffffff','#86efac'];
+  const catColorHex=(ct,i)=>{ const t=(ct||'').toLowerCase(); if(t.includes('verde'))return '#22c55e'; if(t.includes('naranja'))return '#ff9f43'; if(t.includes('roj'))return '#ff5d5d'; if(t.includes('amar'))return '#f5ff80'; if(t.includes('azul'))return '#7aa2ff'; return catPalette[i%catPalette.length]; };
+  const catData=cats.map((ct,i)=>{
+    const studs=allPlayersList.filter(p=>catOf(p)===ct);
+    const dd=areas.map(a=>{ const vals=studs.map(p=>{const s=lastInMonth(p,curMonth); return s?avgLvlKeys(s,AREA_KEYS[a]):0;}).filter(v=>v>0); return vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:0; });
+    return {label:ct, data:dd, color:catColorHex(ct,i)};
+  });
   el.innerHTML = monthChips + catChips
     + `<div class="cz-h">Promedio de la clase${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
     + `<div class="card"><div class="card-title">Asistencia del mes</div><div class="nota" style="margin:0;">${withAt.length?(metN+' de '+withAt.length+' alumnos cumplieron su objetivo de asistencia.'):'Sin datos de asistencia para este mes.'}</div></div>`
-    + `<div class="card"><div class="card-title">Ranking de alumnos · ${players.length}</div>${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div>`;
+    + `<div class="cz-bottom">
+        <div class="cz-radar"><div class="cz-h" style="margin:0 0 4px;">Comparación por categoría${curMonth?' · '+mLabelFull(curMonth):''}</div><div class="chart-wrap" style="height:300px;"><canvas id="ch-coach-radar"></canvas></div></div>
+        <div class="card cz-rank-card"><div class="card-title">Ranking de alumnos · ${players.length}</div>${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div>
+      </div>`;
+  if(charts['coachRadar']){ try{charts['coachRadar'].destroy();}catch(e){} }
+  const _cv=document.getElementById('ch-coach-radar');
+  if(_cv && catData.length){
+    charts['coachRadar']=new Chart(_cv,{type:'radar',
+      data:{labels:['Técnica','Táctica','Físico','Mental'],datasets:catData.map(cd=>({label:cd.label,data:cd.data,borderColor:cd.color,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:cd.color}))},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'bottom',labels:{color:'#ffffff',font:{size:11},boxWidth:10,padding:10,usePointStyle:true}}},
+        scales:{r:{min:0,max:3,ticks:{stepSize:1,backdropColor:'transparent',color:'rgba(255,255,255,0.7)',font:{size:9},callback:v=>['','A trabajar','Funciona','Excelente'][v]||''},grid:{color:'rgba(255,255,255,0.22)'},angleLines:{color:'rgba(255,255,255,0.22)'},pointLabels:{color:'#ffffff',font:{size:12,weight:'700'}}}}
+      }
+    });
+  }
 }
 
 // ══════════════════════════════════════
