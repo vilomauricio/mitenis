@@ -34,6 +34,7 @@
   --pf1:        #f3fe76; --pf1-bg:#fbffcf;
   --pf2:        #a9b6ff; --pf2-bg:#e7ebff;
   --pf3:        #5170ff; --pf3-bg:#e0e6ff;
+  --n1:#ff8585; --n2:#f5ff80; --n3:#22b16c;
   --radius:     16px;
   --radius-sm:  10px;
 }
@@ -507,6 +508,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .cz-score span{font-size:10px;color:var(--hint);font-weight:600;}
 .cz-at{font-size:10px;font-weight:600;margin-top:2px;}
 .cz-at.ok{color:var(--lv3);} .cz-at.low{color:var(--lv2);}
+
+/* === v15: paleta de niveles (chip fondo + texto negro) === */
+.ball-label{padding:4px 12px;border-radius:999px;color:#161616!important;font-weight:700;text-align:center;min-width:0;}
+.lb1{background:var(--n1);} .lb2{background:var(--n2);} .lb3{background:var(--n3);}
+.dot-1{background:var(--n1);} .dot-2{background:var(--n2);} .dot-3{background:var(--n3);}
+.prio-row.lv1{border-left-color:var(--n1);}
+.prio-row.lv2{border-left-color:var(--n2);}
 </style>
 </head>
 <body>
@@ -1418,9 +1426,9 @@ function buildRubrica(){
   }).join('');
   const legend=`<div class="nota">El rendimiento se mide en <strong>3 niveles</strong> — sumá pulgares 👍 a medida que mejorás:</div>
     <div class="sem-legend" style="margin-bottom:14px;">
-      <span class="sem-leg" style="background:#eef0f7;color:var(--muted);">👍 A trabajar</span>
-      <span class="sem-leg" style="background:var(--pf3-bg);color:var(--blue);">👍👍 Funciona</span>
-      <span class="sem-leg" style="background:var(--pf1-bg);color:#8a7e00;">👍👍👍 Excelente</span>
+      <span class="sem-leg" style="background:var(--n1);color:#161616;">👍 A trabajar</span>
+      <span class="sem-leg" style="background:var(--n2);color:#161616;">👍👍 Funciona</span>
+      <span class="sem-leg" style="background:var(--n3);color:#161616;">👍👍👍 Excelente</span>
     </div>`;
   el.innerHTML = monthChipsHTML() + legend + `<div class="perf-grid">${cards}</div>`;
   ldEl.style.display='none'; el.style.display='block';
@@ -1462,8 +1470,8 @@ function buildPlan(){
   const obs=last[COL.obs_profe];
   const obsHTML = `<div class="card"><div class="card-title">Observación del profe · ${fmtDate(last[COL.fecha])}</div><div class="feedback-block feedback-coach">${obs?obs:'Sin observación registrada en la última sesión.'}</div></div>`;
   const legend=`<div class="sem-legend" style="margin-bottom:14px;">
-    <span class="sem-leg" style="background:var(--lv1-bg);color:var(--lv1);">🔴 A trabajar</span>
-    <span class="sem-leg" style="background:var(--lv2-bg);color:var(--lv2);">🟡 En progreso</span>
+    <span class="sem-leg" style="background:var(--n1);color:#161616;">A trabajar</span>
+    <span class="sem-leg" style="background:var(--n2);color:#161616;">En progreso</span>
   </div>`;
   const pl=currentPlayer.replace(/'/g,"\\'");
   const planAcc=(titulo,arr,dotc,lvc,open)=>{
