@@ -1420,7 +1420,7 @@ function buildResumen(){
 
   const totVals=areas.map(a=>curAvgs[a.id]).filter(v=>v>0);
   const tot=totVals.length?totVals.reduce((x,y)=>x+y,0)/totVals.length:0;
-  const totalCard=`<div class="metric-card">
+  const totalCard=`<div class="metric-card mc-hl">
     <div class="mc-label">Promedio total</div>
     <div class="mc-value">${tot>0?`${tot.toFixed(1)}<span class="mc-max"> / 3</span>`:'—'}</div>
     <div class="mc-cat">${monthLabel(curMonth)} · ${curSess.length} ses.</div>
