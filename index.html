@@ -48,7 +48,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .court-lines::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(81,112,255,0.10) 59px,rgba(81,112,255,0.10) 61px);}
 .landing-content{position:relative;z-index:2;text-align:center;max-width:540px;width:100%;}
 .logo-ball{margin:0 auto 1.4rem;display:flex;align-items:center;justify-content:center;}
-.logo-ball svg{width:62px;height:86px;}
+.logo-ball svg{width:60px;height:104px;}
 .landing-title{font-family:'Inter',sans-serif;font-size:clamp(36px,9vw,60px);font-weight:400;color:var(--blue);line-height:1.0;letter-spacing:-.03em;margin-bottom:8px;}
 .landing-title span{font-weight:800;}
 .landing-sub{font-size:14px;color:rgba(81,112,255,.8);margin-bottom:2.5rem;letter-spacing:.01em;}
@@ -468,6 +468,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* === v10: avatar clickeable === */
 .header-avatar{cursor:pointer;transition:outline .12s;}
 .header-avatar:hover{outline:2px solid rgba(32,34,58,.3);outline-offset:1px;}
+
+/* === v12: card de asistencia === */
+.asist-row{display:flex;align-items:center;gap:16px;}
+.asist-pct{font-size:34px;font-weight:800;line-height:1;}
+.asist-pct.ok{color:var(--lv3);}
+.asist-pct.low{color:var(--lv2);}
+.asist-meta{flex:1;min-width:0;}
+.asist-bar{height:10px;background:var(--surf2);border-radius:999px;overflow:hidden;margin-bottom:6px;}
+.asist-fill{height:100%;border-radius:999px;background:var(--lv3);transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+.asist-fill.low{background:var(--lv2);}
+.asist-txt{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -478,9 +489,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="court-lines"></div>
   <div class="landing-content">
     <div class="logo-ball">
-      <svg viewBox="0 0 80 110" fill="none" aria-label="mi tenis">
-        <rect x="8" y="56" width="46" height="48" rx="23" fill="#f3fe76" stroke="#5170ff" stroke-width="7" stroke-linejoin="round"/>
-        <rect x="44" y="8" width="30" height="96" rx="15" fill="#f3fe76" stroke="#5170ff" stroke-width="7" stroke-linejoin="round"/>
+      <svg viewBox="0 0 240 430" fill="none" aria-label="mi tenis — pulgar arriba" xmlns="http://www.w3.org/2000/svg">
+        <!-- silueta azul (unión puño + pulgar) -->
+        <g fill="#5170ff">
+          <rect x="30" y="205" width="180" height="195" rx="85"/>
+          <rect x="118" y="24" width="92" height="376" rx="46"/>
+        </g>
+        <!-- hueco (color del fondo) para dejar el contorno -->
+        <g fill="#f3fe76">
+          <rect x="54" y="229" width="132" height="147" rx="61"/>
+          <rect x="142" y="48" width="44" height="328" rx="22"/>
+        </g>
       </svg>
     </div>
     <div class="landing-title"><span>mi</span> tenis</div>
@@ -576,6 +595,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 const SHEET_ID   = '1Frlg1Kcl1SZ9qsC7G0NvcxziGua2wZrCE8LIRpg7CJk';
 const DATA_SHEET = 'Registro - Rubricas';
 const INFO_SHEET = 'informacion';
+const ASIST_SHEET = 'asistencia';
 
 // ══════════════════════════════════════
 // COLUMNAS — exactamente como las renombró el usuario
@@ -620,6 +640,8 @@ let COL = {...COL_DEFAULT};
 
 const INFO_DEFAULT = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetivo:5, pin:6 };
 let INFO = {...INFO_DEFAULT};
+const ASIST_DEFAULT = { fecha:0, jugador:1, cumplidas:2, objetivo:3 };
+let ASIST = {...ASIST_DEFAULT};
 const AVATAR_COLORS = ['#5170ff','#3a52d6','#6d86ff','#2f3fb0','#5170ff','#3a52d6','#6d86ff','#2f3fb0'];
 const BALL_COLORS=['#c8d42b','#5170ff','#ff5d5d','#ff9f43','#8e5cff','#17b890','#ff6fb5'];
 function avatarStore(){ try{ return JSON.parse(localStorage.getItem('mitenis_avatar')||'{}'); }catch(e){ return {}; } }
@@ -681,6 +703,12 @@ const INFO_ALIASES = {
   categoria:['categoria','categoría'],
   objetivo:['objetivo','objetivos'],
   pin:['pin','clave','codigo','código','contraseña','password']
+};
+const ASIST_ALIASES = {
+  fecha:['fecha','mes','marca temporal','periodo','período'],
+  jugador:['jugador','alumno','nombre'],
+  cumplidas:['sesiones cumplidas','cumplidas','asistencias','realizadas','asistencia'],
+  objetivo:['sesiones mensuales objetivo','objetivo','sesiones objetivo','meta','objetivo mensual','sesiones objetivo mensual']
 };
 
 // ══════════════════════════════════════
@@ -783,7 +811,7 @@ const RESUMEN_GROUPS = {
 // ══════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════
-let allRows=[], infoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all';
+let allRows=[], infoRows=[], asistRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all';
 
 // ══════════════════════════════════════
 // FETCH CSV DESDE GOOGLE SHEETS
@@ -964,11 +992,13 @@ function calcBench(playerName){
 const CACHE_KEY='mitenis_cache_v1';
 function fmtUpdated(ts){ const d=new Date(ts); return isNaN(d)?'':d.toLocaleString('es-AR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function setUpdated(ts){ const e=document.getElementById('last-update'); if(e) e.textContent = ts ? ('Última actualización: '+fmtUpdated(ts)) : ''; }
-function applyData(dataMatrix, infoMatrix){
+function applyData(dataMatrix, infoMatrix, asistMatrix){
   if(dataMatrix.length) COL  = buildColMap(dataMatrix[0], COL_DEFAULT,  HEADER_ALIASES);
   if(infoMatrix && infoMatrix.length) INFO = buildColMap(infoMatrix[0], INFO_DEFAULT, INFO_ALIASES);
+  if(asistMatrix && asistMatrix.length) ASIST = buildColMap(asistMatrix[0], ASIST_DEFAULT, ASIST_ALIASES);
   allRows  = dataMatrix.slice(1).filter(r=>r[COL.alumno] && r[COL.alumno].length>0);
   infoRows = (infoMatrix && infoMatrix.length) ? infoMatrix.slice(1).filter(r=>r[INFO.alumno] && r[INFO.alumno].length>0) : [];
+  asistRows = (asistMatrix && asistMatrix.length) ? asistMatrix.slice(1).filter(r=>r[ASIST.jugador] && r[ASIST.jugador].length>0) : [];
 }
 function renderPlayers(){
   const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean).sort();
@@ -990,18 +1020,19 @@ async function init(){
   // 1) Cache para pintado instantáneo
   try{
     const raw=localStorage.getItem(CACHE_KEY);
-    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[]); renderPlayers(); setUpdated(cc.ts); } }
+    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[], cc.asist||[]); renderPlayers(); setUpdated(cc.ts); } }
   }catch(e){}
   // 2) Refresco en vivo desde el Sheet
   try{
-    const [dataMatrix, infoMatrix] = await Promise.all([
+    const [dataMatrix, infoMatrix, asistMatrix] = await Promise.all([
       fetchSheet(DATA_SHEET),
-      fetchSheet(INFO_SHEET).catch(()=>[])
+      fetchSheet(INFO_SHEET).catch(()=>[]),
+      fetchSheet(ASIST_SHEET).catch(()=>[])
     ]);
-    applyData(dataMatrix, infoMatrix);
+    applyData(dataMatrix, infoMatrix, asistMatrix);
     renderPlayers();
     const ts=Date.now(); setUpdated(ts);
-    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix})); }catch(e){}
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix, asist:asistMatrix})); }catch(e){}
   }catch(e){
     if(!allRows.length){
       const g=document.getElementById('player-grid');
@@ -1089,6 +1120,17 @@ function closeAvatarPicker(){ const ov=document.getElementById('av-overlay'); if
 // RESUMEN — pantallazo con filtro por mes
 // ══════════════════════════════════════
 function monthKey(s){ const d=parseDate(s[COL.fecha])||''; return d?d.slice(0,7):''; }
+function ymKey(dateStr){ const d=parseDate(dateStr)||''; return d?d.slice(0,7):''; }
+function attendanceFor(name, mk){
+  for(const r of asistRows){
+    if((r[ASIST.jugador]||'').trim()===(name||'').trim() && ymKey(r[ASIST.fecha])===mk){
+      const cum=n(r[ASIST.cumplidas]), obj=n(r[ASIST.objetivo]);
+      return {cumplidas:cum, objetivo:obj, pct: obj>0?Math.round(cum/obj*100):0, met: obj>0 && cum>=obj};
+    }
+  }
+  return null;
+}
+function attMonths(name){ return [...new Set(asistRows.filter(r=>(r[ASIST.jugador]||'').trim()===(name||'').trim()).map(r=>ymKey(r[ASIST.fecha])).filter(Boolean))].sort(); }
 function monthLabel(key){
   if(!key) return '';
   const a=key.split('-'); const d=new Date(Number(a[0]),Number(a[1])-1,1);
@@ -1188,7 +1230,9 @@ function buildResumen(){
     <div class="chart-wrap" style="height:380px;"><canvas id="ch-radar"></canvas></div>
   </div>`;
 
-  el.innerHTML = fichaHTML + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + radarHTML;
+  const at=attendanceFor(currentPlayer, curMonth);
+  const asistHTML = at ? `<div class="card"><div class="card-title">Asistencia · ${monthLabel(curMonth)}</div><div class="asist-row"><div class="asist-pct ${at.met?'ok':'low'}">${at.pct}%</div><div class="asist-meta"><div class="asist-bar"><div class="asist-fill ${at.met?'ok':'low'}" style="width:${Math.min(100,at.pct)}%;"></div></div><div class="asist-txt">${at.cumplidas} de ${at.objetivo} sesiones del mes${at.met?' · objetivo cumplido 🎾':''}</div></div></div></div>` : '';
+  el.innerHTML = fichaHTML + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + asistHTML + radarHTML;
   ldEl.style.display='none'; el.style.display='block';
 
   if(document.getElementById('ch-radar')){
@@ -1415,7 +1459,7 @@ function buildHistorial(){
 // ══════════════════════════════════════
 // LIGA — puntaje: asistencia + mejora mensual + bonus mental
 // ══════════════════════════════════════
-const LG = { ATTEND:5, IMPROVE:2, MENTAL_BONUS:10 };
+const LG = { ATTEND:10, IMPROVE:2, MENTAL_BONUS:10 };
 const LG_KEYS=[...AREA_KEYS.tecnica,...AREA_KEYS.tactica,...AREA_KEYS.fisico,...AREA_KEYS.mental];
 function sessionsOf(name){
   return allRows.filter(r=>r[COL.alumno]===name)
@@ -1442,7 +1486,9 @@ function scorePlayer(name, period){
   const months=playerMonths(name);
   const scope = period==='all' ? months : (months.indexOf(period)>=0?[period]:[]);
   const sessScope=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
-  const asistencia=sessScope.length*LG.ATTEND;
+  const aMonths = period==='all' ? attMonths(name) : [period];
+  let asistencia=0;
+  aMonths.forEach(mk=>{ const at=attendanceFor(name,mk); if(at && at.met) asistencia+=LG.ATTEND; });
   let gained=0;
   scope.forEach(mk=>{ const idx=months.indexOf(mk); const prev=idx>0?months[idx-1]:null; gained+=levelsGainedBetween(name,mk,prev); });
   const mejora=gained*LG.IMPROVE;
@@ -1477,7 +1523,7 @@ function buildLiga(){
   let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
   board.sort((a,b)=> b.total-a.total || b.mejora-a.mejora || b.asistencia-a.asistencia);
 
-  const explain=`<div class="nota">El puntaje premia el <strong>esfuerzo</strong>, no solo el nivel. Suma: <strong>+${LG.ATTEND}</strong> por cada <strong>asistencia</strong> · <strong>+${LG.IMPROVE}</strong> por cada <strong>nivel que sube</strong> de un mes al otro · <strong>+${LG.MENTAL_BONUS}</strong> si el promedio del área <strong>Mental</strong> es Funcional o Arma.</div>`;
+  const explain=`<div class="nota">El puntaje premia el <strong>esfuerzo</strong>, no solo el nivel. Suma: <strong>+${LG.ATTEND}</strong> al mes si cumplís tu <strong>objetivo de asistencia</strong> · <strong>+${LG.IMPROVE}</strong> por cada <strong>nivel que sube</strong> de un mes al otro · <strong>+${LG.MENTAL_BONUS}</strong> si el promedio del área <strong>Mental</strong> es Funcional o Arma.</div>`;
 
   const meScore=board.find(s=>s.name===currentPlayer);
   let meHTML;
