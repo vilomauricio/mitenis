@@ -521,6 +521,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ball-name{flex:1;}
 .balls{width:70px;justify-content:flex-start;flex-shrink:0;}
 .ball-label{width:104px;flex-shrink:0;text-align:center;}
+
+/* === v17: logo emoji + indicador de suba === */
+.logo-emoji{font-size:104px;line-height:1;}
+.rise-tag{display:inline-block;font-size:11px;font-weight:700;color:#136c34;background:#dcfce7;padding:3px 10px;border-radius:999px;margin-top:7px;}
 </style>
 </head>
 <body>
@@ -530,20 +534,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="landing-bg"></div>
   <div class="court-lines"></div>
   <div class="landing-content">
-    <div class="logo-ball">
-      <svg viewBox="0 0 240 430" fill="none" aria-label="mi tenis — pulgar arriba" xmlns="http://www.w3.org/2000/svg">
-        <!-- silueta azul (unión puño + pulgar) -->
-        <g fill="#5170ff">
-          <rect x="30" y="205" width="180" height="195" rx="85"/>
-          <rect x="118" y="24" width="92" height="376" rx="46"/>
-        </g>
-        <!-- hueco (color del fondo) para dejar el contorno -->
-        <g fill="#f3fe76">
-          <rect x="54" y="229" width="132" height="147" rx="61"/>
-          <rect x="142" y="48" width="44" height="328" rx="22"/>
-        </g>
-      </svg>
-    </div>
+    <div class="logo-ball"><div class="logo-emoji">👍</div></div>
     <div class="landing-title"><span>mi</span> tenis</div>
     <div class="landing-sub">sistema de rendimiento para jugadores de tenis</div>
     <div class="select-card">
@@ -553,7 +544,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="last-update" id="last-update"></div>
     </div>
-    <button class="coach-btn" onclick="openCoach()">👨‍🏫 Modo Profe</button>
+    <button class="coach-btn" onclick="openCoach()">🧢 Modo Profe</button>
   </div>
 </div>
 
@@ -612,7 +603,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <header class="app-header">
     <div class="header-top">
       <button class="header-back" onclick="closeCoach()">← Volver</button>
-      <div class="header-player"><div class="header-name">👨‍🏫 Modo Profe</div></div>
+      <div class="header-player"><div class="header-name">🧢 Modo Profe</div></div>
       <div style="width:60px;"></div>
     </div>
   </header>
@@ -1405,6 +1396,10 @@ function buildRubrica(){
   }
   const fsess=filterByMonth(sess);
   const last=fsess[fsess.length-1];
+  const _months=[...new Set(playerSessions.map(monthKey).filter(Boolean))].sort();
+  const _curMk=last?monthKey(last):'';
+  const _prevMk=_months.indexOf(_curMk)>0?_months[_months.indexOf(_curMk)-1]:null;
+  const prevLast=(_prevMk?playerSessions.filter(s=>monthKey(s)===_prevMk):[]).slice(-1)[0]||null;
   const bench=calcBench(currentPlayer);
   const info=getInfo(currentPlayer);
   const catName=info?info[INFO.categoria]:'';
@@ -1417,14 +1412,15 @@ function buildRubrica(){
       if(!arr.length) return '';
       const p=arr.reduce((x,y)=>x+y,0)/arr.length;
       const lv=Math.round(p);
-      let cat=0; if(bench){ const cv=g.keys.map(k=>bench[k]||0).filter(v=>v>0); cat=cv.length?cv.reduce((x,y)=>x+y,0)/cv.length:0; }
-      const catLv=cat>0?Math.round(cat):0;
+      let prevLv=0; if(prevLast){ const pa=g.keys.map(k=>toLvl(prevLast[COL[k]])).filter(v=>v>0); if(pa.length) prevLv=Math.round(pa.reduce((x,y)=>x+y,0)/pa.length); }
+      const rise = prevLv>0 && lv>prevLv;
       return `<div class="ball-item">
         <div class="ball-row">
           <span class="ball-name">${g.nombre}</span>
           <span class="balls">${balls(lv)}</span>
           <span class="ball-label lb${lv}">${lvlLabel(lv)}</span>
         </div>
+        ${rise?`<div class="rise-tag">🔥 ¡Subiste de nivel!</div>`:''}
       </div>`;
     }).filter(Boolean).join('');
     if(!rows) return '';
@@ -1500,7 +1496,7 @@ function buildPlan(){
   };
   let fort='';
   if(g3.length) fort=`<div class="plan-group-title"><span class="dot dot-3"></span> Fortalezas (${g3.length})</div><div class="plan-armas-wrap">`+g3.map(it=>`<span class="plan-arma">${it.emoji} ${it.nombre}</span>`).join('')+`</div>`;
-  el.innerHTML = monthChipsHTML() + objetivoHTML + obsHTML
+  el.innerHTML = monthChipsHTML() + obsHTML
     + `<div class="nota">Marcá con el casillero las variables que vas a priorizar en las próximas semanas.</div>`
     + legend
     + planAcc('A trabajar', g1,'dot-1','lv1',true)
