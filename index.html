@@ -553,6 +553,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .perf-grid{display:block;}
 .perf-card{break-inside:avoid;-webkit-column-break-inside:avoid;margin-bottom:16px;}
 @media(min-width:760px){.perf-grid{column-count:2;column-gap:16px;}}
+
+/* === v25: Modo Profe (intro, filtros 2col, asistencia, ranking número) === */
+.cz-intro{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;}
+.cz-intro-t{font-weight:800;font-size:16px;color:var(--blue);margin-bottom:6px;}
+.cz-intro-d{font-size:13px;color:var(--text);line-height:1.55;}
+.cz-filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+.cz-filters .card{margin:0;}
+.cz-asist{display:flex;gap:14px;}
+.cz-stat{flex:1;background:var(--surf2);border-radius:var(--radius-sm);padding:12px;text-align:center;}
+.cz-stat-val{font-size:26px;font-weight:800;color:var(--text);line-height:1;}
+.cz-stat-val span{font-size:12px;color:var(--hint);font-weight:600;}
+.cz-stat-lbl{font-size:11px;color:var(--muted);margin-top:5px;}
+.cz-rank{font-size:15px;font-weight:800;color:var(--muted);width:20px;text-align:center;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -1262,13 +1275,14 @@ function buildCoach(){
   const dPts=(cur,prev)=>{ if(!prevMonth||cur<=0||prev<=0) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>=0.05) return `<div class="mc-delta up">↑ +${d.toFixed(1)}</div>`; if(d<=-0.05) return `<div class="mc-delta down">↓ ${d.toFixed(1)}</div>`; return '<div class="mc-delta flat">= igual</div>'; };
   const dCount=(cur,prev)=>{ if(!prevMonth) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>0) return `<div class="mc-delta up">↑ +${d}</div>`; if(d<0) return `<div class="mc-delta down">↓ ${d}</div>`; return '<div class="mc-delta flat">= igual</div>'; };
 
-  const obsCard=`<div class="metric-card"><div class="mc-label">👤 Alumnos registrados</div><div class="mc-value">${players.length}</div></div>`;
+  const obsCard=`<div class="metric-card"><div class="mc-label">👤 Alumnos CDyCA</div><div class="mc-value">${players.length}</div></div>`;
   const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
   const totCard=`<div class="metric-card mc-hl"><div class="mc-label">Promedio clase</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
-  const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map(d=>{
+  const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map((d,i)=>{
     const a=d.at;
     return `<div class="cz-row">
+      <div class="cz-rank">${i+1}</div>
       <div class="cz-av" style="background:${avatarColor(d.p)};"></div>
       <div class="cz-name">${d.p}</div>
       <div class="cz-ind">
@@ -1279,17 +1293,20 @@ function buildCoach(){
   }).join('');
 
   const withAt=data.filter(d=>d.at); const metN=withAt.filter(d=>d.at.met).length;
+  let _sc=0,_so=0; withAt.forEach(d=>{ _sc+=d.at.cumplidas; _so+=d.at.objetivo; }); const genPct=_so>0?Math.round(_sc/_so*100):0;
   const catPalette=['#f3fe76','#ff9f43','#ff5d5d','#5eead4','#a78bfa','#ffffff','#86efac'];
   const catColorHex=(ct,i)=>{ const t=(ct||'').toLowerCase(); if(t.includes('verde'))return '#22c55e'; if(t.includes('naranja'))return '#ff9f43'; if(t.includes('roj'))return '#ff5d5d'; if(t.includes('amar'))return '#f5ff80'; if(t.includes('azul'))return '#7aa2ff'; return catPalette[i%catPalette.length]; };
+  const hexA=(h,a)=>{const n=(h||'').replace('#','');const r=parseInt(n.slice(0,2),16)||0,g=parseInt(n.slice(2,4),16)||0,b=parseInt(n.slice(4,6),16)||0;return 'rgba('+r+','+g+','+b+','+a+')';};
   const catData=cats.map((ct,i)=>{
     const studs=allPlayersList.filter(p=>catOf(p)===ct);
     const dd=areas.map(a=>{ const vals=studs.map(p=>{const s=lastInMonth(p,curMonth); return s?avgLvlKeys(s,AREA_KEYS[a]):0;}).filter(v=>v>0); return vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:0; });
     return {label:ct, data:dd, color:catColorHex(ct,i)};
   });
-  el.innerHTML = monthChips + catChips
+  el.innerHTML = `<div class="cz-intro"><div class="cz-intro-t">🧢 Modo Profe</div><div class="cz-intro-d">Panorama de toda la clase: mirá el promedio por área, compará las categorías, seguí la asistencia y el ranking de los alumnos para detectar quién va bien y a quién darle foco. Usá los filtros de mes y categoría para acotar lo que ves.</div></div>`
+    + `<div class="cz-filters">${monthChips}${catChips}</div>`
     + `<div class="cz-h">Promedio de la clase${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
-    + `<div class="card"><div class="card-title">Asistencia del mes</div><div class="nota" style="margin:0;">${withAt.length?(metN+' de '+withAt.length+' alumnos cumplieron su objetivo de asistencia.'):'Sin datos de asistencia para este mes.'}</div></div>`
+    + `<div class="card"><div class="card-title">Asistencia del mes</div>${withAt.length?`<div class="cz-asist"><div class="cz-stat"><div class="cz-stat-val">${genPct}%</div><div class="cz-stat-lbl">Asistencia general</div></div><div class="cz-stat"><div class="cz-stat-val">${metN}<span> / ${withAt.length}</span></div><div class="cz-stat-lbl">Cumplieron su objetivo</div></div></div>`:'<div class="nota" style="margin:0;">Sin datos de asistencia para este mes.</div>'}</div>`
     + `<div class="cz-bottom">
         <div class="cz-radar"><div class="cz-h" style="margin:0 0 4px;">Comparación por categoría${curMonth?' · '+mLabelFull(curMonth):''}</div><div class="chart-wrap" style="height:300px;"><canvas id="ch-coach-radar"></canvas></div></div>
         <div class="card cz-rank-card"><div class="card-title">Ranking de alumnos · ${players.length}</div>${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div>
@@ -1298,7 +1315,7 @@ function buildCoach(){
   const _cv=document.getElementById('ch-coach-radar');
   if(_cv && catData.length){
     charts['coachRadar']=new Chart(_cv,{type:'radar',
-      data:{labels:['Técnica','Táctica','Físico','Mental'],datasets:catData.map(cd=>({label:cd.label,data:cd.data,borderColor:cd.color,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:cd.color}))},
+      data:{labels:['🎾 Técnica','♟️ Táctica','⚡ Físico','🧠 Mental'],datasets:catData.map(cd=>({label:cd.label,data:cd.data,borderColor:cd.color,backgroundColor:hexA(cd.color,0.18),fill:true,borderWidth:2,pointRadius:3,pointBackgroundColor:cd.color}))},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:true,position:'bottom',labels:{color:'#ffffff',font:{size:11},boxWidth:10,padding:10,usePointStyle:true}}},
         scales:{r:{min:0,max:3,ticks:{stepSize:1,backdropColor:'transparent',color:'rgba(255,255,255,0.7)',font:{size:9},callback:v=>['','A trabajar','Funciona','Excelente'][v]||''},grid:{color:'rgba(255,255,255,0.22)'},angleLines:{color:'rgba(255,255,255,0.22)'},pointLabels:{color:'#ffffff',font:{size:12,weight:'700'}}}}
