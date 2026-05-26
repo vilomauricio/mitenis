@@ -830,8 +830,6 @@ const RUBRICAS = {
   mental: [
     { key:'Error', nombre:'Tolerancia al error',
       desc:['Se cierra o cambia el juego tras 2 errores seguidos','Se recupera pero tarda 1–2 games en estabilizarse','Resetea entre puntos, sin arrastre emocional visible']},
-    { key:'Comunicacion', nombre:'Comunicación no verbal',
-      desc:['Raquetazo, cabeza baja, hombros caídos con frecuencia','Neutral, pocas señales positivas o negativas','Postura activa, lenguaje corporal abierto y positivo']},
     { key:'Presion', nombre:'Presión en momentos clave',
       desc:['Se apura y acorta el swing en puntos importantes','Juega seguro pero sin arriesgar en break points','Mantiene o sube el nivel en momentos decisivos']}
   ]
@@ -842,7 +840,7 @@ const AREA_KEYS = {
   tecnica:  ['Drive_Preparacion','Drive_control','Drive_Direccion','Reves_Estabilidad','Reves_slice','Saque_Primero','Saque_Segundo','Volea_subida','Volea_Ejecucion'],
   tactica:  ['Punto'],
   fisico:   ['Velocidad','Resistencia'],
-  mental:   ['Error','Comunicacion','Presion']
+  mental:   ['Error','Presion']
 };
 
 // Metadatos de área (para chips y agrupaciones del plan)
@@ -870,7 +868,6 @@ const RESUMEN_GROUPS = {
   ],
   mental:[
     {nombre:'Tolerancia al error', keys:['Error']},
-    {nombre:'Comunicación', keys:['Comunicacion']},
     {nombre:'Presión', keys:['Presion']}
   ]
 };
