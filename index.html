@@ -545,6 +545,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .cz-ind-val{font-size:18px;font-weight:800;color:var(--text);line-height:1;}
 .cz-ind-val span{font-size:10px;color:var(--hint);font-weight:600;}
 .cz-ind-val.ok{color:var(--lv3);} .cz-ind-val.low{color:var(--lv2);}
+
+/* === v22: pregunta-guía por variable === */
+.ball-q{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;}
 </style>
 </head>
 <body>
@@ -1476,6 +1479,7 @@ function buildRubrica(){
   const catName=info?info[INFO.categoria]:'';
   const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
   const balls=(lv)=>[1,2,3].map(i=>`<span class="thumb ${i<=lv?'on':'off'}">👍</span>`).join('');
+  const PERF_Q={'Construcción del punto':'¿Construye variando sus golpes?','Lectura del rival':'¿Ajusta su juego?','Gestión del marcador':'¿Sabe cuándo arriesgar?','Resistencia':'¿Se cansa rápido?','Velocidad':'¿Llega con equilibrio y tiempo?','Agilidad':'¿Recupera posición rápido?','Fuerza':'¿Juega profundo bajo cansancio?','Tolerancia al error':'¿Resetea entre puntos?','Presión':'¿Sube nivel en punto clave?','Comunicación':'¿Postura activa y positiva?','Concentración':'¿Se mantiene presente?'};
   const cards=areas.map(a=>{
     const grupos=RESUMEN_GROUPS[a.id];
     const rows=grupos.map(g=>{
@@ -1485,12 +1489,14 @@ function buildRubrica(){
       const lv=Math.round(p);
       let prevLv=0; if(prevLast){ const pa=g.keys.map(k=>toLvl(prevLast[COL[k]])).filter(v=>v>0); if(pa.length) prevLv=Math.round(pa.reduce((x,y)=>x+y,0)/pa.length); }
       const rise = prevLv>0 && lv>prevLv;
+      const q=PERF_Q[g.nombre]||'';
       return `<div class="ball-item">
         <div class="ball-row">
           <span class="ball-name">${g.nombre}</span>
           <span class="balls">${balls(lv)}</span>
           <span class="ball-label lb${lv}">${lvlLabel(lv)}</span>
         </div>
+        ${q?`<div class="ball-q">${q}</div>`:''}
         ${rise?`<div class="rise-tag">🔥 ¡Subiste de nivel!</div>`:''}
       </div>`;
     }).filter(Boolean).join('');
