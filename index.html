@@ -61,6 +61,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .pb-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
 .pb-name{font-size:13px;font-weight:600;color:var(--text);}
 .pb-meta{font-size:11px;color:var(--muted);}
+.player-cat-head{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 2px 2px;}
+.player-cat-head:first-child{margin-top:0;}
+.player-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);}
+.player-cat-count{margin-left:auto;font-size:10px;font-weight:600;color:var(--hint);background:var(--surf2);border-radius:99px;padding:2px 8px;letter-spacing:0;text-transform:none;}
 .loading-state{color:var(--muted);font-size:13px;padding:1rem;text-align:center;}
 
 /* APP */
@@ -403,6 +407,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .lg-me-pts span{font-size:14px;font-weight:600;opacity:.75;}
 .lg-break{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .lg-break-3{grid-template-columns:repeat(3,1fr);}
+.lg-break-5{grid-template-columns:repeat(5,1fr);gap:5px;}
+.lg-break-5 .lg-bk{padding:8px 3px;}
+.lg-break-5 .lg-bk-lbl{font-size:8px;}
 .lg-bk{background:rgba(255,255,255,.13);border-radius:10px;padding:9px 6px;text-align:center;}
 .lg-bk-ico{font-size:15px;line-height:1;}
 .lg-bk-val{font-size:16px;font-weight:800;margin-top:3px;}
@@ -1103,11 +1110,21 @@ function applyData(dataMatrix, infoMatrix, asistMatrix){
   asistRows = (asistMatrix && asistMatrix.length) ? asistMatrix.slice(1).filter(r=>r[ASIST.jugador] && r[ASIST.jugador].length>0) : [];
 }
 function renderPlayers(){
-  const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean).sort();
+  const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
   const grid=document.getElementById('player-grid');
   if(!grid) return;
   if(!players.length){ grid.innerHTML='<div class="loading-state">No hay jugadores cargados.</div>'; return; }
-  grid.innerHTML=players.map((name,i)=>{
+  const catOf=p=>{ const i=getInfo(p); return i?(i[INFO.categoria]||'').trim():''; };
+  const SIN='Sin categoría';
+  // Agrupar por categoría
+  const groups={};
+  players.forEach(p=>{ const c=catOf(p)||SIN; (groups[c]=groups[c]||[]).push(p); });
+  // Categorías en orden alfabético; "Sin categoría" siempre al final
+  const cats=Object.keys(groups).sort((a,b)=>{
+    if(a===SIN) return 1; if(b===SIN) return -1;
+    return a.localeCompare(b,'es',{sensitivity:'base',numeric:true});
+  });
+  const btn=name=>{
     const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const color=avatarColor(name);
     const ns=allRows.filter(r=>r[COL.alumno]===name).length;
@@ -1115,6 +1132,12 @@ function renderPlayers(){
       <div class="pb-avatar" style="background:${color};">${ini}</div>
       <div><div class="pb-name">${name}</div><div class="pb-meta">${ns} sesión${ns!==1?'es':''}</div></div>
     </button>`;
+  };
+  grid.innerHTML=cats.map(c=>{
+    const list=groups[c].slice().sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base',numeric:true}));
+    const dotColor = c===SIN ? 'var(--hint)' : catColor(c);
+    const head=`<div class="player-cat-head"><span class="player-cat-dot" style="background:${dotColor};"></span>${c}<span class="player-cat-count">${list.length}</span></div>`;
+    return head + list.map(btn).join('');
   }).join('');
 }
 async function init(){
@@ -1236,12 +1259,14 @@ function chooseAvatar(color){ if(currentPlayer) setAvatarColor(currentPlayer,col
 function closeAvatarPicker(){ const ov=document.getElementById('av-overlay'); if(ov) ov.classList.remove('show'); }
 function openLigaInfo(){
   const b=document.getElementById('liga-info-body');
-  if(b) b.innerHTML=`<p style="margin-bottom:10px;">La Liga es una <strong>competencia amistosa</strong> que premia el <strong>esfuerzo y la mejora</strong>, no solo el nivel. Te motiva a venir, progresar mes a mes y cuidar tu cabeza dentro de la cancha.</p>
+  if(b) b.innerHTML=`<p style="margin-bottom:10px;">La Liga es una <strong>competencia amistosa</strong> que premia la <strong>constancia y la excelencia</strong> en cada área. Te motiva a venir y a llevar cada parte de tu juego al máximo nivel.</p>
     <p style="margin:0 0 6px;font-weight:600;">Cómo se suman los puntos:</p>
     <ul style="margin:0 0 0 18px;padding:0;">
       <li style="margin-bottom:5px;"><strong>+${LG.ATTEND}</strong> al mes si cumplís tu objetivo de asistencia 📅</li>
-      <li style="margin-bottom:5px;"><strong>+${LG.IMPROVE}</strong> por cada nivel que subís de un mes al otro 📈</li>
-      <li><strong>+${LG.MENTAL_BONUS}</strong> si tu área <strong>Mental</strong> llega a Excelente 👍 🧠</li>
+      <li style="margin-bottom:5px;"><strong>+${LG.EXC.tactica}</strong> si tu área <strong>Táctica</strong> está en Excelente ♟️</li>
+      <li style="margin-bottom:5px;"><strong>+${LG.EXC.mental}</strong> si tu área <strong>Mental</strong> está en Excelente 🧠</li>
+      <li style="margin-bottom:5px;"><strong>+${LG.EXC.tecnica}</strong> si tu área <strong>Técnica</strong> está en Excelente 🎾</li>
+      <li><strong>+${LG.EXC.fisico}</strong> si tu área <strong>Físico</strong> está en Excelente ⚡</li>
     </ul>`;
   const ov=document.getElementById('liga-info-overlay'); if(ov) ov.classList.add('show');
 }
@@ -1446,6 +1471,8 @@ function buildResumen(){
 
   const bench=calcBench(currentPlayer);
   const areas=[{id:'tecnica',nombre:'Técnica'},{id:'tactica',nombre:'Táctica'},{id:'fisico',nombre:'Físico'},{id:'mental',nombre:'Mental'}];
+  const TIPS={tecnica:'Promedio de los golpes: Drive, Revés, Volea y Saque.',tactica:'Construcción del punto.',fisico:'Resistencia y Velocidad.',mental:'Tolerancia al error y Presión.'};
+  const tipBtn=(t)=>`<span class="mc-info"><button class="mc-info-btn" onclick="toggleTip(this)" aria-label="info">i</button><span class="mc-tip">${t}</span></span>`;
   const curAvgs={}, prevAvgs={};
   areas.forEach(a=>{ curAvgs[a.id]=areaAvgForSessions(curSess,a.id); prevAvgs[a.id]=areaAvgForSessions(prevSess,a.id); });
 
@@ -1458,7 +1485,7 @@ function buildResumen(){
         :`<div class="mc-delta flat">= vs ${prevLbl}</div>`);
     const cat=bench?(bench['avg_'+a.id]||0):0;
     return `<div class="metric-card">
-      <div class="mc-label">${AREA_META[a.id].emoji} ${a.nombre}</div>
+      <div class="mc-head"><div class="mc-label">${AREA_META[a.id].emoji} ${a.nombre}</div>${tipBtn(TIPS[a.id])}</div>
       <div class="mc-value">${v>0?`${v.toFixed(1)}<span class="mc-max"> / 3</span>`:'—'}</div>
       ${deltaHTML}
       ${cat>0?`<div class="mc-cat">Cat.: ${cat.toFixed(1)}</div>`:''}
@@ -1468,7 +1495,7 @@ function buildResumen(){
   const totVals=areas.map(a=>curAvgs[a.id]).filter(v=>v>0);
   const tot=totVals.length?totVals.reduce((x,y)=>x+y,0)/totVals.length:0;
   const totalCard=`<div class="metric-card mc-hl">
-    <div class="mc-label">Promedio total</div>
+    <div class="mc-head"><div class="mc-label">Promedio total</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div>
     <div class="mc-value">${tot>0?`${tot.toFixed(1)}<span class="mc-max"> / 3</span>`:'—'}</div>
     <div class="mc-cat">${monthLabel(curMonth)} · ${curSess.length} ses.</div>
   </div>`;
@@ -1711,45 +1738,34 @@ function buildHistorial(){
 }
 
 // ══════════════════════════════════════
-// LIGA — puntaje: asistencia + mejora mensual + bonus mental
+// LIGA — puntaje: asistencia + excelencia por área
+// +5 asistencia cumplida · +4 táctica · +3 mental · +2 técnica · +1 físico (cada área en nivel Excelente)
 // ══════════════════════════════════════
-const LG = { ATTEND:10, IMPROVE:2, MENTAL_BONUS:15 };
-const LG_KEYS=[...AREA_KEYS.tecnica,...AREA_KEYS.tactica,...AREA_KEYS.fisico,...AREA_KEYS.mental];
+const LG = { ATTEND:5, EXC:{tactica:4, mental:3, tecnica:2, fisico:1} };
 function sessionsOf(name){
   return allRows.filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
 }
-function playerMonths(name){ return [...new Set(sessionsOf(name).map(monthKey).filter(Boolean))].sort(); }
-function levelInMonth(name, mk, key){
-  const ss=sessionsOf(name).filter(s=>monthKey(s)===mk);
-  for(let i=ss.length-1;i>=0;i--){ const lv=toLvl(ss[i][COL[key]]); if(lv>0) return lv; }
-  return null;
-}
-function levelsGainedBetween(name, mk, prevMk){
-  if(!prevMk) return 0;
-  let g=0;
-  LG_KEYS.forEach(k=>{ const a=levelInMonth(name,prevMk,k), b=levelInMonth(name,mk,k); if(a!=null&&b!=null&&b>a) g+=(b-a); });
-  return g;
-}
-function mentalAvgScope(name, period){
+function areaAvgScope(name, period, areaId){
   const ss=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
-  const vals=ss.map(s=>avgLvlKeys(s,AREA_KEYS.mental)).filter(v=>v>0);
+  const vals=ss.map(s=>avgLvlKeys(s,AREA_KEYS[areaId])).filter(v=>v>0);
   return vals.length? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 }
 function scorePlayer(name, period){
-  const months=playerMonths(name);
-  const scope = period==='all' ? months : (months.indexOf(period)>=0?[period]:[]);
   const sessScope=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
   const aMonths = period==='all' ? attMonths(name) : [period];
   let asistencia=0;
   aMonths.forEach(mk=>{ const at=attendanceFor(name,mk); if(at && at.met) asistencia+=LG.ATTEND; });
-  let gained=0;
-  scope.forEach(mk=>{ const idx=months.indexOf(mk); const prev=idx>0?months[idx-1]:null; gained+=levelsGainedBetween(name,mk,prev); });
-  const mejora=gained*LG.IMPROVE;
-  const mAvg=mentalAvgScope(name,period);
-  const mentalLvl=mAvg>0?Math.round(mAvg):0;
-  const mentalBonus=mentalLvl===3?LG.MENTAL_BONUS:0;
-  return {name, asistencia, mejora, mentalBonus, gained, mentalLvl, sesiones:sessScope.length, total:asistencia+mejora+mentalBonus};
+  // Excelencia por área: el área cuenta si su promedio (redondeado) llega a nivel Excelente (3)
+  const exc={};
+  let excelencia=0;
+  Object.keys(LG.EXC).forEach(areaId=>{
+    const isExc = Math.round(areaAvgScope(name,period,areaId))===3;
+    const pts = isExc ? LG.EXC[areaId] : 0;
+    exc[areaId]=pts;
+    excelencia+=pts;
+  });
+  return {name, asistencia, exc, excelencia, sesiones:sessScope.length, total:asistencia+excelencia};
 }
 function areaTier(name, areaId){
   const sess=sessionsOf(name);
@@ -1775,7 +1791,7 @@ function buildLiga(){
   const avatarOf=name=>avatarColor(name);
   const iniOf=name=>name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
-  board.sort((a,b)=> b.total-a.total || b.mejora-a.mejora || b.asistencia-a.asistencia);
+  board.sort((a,b)=> b.total-a.total || b.excelencia-a.excelencia || b.asistencia-a.asistencia);
 
   const explain=`<button class="lg-info-btn" onclick="openLigaInfo()">ℹ️ ¿Cómo funciona la Liga?</button>`;
 
@@ -1788,10 +1804,12 @@ function buildLiga(){
         <div><div class="lg-me-lbl">Mi puntaje · ${periodLbl}</div><div class="lg-me-rank">${rank}º de ${board.length} · ${meScore.sesiones} ses.</div></div>
         <div class="lg-me-score"><div class="lg-me-pts">${meScore.total}<span> pts</span></div></div>
       </div>
-      <div class="lg-break lg-break-3">
-        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asistencia</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">📈</div><div class="lg-bk-val">${meScore.mejora}</div><div class="lg-bk-lbl">Mejora</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">🧠</div><div class="lg-bk-val">${meScore.mentalBonus}</div><div class="lg-bk-lbl">Mental</div></div>
+      <div class="lg-break lg-break-5">
+        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asist.</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">♟️</div><div class="lg-bk-val">${meScore.exc.tactica}</div><div class="lg-bk-lbl">Táctica</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🧠</div><div class="lg-bk-val">${meScore.exc.mental}</div><div class="lg-bk-lbl">Mental</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🎾</div><div class="lg-bk-val">${meScore.exc.tecnica}</div><div class="lg-bk-lbl">Técnica</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">⚡</div><div class="lg-bk-val">${meScore.exc.fisico}</div><div class="lg-bk-lbl">Físico</div></div>
       </div>
     </div>`;
   } else {
@@ -1818,7 +1836,7 @@ function buildLiga(){
       <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
       <div class="lg-info">
         <div class="lg-name">${s.name}</div>
-        <div class="lg-sub">📅 ${s.asistencia} · 📈 ${s.mejora} · 🧠 ${s.mentalBonus}</div>
+        <div class="lg-sub">📅 ${s.asistencia} · ⭐ ${s.excelencia} excelencia</div>
       </div>
       <div class="lg-pts">${s.total}<span> pts</span></div>
     </div>`;
