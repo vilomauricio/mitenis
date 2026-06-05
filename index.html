@@ -61,10 +61,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .pb-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
 .pb-name{font-size:13px;font-weight:600;color:var(--text);}
 .pb-meta{font-size:11px;color:var(--muted);}
-.player-cat-head{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 2px 2px;}
-.player-cat-head:first-child{margin-top:0;}
-.player-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);}
-.player-cat-count{margin-left:auto;font-size:10px;font-weight:600;color:var(--hint);background:var(--surf2);border-radius:99px;padding:2px 8px;letter-spacing:0;text-transform:none;}
+.player-list{display:block;}
+.player-acc{background:var(--surf);}
+.player-acc:last-child{margin-bottom:0;}
+.player-acc .acc-head{padding:12px 14px;}
+.player-acc .acc-title{font-size:14px;font-weight:700;color:var(--text);}
+.player-acc .acc-body-inner{padding:0 12px 12px;}
+.acc-right{display:flex;align-items:center;gap:9px;}
+.player-cat-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);}
+.player-cat-count{font-size:11px;font-weight:700;color:var(--muted);background:var(--surf2);border-radius:99px;padding:2px 9px;min-width:24px;text-align:center;}
 .loading-state{color:var(--muted);font-size:13px;padding:1rem;text-align:center;}
 
 /* APP */
@@ -603,7 +608,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="landing-sub">sistema de rendimiento para jugadores de tenis</div>
     <div class="select-card">
       <div class="select-label">Seleccioná un jugador</div>
-      <div class="player-grid" id="player-grid">
+      <div class="player-list" id="player-grid">
         <div class="loading-state">Cargando jugadores…</div>
       </div>
       <div class="last-update" id="last-update"></div>
@@ -1133,11 +1138,19 @@ function renderPlayers(){
       <div><div class="pb-name">${name}</div><div class="pb-meta">${ns} sesión${ns!==1?'es':''}</div></div>
     </button>`;
   };
-  grid.innerHTML=cats.map(c=>{
+  grid.innerHTML=cats.map((c,idx)=>{
     const list=groups[c].slice().sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base',numeric:true}));
     const dotColor = c===SIN ? 'var(--hint)' : catColor(c);
-    const head=`<div class="player-cat-head"><span class="player-cat-dot" style="background:${dotColor};"></span>${c}<span class="player-cat-count">${list.length}</span></div>`;
-    return head + list.map(btn).join('');
+    const open = idx===0 ? ' open' : ''; // primera categoría abierta por defecto
+    return `<div class="acc player-acc${open}">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <span class="acc-title"><span class="player-cat-dot" style="background:${dotColor};"></span>${c}</span>
+        <span class="acc-right"><span class="player-cat-count">${list.length}</span><span class="acc-chevron">▾</span></span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div class="player-grid">${list.map(btn).join('')}</div>
+      </div></div>
+    </div>`;
   }).join('');
 }
 async function init(){
@@ -1334,8 +1347,9 @@ function buildCoach(){
     const ptv=areas.map(a=>pAvg[a]).filter(v=>v>0); pTot=ptv.length?ptv.reduce((x,y)=>x+y,0)/ptv.length:0;
     obsPrev=pd.filter(d=>d.obs).length;
   }
-  const dPts=(cur,prev)=>{ if(!prevMonth||cur<=0||prev<=0) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>=0.05) return `<div class="mc-delta up">↑ +${d.toFixed(1)}</div>`; if(d<=-0.05) return `<div class="mc-delta down">↓ ${d.toFixed(1)}</div>`; return '<div class="mc-delta flat">= igual</div>'; };
-  const dCount=(cur,prev)=>{ if(!prevMonth) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>0) return `<div class="mc-delta up">↑ +${d}</div>`; if(d<0) return `<div class="mc-delta down">↓ ${d}</div>`; return '<div class="mc-delta flat">= igual</div>'; };
+  const prevLbl = prevMonth?mLabelFull(prevMonth):'';
+  const dPts=(cur,prev)=>{ if(!prevMonth||cur<=0||prev<=0) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>=0.05) return `<div class="mc-delta up">↑ +${d.toFixed(1)} vs ${prevLbl}</div>`; if(d<=-0.05) return `<div class="mc-delta down">↓ ${d.toFixed(1)} vs ${prevLbl}</div>`; return `<div class="mc-delta flat">= vs ${prevLbl}</div>`; };
+  const dCount=(cur,prev)=>{ if(!prevMonth) return '<div class="mc-delta flat">—</div>'; const d=cur-prev; if(d>0) return `<div class="mc-delta up">↑ +${d} vs ${prevLbl}</div>`; if(d<0) return `<div class="mc-delta down">↓ ${d} vs ${prevLbl}</div>`; return `<div class="mc-delta flat">= vs ${prevLbl}</div>`; };
 
   const TIPS={tecnica:'Promedio de los golpes: Drive, Revés, Volea y Saque.',tactica:'Construcción del punto.',fisico:'Resistencia y Velocidad.',mental:'Tolerancia al error y Presión.'};
   const tipBtn=(t)=>`<span class="mc-info"><button class="mc-info-btn" onclick="toggleTip(this)" aria-label="info">i</button><span class="mc-tip">${t}</span></span>`;
@@ -1781,13 +1795,18 @@ const TIER_MEDAL={3:{ic:'🥇',name:'Oro'},2:{ic:'🥈',name:'Plata'},1:{ic:'�
 function buildLiga(){
   const el=document.getElementById('content-liga');
   const ldEl=document.getElementById('loading-liga');
-  const allPlayers=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
+  const catOf=p=>{ const i=getInfo(p); return i?(i[INFO.categoria]||'').trim():''; };
+  const myCat=catOf(currentPlayer);
+  const catLbl = myCat || 'Sin categoría';
+  // La Liga compara a cada jugador solo con sus compañeros de la misma categoría
+  const allPlayers=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean).filter(p=>catOf(p)===myCat);
   if(!allPlayers.length){
     ldEl.style.display='none'; el.style.display='block';
     el.innerHTML=monthChipsHTML()+'<div class="empty">Todavía no hay datos para armar la liga.</div>'; return;
   }
   const period=selectedMonth;
   const periodLbl = period==='all' ? 'General · todos los meses' : monthLabel(period);
+  const catNote=`<div class="nota" style="margin-bottom:12px;">🏷️ Competís en el ranking de tu categoría: <strong>${catLbl}</strong>.</div>`;
   const avatarOf=name=>avatarColor(name);
   const iniOf=name=>name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
@@ -1854,9 +1873,9 @@ function buildLiga(){
     </div>`;
   }).join('');
 
-  el.innerHTML = monthChipsHTML() + explain + meHTML
-    + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${periodLbl}</div>${podiumHTML}</div>`:'')
-    + `<div class="card"><div class="card-title">Tabla de posiciones</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`;
+  el.innerHTML = monthChipsHTML() + explain + catNote + meHTML
+    + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${catLbl}</div>${podiumHTML}</div>`:'')
+    + `<div class="card"><div class="card-title">Tabla de posiciones · ${catLbl}</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`;
   ldEl.style.display='none'; el.style.display='block';
 }
 
