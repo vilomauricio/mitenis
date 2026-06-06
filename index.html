@@ -608,11 +608,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .rb-dl{font-size:20px;font-weight:700;flex-shrink:0;opacity:.95;}
 
 /* === v28: filtros acordeón compacto + dot categoría grande === */
-.filter-acc{margin-bottom:10px;}
-.filter-acc .acc-head{padding:10px 14px;}
+/* filtro de mes SIN card blanca (fondo transparente, sin borde) */
+.filter-acc{margin-bottom:8px;background:transparent;border:none;border-radius:0;overflow:visible;}
+.filter-acc .acc-head{padding:8px 2px;}
+.filter-acc .acc-head:hover{background:transparent;}
 .filter-acc .acc-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text);display:inline-flex;align-items:center;gap:4px;}
 .filter-acc .acc-sub{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px;}
-.filter-acc .acc-body-inner{padding:0 14px 12px;}
+.filter-acc .acc-body-inner{padding:0 2px 10px;}
+
+/* === Historial: calendario de sesiones === */
+.cal-card{padding:16px;}
+.cal-dows{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px;}
+.cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.03em;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-cell{position:relative;aspect-ratio:1/1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;color:var(--text);background:var(--surf2);border:1px solid transparent;}
+.cal-cell.empty{background:transparent;}
+.cal-cell .cal-num{font-weight:600;line-height:1;}
+button.cal-cell{cursor:pointer;font-family:'Inter',sans-serif;transition:transform .12s,box-shadow .12s;padding:0;}
+button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(81,112,255,.22);}
+.cal-cell.cal-has{background:var(--blue);color:#fff;border-color:var(--blue-d);}
+.cal-cell.cal-has .cal-dot{width:5px;height:5px;border-radius:50%;background:#fff;margin-top:3px;}
+.cal-badge{position:absolute;top:3px;right:4px;font-size:9px;font-weight:800;background:var(--ball);color:#5b5400;border-radius:99px;padding:0 4px;line-height:14px;min-width:14px;text-align:center;}
+.cal-cell.cal-dl{background:var(--ball);color:#5b5400;border-color:#d9e84a;}
+.cal-cell.cal-dl .cal-dlico{font-size:11px;line-height:1;margin-top:1px;}
+.cal-cell.cal-dl.has{box-shadow:inset 0 0 0 2px var(--blue);}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--muted);}
+.cal-legend span{display:inline-flex;align-items:center;gap:6px;}
+.cal-legend .lg-swatch{width:13px;height:13px;border-radius:4px;flex-shrink:0;}
+.report-badge-out{margin-top:10px;margin-bottom:20px;}
 </style>
 </head>
 <body>
@@ -720,6 +743,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="pin-title">🧢 Modo Profe</div>
     <div id="coach-info-body" style="font-size:13px;color:var(--text);line-height:1.6;text-align:left;"></div>
     <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeCoachInfo()">Entendido</button></div>
+  </div>
+</div>
+
+<div class="pin-overlay" id="hist-day-overlay">
+  <div class="pin-modal" style="max-width:420px;">
+    <div class="pin-title" id="hist-day-title">Sesión</div>
+    <div id="hist-day-body" style="text-align:left;max-height:60vh;overflow-y:auto;margin-top:4px;"></div>
+    <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeHistDay()">Cerrar</button></div>
   </div>
 </div>
 
@@ -1553,7 +1584,7 @@ function buildResumen(){
 
   const at=attendanceFor(currentPlayer, curMonth);
   const asistHTML = at ? `<div class="card"><div class="card-title">Asistencia · ${monthLabel(curMonth)}</div><div class="asist-row"><div class="asist-pct ${at.met?'ok':'low'}">${at.pct}%</div><div class="asist-meta"><div class="asist-bar"><div class="asist-fill ${at.met?'ok':'low'}" style="width:${Math.min(100,at.pct)}%;"></div></div><div class="asist-txt">${at.cumplidas} de ${at.objetivo} sesiones del mes${at.met?' · objetivo cumplido 🎾':''}</div></div></div></div>` : '';
-  el.innerHTML = fichaHTML + chips + `<div class="metrics-row">${cards}${totalCard}</div>` + asistHTML + radarHTML;
+  el.innerHTML = chips + fichaHTML + `<div class="metrics-row">${cards}${totalCard}</div>` + asistHTML + radarHTML;
   ldEl.style.display='none'; el.style.display='block';
 
   if(document.getElementById('ch-radar')){
@@ -1699,8 +1730,6 @@ function buildPlan(){
   const g1=items.filter(i=>i.lv===1), g2=items.filter(i=>i.lv===2), g3=items.filter(i=>i.lv===3);
   const objetivoHTML = (info && info[INFO.objetivo])
     ? `<div class="card"><div class="card-title">🎯 Objetivo</div><div class="feedback-block feedback-coach">${info[INFO.objetivo]}</div></div>` : '';
-  const obs=last[COL.obs_profe];
-  const obsHTML = `<div class="card"><div class="card-title">Observación del profe · ${fmtDate(last[COL.fecha])}</div><div class="feedback-block feedback-coach">${obs?obs:'Sin observación registrada en la última sesión.'}</div></div>`;
   const legend=`<div class="sem-legend" style="margin-bottom:14px;">
     <span class="sem-leg" style="background:var(--n1);color:#161616;">A trabajar</span>
     <span class="sem-leg" style="background:var(--n2);color:#161616;">En progreso</span>
@@ -1726,7 +1755,7 @@ function buildPlan(){
   };
   let fort='';
   if(g3.length) fort=`<div class="plan-group-title"><span class="dot dot-3"></span> Fortalezas (${g3.length})</div><div class="plan-armas-wrap">`+g3.map(it=>`<span class="plan-arma">${it.emoji} ${it.nombre}</span>`).join('')+`</div>`;
-  el.innerHTML = monthChipsHTML() + obsHTML
+  el.innerHTML = monthChipsHTML()
     + `<div class="nota">Marcá con el casillero las variables que vas a priorizar en las próximas semanas.</div>`
     + legend
     + planAcc('A trabajar', g1,'dot-1','lv1',true)
@@ -1737,6 +1766,91 @@ function buildPlan(){
 // ══════════════════════════════════════
 // HISTORIAL
 // ══════════════════════════════════════
+// Detalle de una sesión (usado en el modal del calendario)
+function renderHistSession(s){
+  const tipo=s[COL.tipo]||'';
+  const tLvl=Math.round(avgLvlKeys(s,AREA_KEYS.tecnica));
+  const tacLvl=Math.round(avgLvlKeys(s,AREA_KEYS.tactica));
+  const fLvl=Math.round(avgLvlKeys(s,AREA_KEYS.fisico));
+  const mLvl=Math.round(avgLvlKeys(s,AREA_KEYS.mental));
+  const t=tipo.toLowerCase();
+  const dot=t.includes('torneo')?'var(--lv1)':t.includes('partido')?'var(--lv2)':t.includes('físic')||t.includes('fisic')?'var(--fis)':t.includes('mental')?'var(--men)':'var(--tec)';
+  return `<div class="session-item">
+    <div class="session-dot" style="background:${dot};margin-top:6px;"></div>
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+        <span class="ctx-badge ${ctxClass(tipo)}">${ctxLabel(tipo)}</span>
+        <span class="session-date">${fmtDate(s[COL.fecha])}</span>
+      </div>
+      ${s[COL.descripcion]?`<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${s[COL.descripcion]}</div>`:''}
+      <div class="session-pills">
+        ${tLvl?`<span class="session-pill pill-tec">Téc: ${lvlLabel(tLvl)}</span>`:''}
+        ${tacLvl?`<span class="session-pill pill-tac">Tác: ${lvlLabel(tacLvl)}</span>`:''}
+        ${fLvl?`<span class="session-pill pill-fis">Fís: ${lvlLabel(fLvl)}</span>`:''}
+        ${mLvl?`<span class="session-pill pill-men">Men: ${lvlLabel(mLvl)}</span>`:''}
+      </div>
+      ${s[COL.obs_profe]?`<div class="hist-obs-h">Observación del Profe</div><div class="feedback-block feedback-coach">${s[COL.obs_profe]}</div>`:''}
+    </div>
+  </div>`;
+}
+
+// Abre el detalle de las sesiones de un día concreto
+function openHistDay(pl, mk, day){
+  const target=mk+'-'+String(day).padStart(2,'0');
+  const list=playerSessions.filter(s=>parseDate(s[COL.fecha])===target);
+  const title=document.getElementById('hist-day-title');
+  const body=document.getElementById('hist-day-body');
+  if(title) title.textContent= list.length ? fmtDate(list[0][COL.fecha]) : 'Sesión';
+  if(body) body.innerHTML= list.length ? list.map(renderHistSession).join('') : '<div class="empty" style="color:var(--muted);">Sin detalle para este día.</div>';
+  const ov=document.getElementById('hist-day-overlay'); if(ov) ov.classList.add('show');
+}
+function closeHistDay(){ const ov=document.getElementById('hist-day-overlay'); if(ov) ov.classList.remove('show'); }
+
+// Calendario de un mes: marca días con sesión y resalta el último día (descarga)
+function buildMonthCalendar(mk, monthSessions, pl){
+  const parts=mk.split('-'); const y=Number(parts[0]); const m=Number(parts[1]);
+  const lastDay=new Date(y, m, 0).getDate();
+  let startDow=new Date(y, m-1, 1).getDay();   // 0=Dom..6=Sáb
+  startDow=(startDow+6)%7;                       // semana arranca en Lunes
+  const dayCount={};
+  monthSessions.forEach(s=>{ const d=parseDate(s[COL.fecha]); if(!d) return; const dd=Number(d.slice(8,10)); dayCount[dd]=(dayCount[dd]||0)+1; });
+  const dows=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  let cells='';
+  for(let i=0;i<startDow;i++) cells+='<div class="cal-cell empty"></div>';
+  for(let day=1; day<=lastDay; day++){
+    const has=dayCount[day]>0;
+    const isLast=day===lastDay;
+    if(isLast){
+      cells+=`<button class="cal-cell cal-dl${has?' has':''}" onclick="downloadMonthReport('${pl}','${mk}')" title="Descargar el reporte completo de ${monthLabel(mk)}">
+        <span class="cal-num">${day}</span><span class="cal-dlico">📄</span>
+        ${dayCount[day]>1?`<span class="cal-badge">${dayCount[day]}</span>`:''}
+      </button>`;
+    } else if(has){
+      cells+=`<button class="cal-cell cal-has" onclick="openHistDay('${pl}','${mk}',${day})" title="Ver sesión">
+        <span class="cal-num">${day}</span><span class="cal-dot"></span>
+        ${dayCount[day]>1?`<span class="cal-badge">${dayCount[day]}</span>`:''}
+      </button>`;
+    } else {
+      cells+=`<div class="cal-cell"><span class="cal-num">${day}</span></div>`;
+    }
+  }
+  const n=monthSessions.length;
+  return `<div class="card cal-card">
+      <div class="card-title">${monthLabel(mk)} · ${n} sesión${n!==1?'es':''}</div>
+      <div class="cal-dows">${dows.map(d=>`<div class="cal-dow">${d}</div>`).join('')}</div>
+      <div class="cal-grid">${cells}</div>
+      <div class="cal-legend">
+        <span><span class="lg-swatch" style="background:var(--blue);"></span> Día con sesión</span>
+        <span><span class="lg-swatch" style="background:var(--ball);"></span> Descargar reporte del mes</span>
+      </div>
+    </div>
+    <button class="report-badge report-badge-out" onclick="downloadMonthReport('${pl}','${mk}')">
+      <span class="rb-ic">📄</span>
+      <span class="rb-tx"><span class="rb-title">Descargar Reporte de Rendimiento</span><span class="rb-sub">${monthLabel(mk)} · resumen completo del mes</span></span>
+      <span class="rb-dl">⬇</span>
+    </button>`;
+}
+
 function buildHistorial(){
   const el=document.getElementById('content-historial');
   const ldEl=document.getElementById('loading-historial');
@@ -1745,53 +1859,14 @@ function buildHistorial(){
     ldEl.style.display='none'; el.style.display='block';
     el.innerHTML=monthChipsHTML()+'<div class="empty">No hay sesiones registradas.</div>'; return;
   }
-  const renderSession=(s)=>{
-    const tipo=s[COL.tipo]||'';
-    const tLvl=Math.round(avgLvlKeys(s,AREA_KEYS.tecnica));
-    const tacLvl=Math.round(avgLvlKeys(s,AREA_KEYS.tactica));
-    const fLvl=Math.round(avgLvlKeys(s,AREA_KEYS.fisico));
-    const mLvl=Math.round(avgLvlKeys(s,AREA_KEYS.mental));
-    const t=tipo.toLowerCase();
-    const dot=t.includes('torneo')?'var(--lv1)':t.includes('partido')?'var(--lv2)':t.includes('físic')||t.includes('fisic')?'var(--fis)':t.includes('mental')?'var(--men)':'var(--tec)';
-    return `<div class="session-item">
-      <div class="session-dot" style="background:${dot};margin-top:6px;"></div>
-      <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-          <span class="ctx-badge ${ctxClass(tipo)}">${ctxLabel(tipo)}</span>
-          <span class="session-date">${fmtDate(s[COL.fecha])}</span>
-        </div>
-        ${s[COL.descripcion]?`<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${s[COL.descripcion]}</div>`:''}
-        <div class="session-pills">
-          ${tLvl?`<span class="session-pill pill-tec">Téc: ${lvlLabel(tLvl)}</span>`:''}
-          ${tacLvl?`<span class="session-pill pill-tac">Tác: ${lvlLabel(tacLvl)}</span>`:''}
-          ${fLvl?`<span class="session-pill pill-fis">Fís: ${lvlLabel(fLvl)}</span>`:''}
-          ${mLvl?`<span class="session-pill pill-men">Men: ${lvlLabel(mLvl)}</span>`:''}
-        </div>
-        ${s[COL.obs_profe]?`<div class="hist-obs-h">Observación del Profe</div><div class="feedback-block feedback-coach">${s[COL.obs_profe]}</div>`:''}
-      </div>
-    </div>`;
-  };
   // Agrupar por mes (más reciente primero)
   const byMonth={};
   sess.forEach(s=>{ const mk=monthKey(s); if(!mk) return; (byMonth[mk]=byMonth[mk]||[]).push(s); });
   const months=Object.keys(byMonth).sort().reverse();
   const pl=currentPlayer.replace(/'/g,"\\'");
-  const monthsHTML=months.map(mk=>{
-    const ms=[...byMonth[mk]].reverse(); // dentro del mes, más reciente arriba
-    const n=ms.length;
-    const rows=ms.map(renderSession).join('');
-    const badge=`<button class="report-badge" onclick="downloadMonthReport('${pl}','${mk}')">
-      <span class="rb-ic">📄</span>
-      <span class="rb-tx"><span class="rb-title">Descargar Reporte de Rendimiento</span><span class="rb-sub">${monthLabel(mk)} · resumen completo del mes</span></span>
-      <span class="rb-dl">⬇</span>
-    </button>`;
-    return `<div class="card hist-month">
-      <div class="card-title">${monthLabel(mk)} · ${n} sesión${n!==1?'es':''}</div>
-      ${rows}
-      ${badge}
-    </div>`;
-  }).join('');
-  el.innerHTML=monthChipsHTML()+monthsHTML;
+  const desc=`<div class="nota">📅 Tu calendario de entrenamiento. Los días en <strong>azul</strong> tienen una sesión registrada — tocalos para ver el detalle. El <strong>último día del mes</strong> (en amarillo 📄) te deja descargar tu registro completo del mes.</div>`;
+  const calsHTML=months.map(mk=>buildMonthCalendar(mk, byMonth[mk], pl)).join('');
+  el.innerHTML=monthChipsHTML()+desc+calsHTML;
   ldEl.style.display='none'; el.style.display='block';
 }
 
@@ -2066,7 +2141,7 @@ function buildLiga(){
     </div>`;
   }).join('');
 
-  el.innerHTML = monthChipsHTML() + explain + catNote + meHTML
+  el.innerHTML = explain + monthChipsHTML() + catNote + meHTML
     + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${catLbl}</div>${podiumHTML}</div>`:'')
     + `<div class="card"><div class="card-title">Tabla de posiciones · ${catLbl}</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`;
   ldEl.style.display='none'; el.style.display='block';
