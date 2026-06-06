@@ -649,9 +649,10 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
 .cal-cell.cal-dl.has{box-shadow:inset 0 0 0 2px var(--blue);}
 .cal-cell.cal-dl-lock{background:var(--surf2);color:var(--hint);border:1px dashed var(--border);cursor:default;}
 .cal-cell.cal-dl-lock .cal-dlico{font-size:9px;opacity:.7;}
-.cal-dl-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:5px;background:var(--ball);color:#5b5400;border:1px solid #d9e84a;border-radius:10px;padding:7px 8px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:transform .12s;line-height:1.2;}
+.cal-dl-btn{margin-top:8px;width:100%;min-height:38px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:5px;background:var(--ball);color:#5b5400;border:1px solid #d9e84a;border-radius:10px;padding:7px 8px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:transform .12s;line-height:1.2;}
 .cal-dl-btn:hover{transform:translateY(-1px);}
-.cal-dl-note{margin-top:8px;font-size:10px;color:var(--muted);background:var(--surf2);border:1px dashed var(--border);border-radius:10px;padding:7px 8px;text-align:center;line-height:1.3;}
+.cal-dl-note{margin-top:8px;min-height:38px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);background:var(--surf2);border:1px dashed var(--border);border-radius:10px;padding:7px 8px;text-align:center;line-height:1.3;}
+.hl-azul{background:#5170ff;color:#fff;padding:1px 7px;border-radius:5px;font-weight:600;}
 .cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,.92);}
 .cal-legend span{display:inline-flex;align-items:center;gap:6px;}
 .cal-legend .lg-swatch{width:13px;height:13px;border-radius:4px;flex-shrink:0;}
@@ -1892,10 +1893,11 @@ function buildMonthCalendar(mk, monthSessions, pl){
       cells+=`<div class="cal-cell"><span class="cal-num">${day}</span></div>`;
     }
   }
+  for(let i=startDow+lastDay; i<42; i++) cells+='<div class="cal-cell empty"></div>';
   const n=monthSessions.length;
   const footer = ended
     ? `<button class="cal-dl-btn" onclick="downloadMonthReport('${pl}','${mk}')" title="Descargar el reporte completo de ${monthLabel(mk)}">📄 Descargar reporte</button>`
-    : `<div class="cal-dl-note">🔒 Reporte disponible al cerrar el mes</div>`;
+    : `<div class="cal-dl-note">🔒 Disponible al cerrar el mes</div>`;
   return `<div class="cal-month-block">
     <div class="card cal-card">
       <div class="card-title">${monthLabel(mk)} · ${n} sesión${n!==1?'es':''}</div>
@@ -1917,11 +1919,10 @@ function buildHistorial(){
   // Agrupar por mes (más reciente primero)
   const byMonth={};
   sess.forEach(s=>{ const mk=monthKey(s); if(!mk) return; (byMonth[mk]=byMonth[mk]||[]).push(s); });
-  const months=Object.keys(byMonth).sort().reverse();
+  const months=Object.keys(byMonth).sort();
   const pl=currentPlayer.replace(/'/g,"\\'");
-  const desc=`<div class="nota">📅 Tu calendario de entrenamiento. Los días en <strong>azul</strong> tienen una sesión registrada — tocalos para ver el detalle. El registro completo del mes se puede descargar <strong>una vez que el mes haya terminado</strong>.</div>`;
+  const desc=`<div class="nota">Los días en <span class="hl-azul">azul</span> tienen una sesión registrada — tocalos para ver el detalle. Al finalizar el mes, puedo descargar Mi Registro completo.</div>`;
   const legend=`<div class="cal-legend" style="margin:-2px 0 12px;">
-    <span><span class="lg-swatch" style="background:var(--blue);"></span> Día con sesión</span>
     <span><span class="lg-swatch" style="background:var(--ball);"></span> Descargar reporte (mes cerrado)</span>
     <span><span class="lg-swatch" style="background:var(--surf2);border:1px dashed var(--border);"></span> Reporte 🔒</span>
   </div>`;
