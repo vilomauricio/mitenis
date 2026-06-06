@@ -1431,8 +1431,8 @@ function buildCoach(){
   // Nuevos alumnos del mes: alumnos cuyo primer registro cae en el mes en curso
   const firstMonthOf=(p)=>{ const ps=allRows.filter(r=>r[COL.alumno]===p).map(monthKey).filter(Boolean).sort(); return ps[0]||''; };
   const newCount = curMonth ? players.filter(p=>firstMonthOf(p)===curMonth).length : 0;
-  const newKpi = `<div class="mc-mini">🆕 +${newCount} nuevo${newCount!==1?'s':''} en ${curMonth?mLabelFull(curMonth):'el mes'}</div>`;
-  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">👤 Alumnos registrados</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
+  const newKpi = `<div class="mc-mini">+${newCount} nuevo${newCount!==1?'s':''} en ${curMonth?mLabelFull(curMonth):'el mes'}</div>`;
+  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
   const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
   const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
@@ -1472,7 +1472,7 @@ function buildCoach(){
     <div class="cb-tx">
       <div class="cb-lbl">🏅 Jugador con más actitud del mes</div>
       <div class="cb-name">${actLeader}</div>
-      <div class="cb-sub">${curMonth?mLabelFull(curMonth)+' · ':''}Actitud 👍 ${lvlLabel(Math.round(actMax))}</div>
+      <div class="cb-sub">${curMonth?mLabelFull(curMonth):''}</div>
     </div>
   </div>` : '';
 
