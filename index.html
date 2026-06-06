@@ -505,8 +505,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* === v14: Modo Profe === */
 .coach{display:none;min-height:100vh;flex-direction:column;}
 .coach.visible{display:flex;}
-.coach-btn{margin-top:16px;width:100%;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;}
-.coach-btn:hover{background:var(--blue);color:#fff;}
+.coach-btn{margin-top:16px;width:100%;background:#5170ff;border:1.5px solid #5170ff;color:#fff;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;}
+.coach-btn:hover{background:var(--blue-d);border-color:var(--blue-d);color:#fff;}
+/* icono informativo en el subtítulo del inicio */
+.info-i{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--blue);background:var(--blue);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;line-height:1;vertical-align:middle;margin-left:5px;padding:0;transition:transform .12s;}
+.info-i:hover{transform:scale(1.12);}
+/* mini KPI bajo la card de alumnos (Modo Profe) */
+.mc-mini{display:inline-block;margin-top:9px;font-size:11px;font-weight:700;color:var(--blue);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:3px 10px;}
 .cz-h{color:#fff;font-weight:700;font-size:14px;margin:4px 2px 10px;}
 /* Insignia: jugador con más actitud del mes */
 .coach-badge{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#fffbe0,#f3fe76);border:1px solid #e6ef5e;border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:0 8px 22px rgba(243,254,118,.45);}
@@ -654,7 +659,7 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(81,1
   <div class="landing-content">
     <div class="logo-ball"><div class="logo-emoji">👍</div></div>
     <div class="landing-title"><span>mi</span> tenis</div>
-    <div class="landing-sub">sistema de rendimiento para jugadores de tenis</div>
+    <div class="landing-sub">sistema de seguimiento y desarrollo para jugadores de tenis <button class="info-i" onclick="openAppInfo()" aria-label="Más información">i</button></div>
     <div class="select-card">
       <div class="select-label">Seleccioná un jugador</div>
       <div class="player-list" id="player-grid">
@@ -750,6 +755,22 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(81,1
     <div class="pin-title">🧢 Modo Profe</div>
     <div id="coach-info-body" style="font-size:13px;color:var(--text);line-height:1.6;text-align:left;"></div>
     <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeCoachInfo()">Entendido</button></div>
+  </div>
+</div>
+
+<div class="pin-overlay" id="app-info-overlay">
+  <div class="pin-modal" style="max-width:380px;">
+    <div class="pin-title">👍 mi tenis</div>
+    <div style="font-size:14px;color:var(--text);line-height:1.7;text-align:left;margin-top:2px;">
+      <p style="margin-bottom:10px;font-weight:600;">Con <strong>mi tenis</strong> vas a poder:</p>
+      <ul style="margin:0;padding:0;list-style:none;">
+        <li style="margin-bottom:8px;">🎾 ver cómo mejorás</li>
+        <li style="margin-bottom:8px;">💪 conocer tus fortalezas</li>
+        <li style="margin-bottom:8px;">🏆 sumar puntos en cada entrenamiento</li>
+        <li>📈 seguir tu evolución</li>
+      </ul>
+    </div>
+    <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeAppInfo()">Entendido</button></div>
   </div>
 </div>
 
@@ -1313,6 +1334,8 @@ function openCoachInfo(){
   const ov=document.getElementById('coach-info-overlay'); if(ov) ov.classList.add('show');
 }
 function closeCoachInfo(){ const ov=document.getElementById('coach-info-overlay'); if(ov) ov.classList.remove('show'); }
+function openAppInfo(){ const ov=document.getElementById('app-info-overlay'); if(ov) ov.classList.add('show'); }
+function closeAppInfo(){ const ov=document.getElementById('app-info-overlay'); if(ov) ov.classList.remove('show'); }
 function openAvatarPicker(){
   if(!currentPlayer) return;
   const cur=avatarColor(currentPlayer);
@@ -1405,7 +1428,11 @@ function buildCoach(){
 
   const TIPS={tecnica:'Promedio de los golpes: Drive, Revés, Volea y Saque.',tactica:'Construcción del punto.',fisico:'Resistencia y Velocidad.',mental:'Tolerancia al error y Actitud.'};
   const tipBtn=(t)=>`<span class="mc-info"><button class="mc-info-btn" onclick="toggleTip(this)" aria-label="info">i</button><span class="mc-tip">${t}</span></span>`;
-  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">👤 Alumnos CDyCA</div>${tipBtn('Cantidad de alumnos registrados en CDyCA (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div></div>`;
+  // Nuevos alumnos del mes: alumnos cuyo primer registro cae en el mes en curso
+  const firstMonthOf=(p)=>{ const ps=allRows.filter(r=>r[COL.alumno]===p).map(monthKey).filter(Boolean).sort(); return ps[0]||''; };
+  const newCount = curMonth ? players.filter(p=>firstMonthOf(p)===curMonth).length : 0;
+  const newKpi = `<div class="mc-mini">🆕 +${newCount} nuevo${newCount!==1?'s':''} en ${curMonth?mLabelFull(curMonth):'el mes'}</div>`;
+  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">👤 Alumnos registrados</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
   const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
   const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
