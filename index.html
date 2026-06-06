@@ -686,11 +686,11 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(81,1
       <div style="width:60px;"></div>
     </div>
     <nav class="app-tabs">
-      <button class="tab-btn active" onclick="switchTab('resumen',this)">Resumen</button>
-      <button class="tab-btn" onclick="switchTab('rubrica',this)">Rendimiento</button>
-      <button class="tab-btn" onclick="switchTab('plan',this)">Plan de acción</button>
-      <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Liga</button>
-      <button class="tab-btn" onclick="switchTab('historial',this)">Historial</button>
+      <button class="tab-btn active" onclick="switchTab('resumen',this)">Mi Tenis</button>
+      <button class="tab-btn" onclick="switchTab('rubrica',this)">Mi Rendimiento</button>
+      <button class="tab-btn" onclick="switchTab('plan',this)">Mi Plan</button>
+      <button class="tab-btn" onclick="switchTab('historial',this)">Mi Registro</button>
+      <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Mi Ranking</button>
     </nav>
   </header>
   <main class="app-content">
@@ -721,7 +721,7 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(81,1
   <header class="app-header">
     <div class="header-top">
       <button class="header-back" onclick="closeCoach()">← Volver</button>
-      <div class="header-player"><div class="header-name">🧢 Modo Profe</div></div>
+      <div class="header-player"><div class="header-name">🧢 Modo Profe <button class="info-i" onclick="openCoachInfo()" aria-label="Más información">i</button></div></div>
       <div style="width:60px;"></div>
     </div>
   </header>
@@ -1330,7 +1330,12 @@ function toggleTip(btn){
 }
 function openCoachInfo(){
   const b=document.getElementById('coach-info-body');
-  if(b) b.innerHTML='¡Hola Profe! En esta sección podés observar un resumen del rendimiento de todos los alumnos registrados en Mi Tenis. Podés comparar las distintas categorías, hacer un seguimiento de asistencia a clases y ver un ranking para ver qué alumno viene bien y a quién hay que darle más foco.';
+  if(b) b.innerHTML='¡Hola Profe! En esta sección podés observar un resumen del rendimiento de todos los alumnos registrados en Mi Tenis. Además, podés:'
+    +'<ol style="margin:10px 0 0;padding-left:20px;line-height:1.7;">'
+    +'<li>comparar las distintas categorías</li>'
+    +'<li>hacer un seguimiento de asistencia a clases</li>'
+    +'<li>ver qué alumno viene bien y a quién hay que darle más foco.</li>'
+    +'</ol>';
   const ov=document.getElementById('coach-info-overlay'); if(ov) ov.classList.add('show');
 }
 function closeCoachInfo(){ const ov=document.getElementById('coach-info-overlay'); if(ov) ov.classList.remove('show'); }
@@ -1391,11 +1396,11 @@ function buildCoach(){
   const curMonth=(selectedMonth==='all'||allMonths.indexOf(selectedMonth)<0)?(allMonths[allMonths.length-1]||''):selectedMonth;
   const ci=allMonths.indexOf(curMonth); const prevMonth=ci>0?allMonths[ci-1]:null;
 
-  const monthChips=`<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">📅 Filtrar por mes <span class="acc-sub">· ${selectedMonth==='all'?'Todos':mLabelFull(selectedMonth)}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
+  const monthChips=`<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">📅 Mes <span class="acc-sub">· ${selectedMonth==='all'?'Todos':mLabelFull(selectedMonth)}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
     <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonthCoach('all')">Todos</button>
     ${allMonths.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonthCoach('${m}')">${mLabelFull(m)}</button>`).join('')}
   </div></div></div></div>`;
-  const catChips = cats.length?`<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">🏷️ Filtrar por categoría <span class="acc-sub">· ${coachCat==='all'?'Todas':coachCat}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
+  const catChips = cats.length?`<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">🏷️ Categoría <span class="acc-sub">· ${coachCat==='all'?'Todas':coachCat}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
     <button class="mf-chip ${coachCat==='all'?'active':''}" onclick="setCatCoach('all')">Todas</button>
     ${cats.map(ct=>`<button class="mf-chip ${coachCat===ct?'active':''}" onclick="setCatCoach('${ct.replace(/'/g,"\\'")}')">${ct}</button>`).join('')}
   </div></div></div></div>`:'';
@@ -1476,8 +1481,7 @@ function buildCoach(){
     </div>
   </div>` : '';
 
-  el.innerHTML = `<button class="lg-info-btn" onclick="openCoachInfo()" style="margin-bottom:14px;">ℹ️ ¿Qué muestra esta sección?</button>`
-    + `<div class="cz-filters">${monthChips}${catChips}</div>`
+  el.innerHTML = `<div class="cz-filters">${monthChips}${catChips}</div>`
     + `<div class="cz-h">Promedio de la clase${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
     + badgeHTML
@@ -1541,7 +1545,7 @@ function filterByMonth(list){ if(selectedMonth==='all') return list; const f=lis
 function monthChipsHTML(){
   const months=[...new Set(playerSessions.map(monthKey).filter(Boolean))].sort();
   const curLbl=selectedMonth==='all'?'Todos':monthLabel(selectedMonth);
-  return `<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">📅 Filtrar por mes <span class="acc-sub">· ${curLbl}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
+  return `<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">📅 Mes <span class="acc-sub">· ${curLbl}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
     <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonth('all')">Todos</button>
     ${months.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonth('${m}')">${monthLabel(m)}</button>`).join('')}
   </div></div></div></div>`;
@@ -1717,13 +1721,13 @@ function buildRubrica(){
         label:a.nombre,
         data:allSess.map(s=>{const v=avgLvlKeys(s,AREA_KEYS[a.id]); return v>0?v:null;}),
         borderColor:a.color, backgroundColor:a.color,
-        tension:.35, pointRadius:4, pointBackgroundColor:a.color, spanGaps:true, borderWidth:3
+        tension:.45, cubicInterpolationMode:'monotone', pointRadius:4, pointBackgroundColor:a.color, spanGaps:true, borderWidth:3
       }))},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:14,padding:14,usePointStyle:true}},
           tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${(c.raw||0).toFixed(1)} 👍`}}},
         scales:{
-          y:{min:0,max:3,ticks:{stepSize:1,font:{size:11},callback:v=>v>=1&&v<=3?v+' 👍':''},grid:{color:'rgba(81,112,255,0.10)'},title:{display:true,text:'Cantidad de pulgares 👍',font:{size:11,weight:'600'},color:'#6b6f8a'}},
+          y:{min:0,max:3,ticks:{stepSize:1,font:{size:11},callback:v=>v>=1&&v<=3?v+' 👍':''},grid:{color:'rgba(81,112,255,0.10)'},title:{display:false}},
           x:{ticks:{font:{size:10},maxRotation:40,autoSkip:true,maxTicksLimit:8},grid:{color:'rgba(81,112,255,0.06)'}}
         }
       }
