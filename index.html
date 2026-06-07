@@ -570,6 +570,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* === v19: Modo Profe radar + ranking compacto === */
 .cz-bottom{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
 @media(min-width:760px){.cz-bottom{grid-template-columns:1fr 1fr;}}
+/* Ranking de alumnos: misma altura que el gráfico, con scroll interno */
+.cz-rank-scroll{margin-top:10px;flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:6px;-webkit-overflow-scrolling:touch;}
+.cz-rank-scroll::-webkit-scrollbar{width:7px;}
+.cz-rank-scroll::-webkit-scrollbar-thumb{background:rgba(81,112,255,.3);border-radius:99px;}
+.cz-rank-scroll::-webkit-scrollbar-track{background:transparent;}
+.cz-rank-scroll{scrollbar-width:thin;scrollbar-color:rgba(81,112,255,.35) transparent;}
+.cz-rank-scroll .cz-row:first-child{padding-top:0;}
+.cz-rank-card{display:flex;flex-direction:column;}
 .cz-ind{margin-left:auto;display:flex;flex-direction:column;gap:4px;}
 .cz-ind-row{display:flex;align-items:baseline;justify-content:flex-end;gap:8px;}
 .cz-ind-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
@@ -1501,8 +1509,7 @@ function buildCoach(){
     </div>
   </div>` : '';
 
-  el.innerHTML = `<div class="cz-filters">${monthChips}${catChips}</div>`
-    + (()=>{
+  const planBtnHTML = (()=>{
         const planMonth = (selectedMonth!=='all' && allMonths.indexOf(selectedMonth)>=0)
           ? selectedMonth
           : (allMonths.filter(m=>monthEnded(m)).pop() || '');
@@ -1517,15 +1524,18 @@ function buildCoach(){
           inner=`<div class="coach-dl-lock">🔒 El resumen para planificar estará disponible al cerrar el primer mes</div>`;
         }
         return `<div class="coach-dl-wrap">${inner}</div>`;
-      })()
+      })();
+
+  el.innerHTML = `<div class="cz-filters">${monthChips}${catChips}</div>`
     + `<div class="cz-h">Promedio de la clase${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
     + badgeHTML
     + `<div class="card"><div class="card-title">Asistencia del mes</div>${withAt.length?`<div class="cz-asist"><div class="cz-stat"><div class="cz-stat-val">${genPct}%</div><div class="cz-stat-lbl">Asistencia general</div></div><div class="cz-stat"><div class="cz-stat-val">${metN}<span> / ${withAt.length}</span></div><div class="cz-stat-lbl">Cumplieron su objetivo</div></div></div>`:'<div class="nota" style="margin:0;">Sin datos de asistencia para este mes.</div>'}</div>`
     + `<div class="cz-bottom">
         <div class="card cz-radar"><div class="card-title">Comparación por categoría${curMonth?' · '+mLabelFull(curMonth):''}</div><div class="chart-wrap" style="height:320px;margin-top:10px;"><canvas id="ch-coach-radar"></canvas></div></div>
-        <div class="card cz-rank-card"><div class="card-title">Ranking de alumnos · ${players.length}</div>${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div>
-      </div>`;
+        <div class="card cz-rank-card"><div class="card-title">Ranking de alumnos · ${players.length}</div><div class="cz-rank-scroll">${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div></div>
+      </div>`
+    + planBtnHTML;
   if(charts['coachRadar']){ try{charts['coachRadar'].destroy();}catch(e){} }
   const _cv=document.getElementById('ch-coach-radar');
   if(_cv && catData.length){
@@ -1537,6 +1547,16 @@ function buildCoach(){
       }
     });
   }
+  // Igualar la altura de la card del Ranking a la del gráfico (con scroll interno)
+  const _syncRank=()=>{
+    const rc=el.querySelector('.cz-radar'), kc=el.querySelector('.cz-rank-card');
+    if(rc && kc){
+      if(window.matchMedia('(min-width:760px)').matches){ kc.style.height=rc.offsetHeight+'px'; }
+      else { kc.style.height=''; }
+    }
+  };
+  if(typeof requestAnimationFrame==='function') requestAnimationFrame(_syncRank); else _syncRank();
+  if(!buildCoach._rankResize){ buildCoach._rankResize=true; window.addEventListener('resize', ()=>{ try{ const c=document.getElementById('coach'); if(c&&c.classList.contains('visible')) _syncRank(); }catch(e){} }); }
 }
 
 // ══════════════════════════════════════
@@ -2124,6 +2144,13 @@ function rubricLevelInMonth(player, key, mk){
   for(let i=ms.length-1;i>=0;i--){ const lv=toLvl(ms[i][COL[key]]); if(lv>0) return lv; }
   return 0;
 }
+// Nivel general de un grupo de rúbricas (ej: Drive = promedio de sus sub-rúbricas) en el mes
+function groupLevelInMonth(player, keys, mk){
+  const ms=allRows.filter(r=>r[COL.alumno]===player && monthKey(r)===mk)
+    .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
+  for(let i=ms.length-1;i>=0;i--){ const v=avgLvlKeys(ms[i], keys); if(v>0) return Math.round(v); }
+  return 0;
+}
 function downloadCoachPlan(mk, cat){
   try{
     const html=buildCoachPlanHTML(mk, cat);
@@ -2144,14 +2171,14 @@ function buildCoachPlanHTML(mk, cat){
   const areasMeta=[['tecnica','Técnica','🎾','#5170ff'],['tactica','Táctica','♟️','#e0a200'],['fisico','Físico','⚡','#16a34a'],['mental','Mental','🧠','#d6336c']];
   let totalFlags=0;
   const sections=areasMeta.map(([id,nombre,emoji,col])=>{
-    const rubs=RUBRICAS[id]||[];
-    const rows=rubs.map(rb=>{
-      const names=players.filter(p=>rubricLevelInMonth(p, rb.key, mk)===1);
+    const grupos=RESUMEN_GROUPS[id]||[];
+    const rows=grupos.map(g=>{
+      const names=players.filter(p=>groupLevelInMonth(p, g.keys, mk)===1);
       totalFlags+=names.length;
       const chips = names.length
         ? '<div class="chips">'+names.map(nm=>'<span class="chip">'+esc(nm)+'</span>').join('')+'</div>'
         : '<div class="none">✓ Nadie en «A trabajar»</div>';
-      return '<div class="rub"><div class="rub-h"><span class="rub-name">'+esc(rb.nombre)+'</span><span class="rub-count'+(names.length?'':' zero')+'">'+names.length+'</span></div>'+chips+'</div>';
+      return '<div class="rub"><div class="rub-h"><span class="rub-name">'+esc(g.nombre)+'</span><span class="rub-count'+(names.length?'':' zero')+'">'+names.length+'</span></div>'+chips+'</div>';
     }).join('');
     return '<div class="area"><div class="area-h" style="--ac:'+col+'">'+emoji+' '+esc(nombre)+'</div>'+rows+'</div>';
   }).join('');
