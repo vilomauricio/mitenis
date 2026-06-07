@@ -717,7 +717,6 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
     <nav class="app-tabs">
       <button class="tab-btn active" onclick="switchTab('resumen',this)">Mi Tenis</button>
       <button class="tab-btn" onclick="switchTab('rubrica',this)">Mi Rendimiento</button>
-      <button class="tab-btn" onclick="switchTab('plan',this)">Mi Plan</button>
       <button class="tab-btn" onclick="switchTab('historial',this)">Mi Registro</button>
       <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Mi Ranking</button>
     </nav>
@@ -730,10 +729,6 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
     <div class="tab-view" id="tab-rubrica">
       <div class="loading-view" id="loading-rubrica"><div class="spinner"></div><p>Cargando…</p></div>
       <div id="content-rubrica" style="display:none;"></div>
-    </div>
-    <div class="tab-view" id="tab-plan">
-      <div class="loading-view" id="loading-plan"><div class="spinner"></div><p>Cargando…</p></div>
-      <div id="content-plan" style="display:none;"></div>
     </div>
     <div class="tab-view" id="tab-historial">
       <div class="loading-view" id="loading-historial"><div class="spinner"></div><p>Cargando…</p></div>
@@ -813,7 +808,7 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
 
 <div class="pin-overlay" id="liga-info-overlay">
   <div class="pin-modal" style="max-width:380px;">
-    <div class="pin-title">🏆 Cómo funciona la Liga</div>
+    <div class="pin-title">🏆 Cómo funciona Mi Ranking</div>
     <div id="liga-info-body" style="font-size:13px;color:var(--text);line-height:1.6;text-align:left;"></div>
     <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeLigaInfo()">Entendido</button></div>
   </div>
@@ -1594,7 +1589,7 @@ function catColor(cat){
 }
 function rebuildAll(){
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}}); charts={};
-  [['resumen',buildResumen],['rubrica',buildRubrica],['plan',buildPlan],['historial',buildHistorial],['liga',buildLiga]].forEach(([id,fn])=>{ try{ fn(); }catch(err){ const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id); if(ld) ld.style.display='none'; if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; } } });
+  [['resumen',buildResumen],['rubrica',buildRubrica],['historial',buildHistorial],['liga',buildLiga]].forEach(([id,fn])=>{ try{ fn(); }catch(err){ const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id); if(ld) ld.style.display='none'; if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; } } });
 }
 function setMonth(m){ selectedMonth=m; rebuildAll(); }
 function filterByMonth(list){ if(selectedMonth==='all') return list; const f=list.filter(s=>monthKey(s)===selectedMonth); return f.length?f:list; }
@@ -2297,7 +2292,7 @@ function buildLiga(){
   let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
   board.sort((a,b)=> b.total-a.total || b.asistencia-a.asistencia || b.actitud-a.actitud || b.torneos-a.torneos);
 
-  const explain=`<button class="lg-info-btn" onclick="openLigaInfo()">ℹ️ ¿Cómo funciona la Liga?</button>`;
+  const explain=`<button class="lg-info-btn" onclick="openLigaInfo()">ℹ️ ¿Cómo funciona Mi Ranking?</button>`;
 
   const meScore=board.find(s=>s.name===currentPlayer);
   let meHTML;
