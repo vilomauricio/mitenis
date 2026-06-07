@@ -434,6 +434,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .lg-pod.p3 .lg-pod-stand{background:linear-gradient(180deg,#d8a06b,#b97f47);height:42px;}
 .lg-pod.p1 .lg-pod-av{width:54px;height:54px;font-size:16px;}
 
+/* Resaltado del jugador actual en podio y tabla */
+.lg-you{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#fff;background:var(--blue);border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:middle;}
+.lg-row.me .lg-name{color:var(--blue);font-weight:800;}
+.lg-row.me{box-shadow:inset 0 0 0 1.5px var(--blue);}
+.lg-pod.me .lg-pod-av{outline:3px solid var(--blue);outline-offset:2px;}
+.lg-pod.me .lg-pod-name{color:var(--blue);font-weight:800;}
+
 /* Tabla de posiciones */
 .lg-row{display:flex;align-items:center;gap:11px;padding:10px 8px;border-bottom:1px solid var(--border);}
 .lg-row:last-child{border-bottom:none;}
@@ -637,7 +644,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .cal-dow{width:26px;text-align:center;font-size:9px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.02em;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,26px);gap:3px;justify-content:center;}
 .cal-cell{position:relative;width:26px;height:26px;box-sizing:border-box;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--text);background:var(--surf2);border:1px solid transparent;}
-.cal-cell.empty{background:transparent;}
+.cal-cell.empty{background:transparent;padding:0;font-size:0;min-height:0;}
 .cal-cell .cal-num{font-weight:600;line-height:1;}
 button.cal-cell{cursor:pointer;font-family:'Inter',sans-serif;transition:transform .12s,box-shadow .12s;padding:0;}
 button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,112,255,.22);}
@@ -851,7 +858,7 @@ let COL = {...COL_DEFAULT};
 
 const INFO_DEFAULT = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetivo:5, pin:6 };
 let INFO = {...INFO_DEFAULT};
-const ASIST_DEFAULT = { fecha:0, jugador:1, cumplidas:2, objetivo:3 };
+const ASIST_DEFAULT = { fecha:0, jugador:1, cumplidas:2, objetivo:3, torneos:4 };
 let ASIST = {...ASIST_DEFAULT};
 const AVATAR_COLORS = ['#5170ff','#3a52d6','#6d86ff','#2f3fb0','#5170ff','#3a52d6','#6d86ff','#2f3fb0'];
 const BALL_COLORS=['#c8d42b','#5170ff','#ff5d5d','#ff9f43','#8e5cff','#17b890','#ff6fb5'];
@@ -921,7 +928,8 @@ const ASIST_ALIASES = {
   fecha:['fecha','mes','marca temporal','periodo','período'],
   jugador:['jugador','alumno','nombre'],
   cumplidas:['sesiones cumplidas','cumplidas','asistencias','realizadas','asistencia'],
-  objetivo:['sesiones mensuales objetivo','objetivo','sesiones objetivo','meta','objetivo mensual','sesiones objetivo mensual']
+  objetivo:['sesiones mensuales objetivo','objetivo','sesiones objetivo','meta','objetivo mensual','sesiones objetivo mensual'],
+  torneos:['torneos jugados','torneos','torneos del mes','cantidad de torneos','torneos jugados en el mes','torneos mes']
 };
 
 // ══════════════════════════════════════
@@ -1360,14 +1368,12 @@ function chooseAvatar(color){ if(currentPlayer) setAvatarColor(currentPlayer,col
 function closeAvatarPicker(){ const ov=document.getElementById('av-overlay'); if(ov) ov.classList.remove('show'); }
 function openLigaInfo(){
   const b=document.getElementById('liga-info-body');
-  if(b) b.innerHTML=`<p style="margin-bottom:10px;">La Liga es una <strong>competencia amistosa</strong> que premia la <strong>constancia y la excelencia</strong> en cada área. Te motiva a venir y a llevar cada parte de tu juego al máximo nivel.</p>
+  if(b) b.innerHTML=`<p style="margin-bottom:10px;">Mi Ranking es una <strong>competencia amistosa</strong> que premia la <strong>constancia, la buena actitud y la competencia</strong>. Te motiva a venir, a entrenar con la mejor energía y a animarte a jugar torneos.</p>
     <p style="margin:0 0 6px;font-weight:600;">Cómo se suman los puntos:</p>
     <ul style="margin:0 0 0 18px;padding:0;">
-      <li style="margin-bottom:5px;"><strong>+${LG.ATTEND}</strong> al mes si cumplís tu objetivo de asistencia 📅</li>
-      <li style="margin-bottom:5px;"><strong>+${LG.EXC.tactica}</strong> si tu área <strong>Táctica</strong> está en Excelente ♟️</li>
-      <li style="margin-bottom:5px;"><strong>+${LG.EXC.mental}</strong> si tu área <strong>Mental</strong> está en Excelente 🧠</li>
-      <li style="margin-bottom:5px;"><strong>+${LG.EXC.tecnica}</strong> si tu área <strong>Técnica</strong> está en Excelente 🎾</li>
-      <li><strong>+${LG.EXC.fisico}</strong> si tu área <strong>Físico</strong> está en Excelente ⚡</li>
+      <li style="margin-bottom:5px;"><strong>+${LG.ATTEND}</strong> por tu asistencia completa del mes 📅</li>
+      <li style="margin-bottom:5px;"><strong>+${LG.ACTITUD}</strong> si tu Actitud del mes es <strong>Excelente</strong> 💪</li>
+      <li><strong>+${LG.TORNEO}</strong> por cada torneo que jugaste en el mes 🏆</li>
     </ul>`;
   const ov=document.getElementById('liga-info-overlay'); if(ov) ov.classList.add('show');
 }
@@ -1735,7 +1741,7 @@ function buildRubrica(){
         plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:14,padding:14,usePointStyle:true}},
           tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${(c.raw||0).toFixed(1)} 👍`}}},
         scales:{
-          y:{min:0,max:3,ticks:{stepSize:1,font:{size:11},callback:v=>v>=1&&v<=3?v+' 👍':''},grid:{color:'rgba(81,112,255,0.10)'},title:{display:false}},
+          y:{min:0,max:3,ticks:{stepSize:1,font:{size:10},callback:v=>['','A trabajar','Funciona','Excelente'][v]||''},grid:{color:'rgba(81,112,255,0.10)'},title:{display:false}},
           x:{ticks:{font:{size:10},maxRotation:40,autoSkip:true,maxTicksLimit:8},grid:{color:'rgba(81,112,255,0.06)'}}
         }
       }
@@ -2080,10 +2086,12 @@ function buildMonthReportHTML(name, mk){
 }
 
 // ══════════════════════════════════════
-// LIGA — puntaje: asistencia + excelencia por área
-// +5 asistencia cumplida · +4 táctica · +3 mental · +2 técnica · +1 físico (cada área en nivel Excelente)
+// LIGA — puntaje:
+// +5 por asistencia completa del mes (cumple el objetivo)
+// +3 si la Actitud del mes es Excelente
+// +1 por cada torneo jugado en el mes (columna 'Torneos jugados' de la hoja asistencia)
 // ══════════════════════════════════════
-const LG = { ATTEND:5, EXC:{tactica:4, mental:3, tecnica:2, fisico:1} };
+const LG = { ATTEND:5, ACTITUD:3, TORNEO:1 };
 function sessionsOf(name){
   return allRows.filter(r=>r[COL.alumno]===name)
     .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
@@ -2093,21 +2101,34 @@ function areaAvgScope(name, period, areaId){
   const vals=ss.map(s=>avgLvlKeys(s,AREA_KEYS[areaId])).filter(v=>v>0);
   return vals.length? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
 }
+// Torneos jugados (de la hoja asistencia) para un mes puntual
+function tournamentsForMonth(name, mk){
+  for(const r of asistRows){
+    if((r[ASIST.jugador]||'').trim()===(name||'').trim() && ymKey(r[ASIST.fecha])===mk){
+      return Math.max(0, Math.round(n(r[ASIST.torneos])));
+    }
+  }
+  return 0;
+}
+// ¿La Actitud del período llega a nivel Excelente? (promedio redondeado de la variable Actitud = 3)
+function actitudExcelente(name, period){
+  const ss=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
+  const vals=ss.map(s=>toLvl(s[COL.Actitud])).filter(v=>v>0);
+  if(!vals.length) return false;
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)===3;
+}
 function scorePlayer(name, period){
   const sessScope=sessionsOf(name).filter(s=> period==='all'?true:monthKey(s)===period);
   const aMonths = period==='all' ? attMonths(name) : [period];
+  // +5 por cada mes con asistencia completa
   let asistencia=0;
   aMonths.forEach(mk=>{ const at=attendanceFor(name,mk); if(at && at.met) asistencia+=LG.ATTEND; });
-  // Excelencia por área: el área cuenta si su promedio (redondeado) llega a nivel Excelente (3)
-  const exc={};
-  let excelencia=0;
-  Object.keys(LG.EXC).forEach(areaId=>{
-    const isExc = Math.round(areaAvgScope(name,period,areaId))===3;
-    const pts = isExc ? LG.EXC[areaId] : 0;
-    exc[areaId]=pts;
-    excelencia+=pts;
-  });
-  return {name, asistencia, exc, excelencia, sesiones:sessScope.length, total:asistencia+excelencia};
+  // +1 por cada torneo jugado en los meses del período
+  let torneos=0;
+  aMonths.forEach(mk=>{ torneos+=tournamentsForMonth(name,mk)*LG.TORNEO; });
+  // +3 si la Actitud es Excelente
+  const actitud = actitudExcelente(name, period) ? LG.ACTITUD : 0;
+  return {name, asistencia, actitud, torneos, sesiones:sessScope.length, total:asistencia+actitud+torneos};
 }
 function areaTier(name, areaId){
   const sess=sessionsOf(name);
@@ -2138,7 +2159,7 @@ function buildLiga(){
   const avatarOf=name=>avatarColor(name);
   const iniOf=name=>name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   let board=allPlayers.map(p=>scorePlayer(p, period)).filter(s=>s.sesiones>0);
-  board.sort((a,b)=> b.total-a.total || b.excelencia-a.excelencia || b.asistencia-a.asistencia);
+  board.sort((a,b)=> b.total-a.total || b.asistencia-a.asistencia || b.actitud-a.actitud || b.torneos-a.torneos);
 
   const explain=`<button class="lg-info-btn" onclick="openLigaInfo()">ℹ️ ¿Cómo funciona la Liga?</button>`;
 
@@ -2151,12 +2172,10 @@ function buildLiga(){
         <div><div class="lg-me-lbl">Mi puntaje · ${periodLbl}</div><div class="lg-me-rank">${rank}º de ${board.length} · ${meScore.sesiones} ses.</div></div>
         <div class="lg-me-score"><div class="lg-me-pts">${meScore.total}<span> pts</span></div></div>
       </div>
-      <div class="lg-break lg-break-5">
-        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asist.</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">♟️</div><div class="lg-bk-val">${meScore.exc.tactica}</div><div class="lg-bk-lbl">Táctica</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">🧠</div><div class="lg-bk-val">${meScore.exc.mental}</div><div class="lg-bk-lbl">Mental</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">🎾</div><div class="lg-bk-val">${meScore.exc.tecnica}</div><div class="lg-bk-lbl">Técnica</div></div>
-        <div class="lg-bk"><div class="lg-bk-ico">⚡</div><div class="lg-bk-val">${meScore.exc.fisico}</div><div class="lg-bk-lbl">Físico</div></div>
+      <div class="lg-break lg-break-3">
+        <div class="lg-bk"><div class="lg-bk-ico">📅</div><div class="lg-bk-val">${meScore.asistencia}</div><div class="lg-bk-lbl">Asistencia</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">💪</div><div class="lg-bk-val">${meScore.actitud}</div><div class="lg-bk-lbl">Actitud</div></div>
+        <div class="lg-bk"><div class="lg-bk-ico">🏆</div><div class="lg-bk-val">${meScore.torneos}</div><div class="lg-bk-lbl">Torneos</div></div>
       </div>
     </div>`;
   } else {
@@ -2168,9 +2187,10 @@ function buildLiga(){
     const order=[1,0,2], cls={0:'p1',1:'p2',2:'p3'}, medal={0:'🥇',1:'🥈',2:'🥉'};
     podiumHTML='<div class="lg-podium">'+order.filter(i=>board[i]).map(i=>{
       const s=board[i];
-      return `<div class="lg-pod ${cls[i]}">
+      const isMe=s.name===currentPlayer;
+      return `<div class="lg-pod ${cls[i]}${isMe?' me':''}">
         <div class="lg-pod-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
-        <div class="lg-pod-name">${s.name.split(' ')[0]}</div>
+        <div class="lg-pod-name">${s.name.split(' ')[0]}${isMe?' <span class="lg-you">vos</span>':''}</div>
         <div class="lg-pod-pts">${s.total} pts</div>
         <div class="lg-pod-stand">${medal[i]}</div>
       </div>`;
@@ -2178,12 +2198,13 @@ function buildLiga(){
   }
 
   const rowsHTML=board.map((s,i)=>{
-    return `<div class="lg-row ${s.name===currentPlayer?'me':''}">
+    const isMe=s.name===currentPlayer;
+    return `<div class="lg-row ${isMe?'me':''}">
       <div class="lg-rank ${i<3?'top':''}">${i+1}</div>
       <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
       <div class="lg-info">
-        <div class="lg-name">${s.name}</div>
-        <div class="lg-sub">📅 ${s.asistencia} · ⭐ ${s.excelencia} excelencia</div>
+        <div class="lg-name">${s.name}${isMe?'<span class="lg-you">vos</span>':''}</div>
+        <div class="lg-sub">📅 ${s.asistencia} · 💪 ${s.actitud} · 🏆 ${s.torneos}</div>
       </div>
       <div class="lg-pts">${s.total}<span> pts</span></div>
     </div>`;
