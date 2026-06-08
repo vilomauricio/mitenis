@@ -620,10 +620,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-info-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 .mc-tip{position:absolute;top:calc(100% + 6px);right:0;background:#20223a;color:#fff;font-size:11px;font-weight:500;padding:9px 11px;border-radius:8px;width:max-content;max-width:240px;box-shadow:0 10px 26px rgba(32,34,58,.32);opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .15s;z-index:60;line-height:1.45;text-align:left;}
 .mc-info:hover .mc-tip,.mc-info.open .mc-tip{opacity:1;pointer-events:auto;transform:translateY(0);}
-/* Modo Profe: cards KPI con título, línea divisoria fina y tendencia mensual de fondo */
+/* Modo Profe: cards KPI con título y tendencia mensual de fondo */
 #coach .metric-card{position:relative;}
 #coach .metric-card .mc-label{font-size:12px;}
-#coach .metric-card .mc-head{border-bottom:1px solid var(--blue);padding-bottom:9px;margin-bottom:11px;}
 #coach .metric-card .mc-spark{position:absolute;left:0;right:0;bottom:0;width:100%;height:56%;z-index:0;pointer-events:none;border-radius:0 0 var(--radius) var(--radius);}
 #coach .metric-card .mc-head,#coach .metric-card .mc-value,#coach .metric-card .mc-delta,#coach .metric-card .mc-mini,#coach .metric-card .mc-cat{position:relative;z-index:1;}
 .cz-ind-val-sm{font-size:13px;}
@@ -1489,15 +1488,13 @@ function buildCoach(){
     const xy=pts.map((v,i)=>[ (i/(n-1))*W, H-pad-((v-mn)/rng)*(H-2*pad) ]);
     const line=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
     const area='M'+xy[0][0].toFixed(1)+' '+H+' '+xy.map(p=>'L'+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+' L'+xy[n-1][0].toFixed(1)+' '+H+' Z';
-    return `<svg class="mc-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${area}" fill="${col}" fill-opacity="0.13"/><path d="${line}" fill="none" stroke="${col}" stroke-opacity="0.55" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+    return `<svg class="mc-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${area}" fill="${col}" fill-opacity="0.07"/><path d="${line}" fill="none" stroke="${col}" stroke-opacity="0.3" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
   };
-  const sparkObs = sparkSVG(trendMonths.map(cumStudents));
   const sparkArea = {}; areas.forEach(a=>sparkArea[a]=sparkSVG(series.map(s=>s.ca[a])));
-  const sparkTot = sparkSVG(series.map(s=>s.tot));
 
-  const obsCard=`<div class="metric-card">${sparkObs}<div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
+  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
   const areaCards=areas.map(a=>`<div class="metric-card">${sparkArea[a]}<div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
-  const totCard=`<div class="metric-card mc-hl">${sparkTot}<div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
+  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
   const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map((d,i)=>{
     const a=d.at;
