@@ -620,6 +620,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-info-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 .mc-tip{position:absolute;top:calc(100% + 6px);right:0;background:#20223a;color:#fff;font-size:11px;font-weight:500;padding:9px 11px;border-radius:8px;width:max-content;max-width:240px;box-shadow:0 10px 26px rgba(32,34,58,.32);opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .15s;z-index:60;line-height:1.45;text-align:left;}
 .mc-info:hover .mc-tip,.mc-info.open .mc-tip{opacity:1;pointer-events:auto;transform:translateY(0);}
+/* Modo Profe: cards KPI con título más grande y línea azul entre título y valor */
+#coach .metric-card .mc-label{font-size:13px;}
+#coach .metric-card .mc-head{border-bottom:1.5px solid var(--blue);padding-bottom:10px;margin-bottom:12px;}
 .cz-ind-val-sm{font-size:13px;}
 .hist-obs-h{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:3px;}
 /* Insignia de descarga del Reporte de Rendimiento mensual */
@@ -1456,13 +1459,14 @@ function buildCoach(){
 
   const TIPS={tecnica:'Promedio de los golpes: Drive, Revés, Volea y Saque.',tactica:'Construcción del punto.',fisico:'Resistencia y Velocidad.',mental:'Tolerancia al error y Actitud.'};
   const tipBtn=(t)=>`<span class="mc-info"><button class="mc-info-btn" onclick="toggleTip(this)" aria-label="info">i</button><span class="mc-tip">${t}</span></span>`;
+  const SCALE_NOTE='La escala de observación es del 1 al 3 — 1: A trabajar · 2: Funciona · 3: Excelente.';
   // Nuevos alumnos del mes: alumnos cuyo primer registro cae en el mes en curso
   const firstMonthOf=(p)=>{ const ps=allRows.filter(r=>r[COL.alumno]===p).map(monthKey).filter(Boolean).sort(); return ps[0]||''; };
   const newCount = curMonth ? players.filter(p=>firstMonthOf(p)===curMonth).length : 0;
   const newKpi = `<div class="mc-mini">+${newCount} nuevo${newCount!==1?'s':''} en ${curMonth?mLabelFull(curMonth):'el mes'}</div>`;
   const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
-  const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
-  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
+  const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a]+' '+SCALE_NOTE)}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
+  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental). '+SCALE_NOTE)}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
   const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map((d,i)=>{
     const a=d.at;
