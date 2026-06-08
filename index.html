@@ -620,9 +620,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-info-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 .mc-tip{position:absolute;top:calc(100% + 6px);right:0;background:#20223a;color:#fff;font-size:11px;font-weight:500;padding:9px 11px;border-radius:8px;width:max-content;max-width:240px;box-shadow:0 10px 26px rgba(32,34,58,.32);opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .15s;z-index:60;line-height:1.45;text-align:left;}
 .mc-info:hover .mc-tip,.mc-info.open .mc-tip{opacity:1;pointer-events:auto;transform:translateY(0);}
-/* Modo Profe: cards KPI con título más grande y línea azul entre título y valor */
-#coach .metric-card .mc-label{font-size:13px;}
-#coach .metric-card .mc-head{border-bottom:1.5px solid var(--blue);padding-bottom:10px;margin-bottom:12px;}
+/* Modo Profe: cards KPI con título, línea divisoria fina y tendencia mensual de fondo */
+#coach .metric-card{position:relative;}
+#coach .metric-card .mc-label{font-size:12px;}
+#coach .metric-card .mc-head{border-bottom:1px solid var(--blue);padding-bottom:9px;margin-bottom:11px;}
+#coach .metric-card .mc-spark{position:absolute;left:0;right:0;bottom:0;width:100%;height:56%;z-index:0;pointer-events:none;border-radius:0 0 var(--radius) var(--radius);}
+#coach .metric-card .mc-head,#coach .metric-card .mc-value,#coach .metric-card .mc-delta,#coach .metric-card .mc-mini,#coach .metric-card .mc-cat{position:relative;z-index:1;}
 .cz-ind-val-sm{font-size:13px;}
 .hist-obs-h{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:8px;margin-bottom:3px;}
 /* Insignia de descarga del Reporte de Rendimiento mensual */
@@ -1459,14 +1462,42 @@ function buildCoach(){
 
   const TIPS={tecnica:'Promedio de los golpes: Drive, Revés, Volea y Saque.',tactica:'Construcción del punto.',fisico:'Resistencia y Velocidad.',mental:'Tolerancia al error y Actitud.'};
   const tipBtn=(t)=>`<span class="mc-info"><button class="mc-info-btn" onclick="toggleTip(this)" aria-label="info">i</button><span class="mc-tip">${t}</span></span>`;
-  const SCALE_NOTE='La escala de observación es del 1 al 3 — 1: A trabajar · 2: Funciona · 3: Excelente.';
   // Nuevos alumnos del mes: alumnos cuyo primer registro cae en el mes en curso
   const firstMonthOf=(p)=>{ const ps=allRows.filter(r=>r[COL.alumno]===p).map(monthKey).filter(Boolean).sort(); return ps[0]||''; };
   const newCount = curMonth ? players.filter(p=>firstMonthOf(p)===curMonth).length : 0;
-  const newKpi = `<div class="mc-mini">+${newCount} nuevo${newCount!==1?'s':''} en ${curMonth?mLabelFull(curMonth):'el mes'}</div>`;
-  const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
-  const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a]+' '+SCALE_NOTE)}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
-  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental). '+SCALE_NOTE)}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
+  const monthNameOnly = curMonth ? mLabelFull(curMonth).replace(/\s+\d{4}$/,'') : 'el mes';
+  const newKpi = `<div class="mc-mini">+${newCount} nuevo${newCount!==1?'s':''} en ${monthNameOnly}</div>`;
+
+  // Tendencia mensual de fondo: serie de cada KPI por mes hasta el mes en curso
+  const trendMonths = allMonths.slice(0, (ci<0?allMonths.length:ci+1));
+  const monthClassStats=(mk)=>{
+    const ds=players.map(p=>{ const s=lastInMonth(p,mk); const av={}; areas.forEach(a=>av[a]=s?avgLvlKeys(s,AREA_KEYS[a]):0); return {av}; });
+    const ca={}; areas.forEach(a=>{ const v=ds.map(d=>d.av[a]).filter(x=>x>0); ca[a]=v.length?v.reduce((x,y)=>x+y,0)/v.length:0; });
+    const tvv=areas.map(a=>ca[a]).filter(v=>v>0); const tot=tvv.length?tvv.reduce((x,y)=>x+y,0)/tvv.length:0;
+    return {ca, tot};
+  };
+  const series = trendMonths.map(monthClassStats);
+  const cumStudents=(mk)=>{ const seen={}; let c=0; allRows.forEach(r=>{ const nm=r[COL.alumno]; if(players.indexOf(nm)>=0){ const mm=monthKey(r); if(mm && mm<=mk && !seen[nm]){ seen[nm]=1; c++; } } }); return c; };
+  const sparkSVG=(vals)=>{
+    const pts=vals.filter(v=>v>0);
+    if(pts.length<2) return '';
+    const W=100,H=42,pad=7;
+    const mn=Math.min.apply(null,pts), mx=Math.max.apply(null,pts), rng=(mx-mn)||1;
+    const diff=pts[pts.length-1]-pts[0];
+    const col = diff>0?'#16a34a':(diff<0?'#dc2626':'#9aa0bd');
+    const n=pts.length;
+    const xy=pts.map((v,i)=>[ (i/(n-1))*W, H-pad-((v-mn)/rng)*(H-2*pad) ]);
+    const line=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    const area='M'+xy[0][0].toFixed(1)+' '+H+' '+xy.map(p=>'L'+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+' L'+xy[n-1][0].toFixed(1)+' '+H+' Z';
+    return `<svg class="mc-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${area}" fill="${col}" fill-opacity="0.13"/><path d="${line}" fill="none" stroke="${col}" stroke-opacity="0.55" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+  };
+  const sparkObs = sparkSVG(trendMonths.map(cumStudents));
+  const sparkArea = {}; areas.forEach(a=>sparkArea[a]=sparkSVG(series.map(s=>s.ca[a])));
+  const sparkTot = sparkSVG(series.map(s=>s.tot));
+
+  const obsCard=`<div class="metric-card">${sparkObs}<div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
+  const areaCards=areas.map(a=>`<div class="metric-card">${sparkArea[a]}<div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
+  const totCard=`<div class="metric-card mc-hl">${sparkTot}<div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
 
   const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map((d,i)=>{
     const a=d.at;
