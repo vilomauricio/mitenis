@@ -479,6 +479,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* Avatares con aspecto de pelota (brillo) */
 .header-avatar,.pb-avatar,.lg-av,.lg-pod-av{box-shadow:inset 0 3px 6px rgba(255,255,255,.32),inset 0 -4px 8px rgba(0,0,0,.16);}
 
+/* Medalla 🥇 del campeón vigente (sobre la foto de perfil) */
+.header-avatar,.pb-avatar,.lg-av,.lg-pod-av{position:relative;}
+.champ-medal{position:absolute;bottom:-4px;right:-4px;font-size:15px;line-height:1;pointer-events:none;z-index:3;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
+.lg-av .champ-medal{font-size:13px;bottom:-3px;right:-3px;}
+.lg-pod.p1 .champ-medal{font-size:18px;}
+
 /* Selector de foto de perfil (pelotas) */
 .av-picker{display:flex;gap:11px;flex-wrap:wrap;}
 .av-pick{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer;position:relative;overflow:hidden;box-shadow:inset 0 2px 6px rgba(255,255,255,.45),inset 0 -3px 6px rgba(0,0,0,.14);transition:transform .12s;}
@@ -1262,7 +1268,7 @@ function renderPlayers(){
     const color=avatarColor(name);
     const ns=allRows.filter(r=>r[COL.alumno]===name).length;
     return `<button class="player-btn" onclick="selectPlayer('${name.replace(/'/g,"\\'")}')">
-      <div class="pb-avatar" style="background:${color};">${ini}</div>
+      <div class="pb-avatar" style="background:${color};">${ini}${champMedal(name)}</div>
       <div><div class="pb-name">${name}</div><div class="pb-meta">${ns} sesión${ns!==1?'es':''}</div></div>
     </button>`;
   };
@@ -1350,7 +1356,7 @@ function openPlayer(name){
   const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const info=getInfo(name);
   document.getElementById('h-avatar').style.background=color;
-  document.getElementById('h-avatar').textContent=ini;
+  document.getElementById('h-avatar').innerHTML=ini+champMedal(name);
   document.getElementById('h-name').textContent=name;
   document.getElementById('h-meta').textContent=info
     ?[info[INFO.edad]?info[INFO.edad]+' años':'',info[INFO.categoria]||'',playerSessions.length+' sesiones'].filter(Boolean).join(' · ')
@@ -2385,6 +2391,38 @@ function scorePlayer(name, period){
   const actitud = actitudExcelente(name, period) ? LG.ACTITUD : 0;
   return {name, asistencia, actitud, torneos, sesiones:sessScope.length, total:asistencia+actitud+torneos};
 }
+
+// ══════════════════════════════════════
+// CAMPEÓN VIGENTE — #1 de su categoría en el último mes CERRADO.
+// Lleva la medalla 🥇 en su foto de perfil durante todo el mes siguiente,
+// hasta que ese mes también cierre (y se corona un nuevo campeón).
+// ══════════════════════════════════════
+let __CHAMPS=null, __CHAMPS_MK='__init__';
+function lastEndedMonth(){
+  const ms=[...new Set(allRows.map(monthKey).filter(Boolean))].sort();
+  for(let i=ms.length-1;i>=0;i--){ if(monthEnded(ms[i])) return ms[i]; }
+  return '';
+}
+function monthCategoryChampion(cat, mk){
+  const ps=[...new Set(allRows.map(r=>r[COL.alumno]).filter(Boolean))]
+    .filter(p=>{ const i=getInfo(p); return (i?(i[INFO.categoria]||'').trim():'')===cat; });
+  const board=ps.map(p=>scorePlayer(p, mk)).filter(s=>s.sesiones>0);
+  if(!board.length) return null;
+  board.sort((a,b)=> b.total-a.total || b.asistencia-a.asistencia || b.actitud-a.actitud || b.torneos-a.torneos);
+  return board[0].total>0 ? board[0].name : null;
+}
+function getChampions(){
+  const mk=lastEndedMonth();
+  if(mk===__CHAMPS_MK && __CHAMPS) return __CHAMPS;
+  __CHAMPS_MK=mk; __CHAMPS={};
+  if(mk){
+    const cats=[...new Set(infoRows.map(r=>(r[INFO.categoria]||'').trim()).filter(Boolean))];
+    cats.forEach(cat=>{ const c=monthCategoryChampion(cat, mk); if(c) __CHAMPS[c.trim()]=true; });
+  }
+  return __CHAMPS;
+}
+function isChampion(name){ try{ return !!getChampions()[(name||'').trim()]; }catch(e){ return false; } }
+function champMedal(name){ return isChampion(name) ? '<span class="champ-medal" title="Campeón del mes pasado en su categoría">🥇</span>' : ''; }
 function areaTier(name, areaId){
   const sess=sessionsOf(name);
   const last={};
@@ -2444,7 +2482,7 @@ function buildLiga(){
       const s=board[i];
       const isMe=s.name===currentPlayer;
       return `<div class="lg-pod ${cls[i]}${isMe?' me':''}">
-        <div class="lg-pod-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
+        <div class="lg-pod-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}${champMedal(s.name)}</div>
         <div class="lg-pod-name">${s.name.split(' ')[0]}${isMe?' <span class="lg-you">vos</span>':''}</div>
         <div class="lg-pod-pts">${s.total} pts</div>
         <div class="lg-pod-stand">${medal[i]}</div>
@@ -2456,7 +2494,7 @@ function buildLiga(){
     const isMe=s.name===currentPlayer;
     return `<div class="lg-row ${isMe?'me':''}">
       <div class="lg-rank ${i<3?'top':''}">${i+1}</div>
-      <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}</div>
+      <div class="lg-av" style="background:${avatarOf(s.name)};">${iniOf(s.name)}${champMedal(s.name)}</div>
       <div class="lg-info">
         <div class="lg-name">${s.name}${isMe?'<span class="lg-you">vos</span>':''}</div>
         <div class="lg-sub">📅 ${s.asistencia} · 💪 ${s.actitud} · 🏆 ${s.torneos}</div>
