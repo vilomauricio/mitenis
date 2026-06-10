@@ -564,6 +564,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ball-label.mejora-trigger{cursor:pointer;outline:1.5px solid transparent;transition:outline-color .15s, transform .1s;}
 .ball-label.mejora-trigger:hover{outline-color:var(--lv1);}
 .ball-label.mejora-trigger:active{transform:scale(.97);}
+/* === videos: iconos 🎥 por golpe + modal === */
+.vid-icos{display:inline-flex;align-items:center;gap:4px;margin-left:8px;vertical-align:middle;}
+.vid-ico{font-size:14px;line-height:1;cursor:pointer;transition:transform .1s ease, opacity .15s;}
+.vid-ico:hover{transform:scale(1.18);}
+.vid-ico.pending{opacity:.26;filter:grayscale(1);cursor:default;}
+.vid-ico.pending:hover{transform:none;}
+.vid-sep{color:var(--hint);font-size:11px;line-height:1;}
+.video-modal{background:var(--surf);border-radius:var(--radius);padding:22px;width:100%;max-width:760px;box-shadow:0 20px 60px rgba(32,34,58,.3);max-height:88vh;overflow-y:auto;}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:640px){.video-grid{grid-template-columns:1fr;}}
+.video-slot-lbl{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+.video-slot.pending .video-slot-lbl{color:var(--hint);}
+.video-date{font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;}
+.video-frame-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;}
+.video-frame{position:absolute;inset:0;width:100%;height:100%;border:none;display:block;}
+.video-frame-wrap.empty{background:var(--surf2);display:flex;align-items:center;justify-content:center;border:1.5px dashed var(--border);}
+.video-empty{text-align:center;color:var(--hint);font-size:18px;font-weight:600;line-height:1.7;}
+.video-empty span{font-size:11px;}
+.video-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-weight:700;font-size:14px;}
+.video-note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center;}
 #mejora-title{text-align:left;}
 .mejora-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--lv1);background:var(--lv1-bg);border-radius:999px;padding:3px 11px;margin-bottom:10px;}
 .mejora-tag.tag1{color:var(--lv1);background:var(--lv1-bg);}
@@ -850,6 +870,14 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
   </div>
 </div>
 
+<div class="pin-overlay" id="video-overlay" onclick="if(event.target===this)closeVideo()">
+  <div class="video-modal">
+    <div class="pin-title" id="video-title">🎥 Video</div>
+    <div id="video-body" style="margin-top:6px;"></div>
+    <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeVideo()">Cerrar</button></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ══════════════════════════════════════
@@ -859,6 +887,7 @@ const SHEET_ID   = '1Frlg1Kcl1SZ9qsC7G0NvcxziGua2wZrCE8LIRpg7CJk';
 const DATA_SHEET = 'Registro - Rubricas';
 const INFO_SHEET = 'informacion';
 const ASIST_SHEET = 'asistencia';
+const VIDEOS_SHEET = 'Videos';   // hoja: alumno | golpe | fecha | link
 
 // ══════════════════════════════════════
 // COLUMNAS — exactamente como las renombró el usuario
@@ -905,6 +934,8 @@ const INFO_DEFAULT = { alumno:0, brazo:1, altura:2, edad:3, categoria:4, objetiv
 let INFO = {...INFO_DEFAULT};
 const ASIST_DEFAULT = { fecha:0, jugador:1, cumplidas:2, objetivo:3, torneos:4 };
 let ASIST = {...ASIST_DEFAULT};
+const VID_DEFAULT = { alumno:0, golpe:1, fecha:2, link:3 };
+let VID = {...VID_DEFAULT};
 const AVATAR_COLORS = ['#5170ff','#3a52d6','#6d86ff','#2f3fb0','#5170ff','#3a52d6','#6d86ff','#2f3fb0'];
 const BALL_COLORS=['#c8d42b','#5170ff','#ff5d5d','#ff9f43','#8e5cff','#17b890','#ff6fb5'];
 const COACH_PIN_FALLBACK='';
@@ -975,6 +1006,12 @@ const ASIST_ALIASES = {
   cumplidas:['sesiones cumplidas','cumplidas','asistencias','realizadas','asistencia'],
   objetivo:['sesiones mensuales objetivo','objetivo','sesiones objetivo','meta','objetivo mensual','sesiones objetivo mensual'],
   torneos:['torneos jugados','torneos','torneos del mes','cantidad de torneos','torneos jugados en el mes','torneos mes']
+};
+const VID_ALIASES = {
+  alumno:['alumno','jugador','nombre'],
+  golpe:['golpe','golpes','rubrica','rúbrica','tipo'],
+  fecha:['fecha','marca temporal','timestamp'],
+  link:['link','enlace','url','video','dirección','direccion']
 };
 
 // ══════════════════════════════════════
@@ -1059,7 +1096,7 @@ const RESUMEN_GROUPS = {
 // ══════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════
-let allRows=[], infoRows=[], asistRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all', coachCat='all';
+let allRows=[], infoRows=[], asistRows=[], videoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all', coachCat='all';
 
 // ══════════════════════════════════════
 // FETCH CSV DESDE GOOGLE SHEETS
@@ -1078,6 +1115,13 @@ async function fetchSheet(name){
   }
   if(!res.ok) throw new Error(`No se pudo cargar la hoja "${name}" (HTTP ${res.status})`);
   return parseCSV(await res.text());
+}
+// La hoja de videos puede llamarse "Videos" o "videos" — probamos ambas
+async function fetchVideosSheet(){
+  for(const nm of [VIDEOS_SHEET, 'videos', 'Videos']){
+    try{ const m=await fetchSheet(nm); if(m && m.length) return m; }catch(e){}
+  }
+  return [];
 }
 
 // Parser CSV robusto: respeta comillas, comas y saltos de línea dentro de celdas,
@@ -1240,13 +1284,15 @@ function calcBench(playerName){
 const CACHE_KEY='mitenis_cache_v1';
 function fmtUpdated(ts){ const d=new Date(ts); return isNaN(d)?'':d.toLocaleString('es-AR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function setUpdated(ts){ const e=document.getElementById('last-update'); if(e) e.textContent = ts ? ('Última actualización: '+fmtUpdated(ts)) : ''; }
-function applyData(dataMatrix, infoMatrix, asistMatrix){
+function applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix){
   if(dataMatrix.length) COL  = buildColMap(dataMatrix[0], COL_DEFAULT,  HEADER_ALIASES);
   if(infoMatrix && infoMatrix.length) INFO = buildColMap(infoMatrix[0], INFO_DEFAULT, INFO_ALIASES);
   if(asistMatrix && asistMatrix.length) ASIST = buildColMap(asistMatrix[0], ASIST_DEFAULT, ASIST_ALIASES);
+  if(videosMatrix && videosMatrix.length) VID = buildColMap(videosMatrix[0], VID_DEFAULT, VID_ALIASES);
   allRows  = dataMatrix.slice(1).filter(r=>r[COL.alumno] && r[COL.alumno].length>0);
   infoRows = (infoMatrix && infoMatrix.length) ? infoMatrix.slice(1).filter(r=>r[INFO.alumno] && r[INFO.alumno].length>0) : [];
   asistRows = (asistMatrix && asistMatrix.length) ? asistMatrix.slice(1).filter(r=>r[ASIST.jugador] && r[ASIST.jugador].length>0) : [];
+  videoRows = (videosMatrix && videosMatrix.length) ? videosMatrix.slice(1).filter(r=>r[VID.alumno] && r[VID.alumno].length>0 && r[VID.link] && r[VID.link].length>0) : [];
 }
 function renderPlayers(){
   const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
@@ -1292,19 +1338,20 @@ async function init(){
   // 1) Cache para pintado instantáneo
   try{
     const raw=localStorage.getItem(CACHE_KEY);
-    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[], cc.asist||[]); renderPlayers(); setUpdated(cc.ts); } }
+    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[], cc.asist||[], cc.videos||[]); renderPlayers(); setUpdated(cc.ts); } }
   }catch(e){}
   // 2) Refresco en vivo desde el Sheet
   try{
-    const [dataMatrix, infoMatrix, asistMatrix] = await Promise.all([
+    const [dataMatrix, infoMatrix, asistMatrix, videosMatrix] = await Promise.all([
       fetchSheet(DATA_SHEET),
       fetchSheet(INFO_SHEET).catch(()=>[]),
-      fetchSheet(ASIST_SHEET).catch(()=>[])
+      fetchSheet(ASIST_SHEET).catch(()=>[]),
+      fetchVideosSheet().catch(()=>[])
     ]);
-    applyData(dataMatrix, infoMatrix, asistMatrix);
+    applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix);
     renderPlayers();
     const ts=Date.now(); setUpdated(ts);
-    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix, asist:asistMatrix})); }catch(e){}
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix, asist:asistMatrix, videos:videosMatrix})); }catch(e){}
   }catch(e){
     if(!allRows.length){
       const g=document.getElementById('player-grid');
@@ -1488,6 +1535,82 @@ function openMejora(name, lv){
   const ov=document.getElementById('mejora-overlay'); if(ov) ov.classList.add('show');
 }
 function closeMejora(){ const ov=document.getElementById('mejora-overlay'); if(ov) ov.classList.remove('show'); }
+
+// ══════════════════════════════════════
+// VIDEOS — clip por golpe (Inicio / Fin de año)
+// ══════════════════════════════════════
+// Devuelve {inicio, fin, count} para un alumno + golpe.
+// El más antiguo por fecha = Inicio de año; el más reciente (si hay 2+) = Fin de año.
+function getPlayerVideos(name, golpe){
+  if(!name) return {inicio:null, fin:null, count:0};
+  const rows=videoRows.filter(r=>
+    (r[VID.alumno]||'').trim()===name.trim() &&
+    normHeader(r[VID.golpe]||'')===normHeader(golpe)
+  ).sort((a,b)=>{
+    const da=parseDate(a[VID.fecha])||'', db=parseDate(b[VID.fecha])||'';
+    return da<db?-1:da>db?1:0;
+  });
+  const pack=r=>r?{link:(r[VID.link]||'').trim(), fecha:r[VID.fecha]||''}:null;
+  return {
+    inicio: pack(rows[0]),
+    fin: rows.length>=2 ? pack(rows[rows.length-1]) : null,
+    count: rows.length
+  };
+}
+// Convierte un link (Drive / YouTube / imagen / video directo) en HTML embebible
+function embedVideo(link){
+  if(!link) return '';
+  const url=link.trim();
+  let m;
+  if(/drive\.google\.com/.test(url) && (m=url.match(/\/file\/d\/([^/]+)/)||url.match(/[?&]id=([^&]+)/))){
+    return `<iframe class="video-frame" src="https://drive.google.com/file/d/${m[1]}/preview" allow="autoplay" allowfullscreen></iframe>`;
+  }
+  if((m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/))){
+    return `<iframe class="video-frame" src="https://www.youtube.com/embed/${m[1]}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  }
+  if(/\.(jpe?g|png|gif|webp)(\?|$)/i.test(url)){
+    return `<img class="video-frame" src="${url}" alt="video" style="object-fit:cover;">`;
+  }
+  if(/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)){
+    return `<video class="video-frame" src="${url}" controls playsinline></video>`;
+  }
+  return `<a class="video-fallback" href="${url}" target="_blank" rel="noopener">▶︎ Abrir video</a>`;
+}
+// Iconos 🎥 al lado del nombre del golpe (Inicio | Fin). Translúcido = todavía sin video.
+function vidIconsHTML(golpe){
+  const v=getPlayerVideos(currentPlayer, golpe);
+  const iniOk=!!(v.inicio&&v.inicio.link), finOk=!!(v.fin&&v.fin.link);
+  if(!iniOk&&!finOk) return '';
+  const g=String(golpe).replace(/'/g,"\\'");
+  const ico=(ok,label)=> ok
+    ? `<span class="vid-ico" title="${label} — ver video" onclick="event.stopPropagation();openVideo('${g}')">🎥</span>`
+    : `<span class="vid-ico pending" title="${label} — disponible a fin de año">🎥</span>`;
+  return `<span class="vid-icos">${ico(iniOk,'Inicio de año')}<span class="vid-sep">|</span>${ico(finOk,'Fin de año')}</span>`;
+}
+function openVideo(golpe){
+  if(!currentPlayer) return;
+  const v=getPlayerVideos(currentPlayer, golpe);
+  const tEl=document.getElementById('video-title');
+  const bEl=document.getElementById('video-body');
+  if(!tEl||!bEl) return;
+  tEl.innerHTML=`🎥 Tu ${golpe} en video`;
+  const slot=(label, data)=>{
+    if(data && data.link){
+      return `<div class="video-slot">
+        <div class="video-slot-lbl">${label}${data.fecha?` · <span class="video-date">${fmtDate(data.fecha)}</span>`:''}</div>
+        <div class="video-frame-wrap">${embedVideo(data.link)}</div>
+      </div>`;
+    }
+    return `<div class="video-slot pending">
+      <div class="video-slot-lbl">${label}</div>
+      <div class="video-frame-wrap empty"><div class="video-empty">🎥<br><span>Disponible a fin de año</span></div></div>
+    </div>`;
+  };
+  bEl.innerHTML=`<div class="video-grid">${slot('Inicio de año', v.inicio)}${slot('Fin de año', v.fin)}</div>`
+    +`<div class="video-note">El mismo golpe al empezar y al terminar el año — para ver tu progreso. 💪</div>`;
+  const ov=document.getElementById('video-overlay'); if(ov) ov.classList.add('show');
+}
+function closeVideo(){ const ov=document.getElementById('video-overlay'); if(ov){ ov.classList.remove('show'); const b=document.getElementById('video-body'); if(b) b.innerHTML=''; } }
 function coachPin(){
   for(const r of infoRows){ const nm=(r[INFO.alumno]||'').toLowerCase(); if(/profe|coach|entrenad|admin/.test(nm)){ const p=r[INFO.pin]!=null?String(r[INFO.pin]).trim():''; if(p) return p; } }
   return COACH_PIN_FALLBACK;
@@ -1857,7 +1980,7 @@ function buildRubrica(){
       const q=PERF_Q[g.nombre]||'';
       return `<div class="ball-item">
         <div class="ball-row">
-          <span class="ball-name">${g.nombre}</span>
+          <span class="ball-name">${g.nombre}${vidIconsHTML(g.nombre)}</span>
           <span class="balls">${balls(lv)}</span>
           ${(lv===1||lv===2)
             ? `<span class="ball-label lb${lv} mejora-trigger" onclick="openMejora('${g.nombre}',${lv})" title="Cómo mejorar">${lvlLabel(lv)} 💡</span>`
