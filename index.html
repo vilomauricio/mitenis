@@ -515,13 +515,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .asist-kpi{flex-shrink:0;}
 .asist-frac{font-size:32px;font-weight:800;line-height:1;}
 .asist-frac span{font-size:18px;font-weight:700;color:var(--hint);}
-.asist-frac.ok{color:var(--lv3);}
-.asist-frac.low{color:var(--lv2);}
+.asist-frac.ok{color:#22b16c;}
+.asist-frac.low{color:#626262;}
 .asist-pctsm{font-size:11px;color:var(--muted);margin-top:5px;}
+.asist-pctsm.ok{color:#22b16c;}
 .asist-dots{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;align-content:center;width:100%;}
-.asist-dot{width:18px;height:18px;border-radius:50%;background:var(--surf2);border:1.5px solid var(--border);box-sizing:border-box;}
-.asist-dot.done{background:var(--lv2);border-color:var(--lv2);}
-.asist-dot.done.met{background:var(--lv3);border-color:var(--lv3);}
+.asist-dot{width:18px;height:18px;border-radius:50%;background:#e8eaef;box-sizing:border-box;}
+.asist-dot.done{background:#626262;}
+.asist-dot.done.met{background:#22b16c;}
 
 /* === v13: sufijo "/ 3" en el score === */
 .mc-max{font-size:0.56em;font-weight:600;color:var(--hint);letter-spacing:0;}
@@ -1504,6 +1505,7 @@ function openAvatarPicker(){
 function chooseAvatar(color){ if(currentPlayer) setAvatarColor(currentPlayer,color); closeAvatarPicker(); }
 function closeAvatarPicker(){ const ov=document.getElementById('av-overlay'); if(ov) ov.classList.remove('show'); }
 function openLigaInfo(){
+  const myCat=(getInfo(currentPlayer)?.[INFO.categoria]||'').trim() || 'Sin categoría';
   const b=document.getElementById('liga-info-body');
   if(b) b.innerHTML=`<p style="margin-bottom:10px;">Mi Ranking es una <strong>competencia amistosa</strong> que premia la <strong>constancia, la buena actitud y la competencia</strong>. Te motiva a venir, a entrenar con la mejor energía y a animarte a jugar torneos.</p>
     <p style="margin:0 0 6px;font-weight:600;">Cómo se suman los puntos:</p>
@@ -1511,7 +1513,8 @@ function openLigaInfo(){
       <li style="margin-bottom:5px;"><strong>+${LG.ATTEND}</strong> por tu asistencia completa del mes 📅</li>
       <li style="margin-bottom:5px;"><strong>+${LG.ACTITUD}</strong> si tu Actitud del mes es <strong>Excelente</strong> 💪</li>
       <li><strong>+${LG.TORNEO}</strong> por cada torneo que jugaste en el mes 🏆</li>
-    </ul>`;
+    </ul>
+    <p style="margin:12px 0 0;padding-top:10px;border-top:1px solid var(--border);">🏷️ Competís en el ranking de tu categoría: <strong>${myCat}</strong>.</p>`;
   const ov=document.getElementById('liga-info-overlay'); if(ov) ov.classList.add('show');
 }
 function closeLigaInfo(){ const ov=document.getElementById('liga-info-overlay'); if(ov) ov.classList.remove('show'); }
@@ -1979,7 +1982,7 @@ function buildResumen(){
       <div class="asist-row">
         <div class="asist-kpi">
           <div class="asist-frac ${at.met?'ok':'low'}">${done}<span>/${obj}</span></div>
-          <div class="asist-pctsm">${at.pct}%${at.met?' · objetivo cumplido 🎾':''}</div>
+          <div class="asist-pctsm ${at.met?'ok':''}">${at.pct}%${at.met?' · objetivo cumplido 🎾':''}</div>
         </div>
         <div class="asist-dots">${dots||'<span class="asist-txt">Sin objetivo definido este mes</span>'}</div>
       </div>
@@ -2705,7 +2708,7 @@ function buildLiga(){
     </div>`;
   }).join('');
 
-  el.innerHTML = explain + monthChipsHTML() + catNote + meHTML
+  el.innerHTML = explain + monthChipsHTML() + meHTML
     + (podiumHTML?`<div class="card"><div class="card-title">Podio · ${catLbl}</div>${podiumHTML}</div>`:'')
     + `<div class="card"><div class="card-title">Tabla de posiciones · ${catLbl}</div>${rowsHTML||'<div class="empty" style="color:var(--muted);">Sin jugadores en este período.</div>'}</div>`;
   ldEl.style.display='none'; el.style.display='block';
