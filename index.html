@@ -670,6 +670,45 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .cz-intro-d{font-size:13px;color:var(--text);line-height:1.55;}
 .cz-filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
 .cz-filters .card{margin:0;}
+.mode-toggle{display:flex;gap:6px;background:rgba(255,255,255,.18);padding:5px;border-radius:14px;margin-bottom:14px;width:100%;}
+.mode-btn{flex:1;border:none;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:background .15s,color .15s;}
+.mode-btn.active{background:#fff;color:var(--blue);}
+.rec-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.rec-item{flex:1;min-width:64px;text-align:center;background:var(--surf2);border-radius:12px;padding:10px 6px;}
+.rec-val{font-size:20px;font-weight:800;color:var(--text);}
+.rec-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}
+.match-list{display:flex;flex-direction:column;gap:8px;}
+.match-row{display:flex;align-items:center;gap:12px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
+.match-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;font-size:13px;}
+.match-row.win .match-badge{background:#22b16c;}
+.match-row.loss .match-badge{background:#f73b3b;}
+.match-row.tie .match-badge{background:var(--hint);}
+.match-mid{flex:1;min-width:0;}
+.match-opp{font-weight:700;font-size:14px;color:var(--text);}
+.match-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.match-res{font-weight:700;color:var(--text);white-space:nowrap;}
+.rank-list{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.rank-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:var(--surf2);}
+.rank-row.me{background:#fffceb;border:1px solid #f3e07a;}
+.rank-pos{font-weight:800;color:var(--muted);width:20px;text-align:center;flex-shrink:0;}
+.rank-name{flex:1;min-width:0;}
+.rank-nm{font-weight:700;color:var(--text);font-size:14px;}
+.rank-rec{font-size:11px;color:var(--muted);margin-top:1px;}
+.rank-you{display:inline-block;background:var(--blue);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;vertical-align:middle;}
+.rank-pts{font-weight:800;color:var(--blue);white-space:nowrap;}
+.rank-pts small{font-size:10px;color:var(--muted);font-weight:600;margin-left:2px;}
+.ev-row{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.ev-row:last-child{border-bottom:none;}
+.ev-date{font-size:12px;color:var(--blue);min-width:90px;flex-shrink:0;}
+.ev-name{font-weight:700;color:var(--text);font-size:14px;}
+.ev-meta{font-size:11px;color:var(--muted);}
+.cz-cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.cz-cat{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font-weight:600;font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;}
+.cz-cat.active{background:#fff;color:var(--blue);border-color:#fff;}
+.cz-stats{display:flex;gap:10px;margin:4px 0 12px;}
+.cz-stats > div{flex:1;text-align:center;background:var(--surf2);border-radius:10px;padding:8px 4px;}
+.cz-stats b{display:block;font-size:18px;color:var(--text);}
+.cz-stats span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
 /* Botón de descarga del resumen de planificación (Modo Profe) */
 .coach-dl-wrap{display:flex;margin:2px 0 14px;}
 .coach-dl{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,#5170ff,#6f86ff);color:#fff;border:none;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(81,112,255,.34);transition:transform .12s,box-shadow .12s;text-align:left;line-height:1.25;}
@@ -765,14 +804,18 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
     <div class="logo-ball"><div class="logo-emoji">👍</div></div>
     <div class="landing-title"><span>mi</span> tenis</div>
     <div class="landing-sub">sistema de seguimiento y desarrollo para jugadores de tenis <button class="info-i" onclick="openAppInfo()" aria-label="Más información">i</button></div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-escuela" onclick="setMode('escuela')">Escuela de Tenis</button>
+      <button class="mode-btn" id="mode-torneos" onclick="setMode('torneos')">Torneos internos</button>
+    </div>
     <div class="select-card">
-      <div class="select-label">Seleccioná un jugador por categoría</div>
+      <div class="select-label" id="select-label">Seleccioná un jugador por categoría</div>
       <div class="player-list" id="player-grid">
         <div class="loading-state">Cargando jugadores…</div>
       </div>
       <div class="last-update" id="last-update"></div>
     </div>
-    <button class="coach-btn" onclick="openCoach()">🧢 Modo Profe</button>
+    <button class="coach-btn" id="entry-btn" onclick="openEntry()">🧢 Modo Profe</button>
   </div>
 </div>
 
@@ -790,11 +833,16 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
       </div>
       <div style="width:60px;"></div>
     </div>
-    <nav class="app-tabs">
+    <nav class="app-tabs" id="tabs-escuela">
       <button class="tab-btn active" onclick="switchTab('resumen',this)">Mi Tenis</button>
       <button class="tab-btn" onclick="switchTab('rubrica',this)">Mi Rendimiento</button>
       <button class="tab-btn" onclick="switchTab('historial',this)">Mi Registro</button>
       <button class="tab-btn" onclick="switchTab('liga',this)">🏆 Mi Ranking</button>
+    </nav>
+    <nav class="app-tabs" id="tabs-torneos" style="display:none;">
+      <button class="tab-btn active" onclick="switchTab('partidos',this)">🎾 Mis Partidos</button>
+      <button class="tab-btn" onclick="switchTab('ranking',this)">🏆 Ranking</button>
+      <button class="tab-btn" onclick="switchTab('calendario',this)">📅 Calendario</button>
     </nav>
   </header>
   <main class="app-content">
@@ -814,6 +862,18 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
       <div class="loading-view" id="loading-liga"><div class="spinner"></div><p>Cargando…</p></div>
       <div id="content-liga" style="display:none;"></div>
     </div>
+    <div class="tab-view" id="tab-partidos">
+      <div class="loading-view" id="loading-partidos"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-partidos" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-ranking">
+      <div class="loading-view" id="loading-ranking"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-ranking" style="display:none;"></div>
+    </div>
+    <div class="tab-view" id="tab-calendario">
+      <div class="loading-view" id="loading-calendario"><div class="spinner"></div><p>Cargando…</p></div>
+      <div id="content-calendario" style="display:none;"></div>
+    </div>
   </main>
 </div>
 
@@ -826,6 +886,17 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(81,1
     </div>
   </header>
   <main class="app-content"><div id="coach-content"></div></main>
+</div>
+
+<div class="coach" id="circuito">
+  <header class="app-header coach-header">
+    <div class="header-top">
+      <button class="header-back" onclick="closeCircuito()">← Volver</button>
+      <div class="header-player"><div class="header-name">🎾 Circuito interno</div></div>
+      <div style="width:60px;"></div>
+    </div>
+  </header>
+  <main class="app-content"><div id="circuito-content"></div></main>
 </div>
 
 <div class="pin-overlay" id="pin-overlay">
@@ -937,6 +1008,10 @@ const DATA_SHEET = 'Registro - Rubricas';
 const INFO_SHEET = 'informacion';
 const ASIST_SHEET = 'asistencia';
 const VIDEOS_SHEET = 'Videos';   // hoja: alumno | golpe | fecha | link
+const ADULTS_SHEET = 'informacion adultos'; // alumno | categoria | edad | brazo | pin
+const MATCHES_SHEET = 'Partidos Torneos';   // torneo | categoria | fecha | jugadorA | jugadorB | resultado | ganador
+const EVENTS_SHEET = 'Torneos';  // (opcional) torneo | categoria | fecha | estado
+const MATCH_WIN_PTS = 3;         // puntaje por victoria para el ranking interno
 
 // ══════════════════════════════════════
 // COLUMNAS — exactamente como las renombró el usuario
@@ -985,6 +1060,12 @@ const ASIST_DEFAULT = { fecha:0, jugador:1, cumplidas:2, objetivo:3, torneos:4 }
 let ASIST = {...ASIST_DEFAULT};
 const VID_DEFAULT = { alumno:0, golpe:1, fecha:2, link:3 };
 let VID = {...VID_DEFAULT};
+const ADULT_DEFAULT = { alumno:0, categoria:1, edad:2, brazo:3, pin:4 };
+let ADULT = {...ADULT_DEFAULT};
+const MATCH_DEFAULT = { torneo:0, categoria:1, fecha:2, jugadorA:3, jugadorB:4, resultado:5, ganador:6 };
+let MATCH = {...MATCH_DEFAULT};
+const EV_DEFAULT = { nombre:0, categoria:1, fecha:2, estado:3 };
+let EV = {...EV_DEFAULT};
 const AVATAR_COLORS = ['#5170ff','#3a52d6','#6d86ff','#2f3fb0','#5170ff','#3a52d6','#6d86ff','#2f3fb0'];
 const BALL_COLORS=['#c8d42b','#5170ff','#ff5d5d','#ff9f43','#8e5cff','#17b890','#ff6fb5'];
 const COACH_PIN_FALLBACK='';
@@ -1061,6 +1142,28 @@ const VID_ALIASES = {
   golpe:['golpe','golpes','rubrica','rúbrica','tipo'],
   fecha:['fecha','marca temporal','timestamp'],
   link:['link','enlace','url','video','dirección','direccion']
+};
+const ADULT_ALIASES = {
+  alumno:['alumno','jugador','nombre','nombre y apellido'],
+  categoria:['categoria','categoría','cat','nivel'],
+  edad:['edad'],
+  brazo:['brazo','brazo hábil','brazo habil','mano','mano hábil'],
+  pin:['pin','clave','código','codigo']
+};
+const MATCH_ALIASES = {
+  torneo:['torneo','nombre del torneo','nombre torneo','evento','copa','competencia'],
+  categoria:['categoria','categoría','cat','nivel'],
+  fecha:['fecha','marca temporal','timestamp','día','dia'],
+  jugadorA:['jugador a','jugadora','jugador 1','jugador1','local','jugador local'],
+  jugadorB:['jugador b','jugadorb','jugador 2','jugador2','visitante','rival','jugador visitante'],
+  resultado:['resultado','marcador','score','sets','games','tanteo'],
+  ganador:['ganador','quien gano','quién ganó','quien ganó','winner','gana','ganó']
+};
+const EV_ALIASES = {
+  nombre:['torneo','nombre','nombre del torneo','evento'],
+  categoria:['categoria','categoría','cat','nivel'],
+  fecha:['fecha','día','dia','marca temporal'],
+  estado:['estado','status','situación','situacion']
 };
 
 // ══════════════════════════════════════
@@ -1146,6 +1249,8 @@ const RESUMEN_GROUPS = {
 // ESTADO GLOBAL
 // ══════════════════════════════════════
 let allRows=[], infoRows=[], asistRows=[], videoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all', coachCat='all';
+let appMode='escuela'; // 'escuela' | 'torneos'
+let adultRows=[], matchRows=[], eventRows=[], circuitoCat='all';
 
 // ══════════════════════════════════════
 // FETCH CSV DESDE GOOGLE SHEETS
@@ -1170,6 +1275,10 @@ async function fetchVideosSheet(){
   for(const nm of [VIDEOS_SHEET, 'videos', 'Videos']){
     try{ const m=await fetchSheet(nm); if(m && m.length) return m; }catch(e){}
   }
+  return [];
+}
+async function fetchByNames(names){
+  for(const nm of names){ try{ const m=await fetchSheet(nm); if(m && m.length) return m; }catch(e){} }
   return [];
 }
 
@@ -1333,23 +1442,59 @@ function calcBench(playerName){
 const CACHE_KEY='mitenis_cache_v1';
 function fmtUpdated(ts){ const d=new Date(ts); return isNaN(d)?'':d.toLocaleString('es-AR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function setUpdated(ts){ const e=document.getElementById('last-update'); if(e) e.textContent = ts ? ('Última actualización: '+fmtUpdated(ts)) : ''; }
-function applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix){
+function applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix, adultsMatrix, matchesMatrix, eventsMatrix){
   if(dataMatrix.length) COL  = buildColMap(dataMatrix[0], COL_DEFAULT,  HEADER_ALIASES);
   if(infoMatrix && infoMatrix.length) INFO = buildColMap(infoMatrix[0], INFO_DEFAULT, INFO_ALIASES);
   if(asistMatrix && asistMatrix.length) ASIST = buildColMap(asistMatrix[0], ASIST_DEFAULT, ASIST_ALIASES);
   if(videosMatrix && videosMatrix.length) VID = buildColMap(videosMatrix[0], VID_DEFAULT, VID_ALIASES);
+  if(adultsMatrix && adultsMatrix.length) ADULT = buildColMap(adultsMatrix[0], ADULT_DEFAULT, ADULT_ALIASES);
+  if(matchesMatrix && matchesMatrix.length) MATCH = buildColMap(matchesMatrix[0], MATCH_DEFAULT, MATCH_ALIASES);
+  if(eventsMatrix && eventsMatrix.length) EV = buildColMap(eventsMatrix[0], EV_DEFAULT, EV_ALIASES);
   allRows  = dataMatrix.slice(1).filter(r=>r[COL.alumno] && r[COL.alumno].length>0);
   infoRows = (infoMatrix && infoMatrix.length) ? infoMatrix.slice(1).filter(r=>r[INFO.alumno] && r[INFO.alumno].length>0) : [];
   asistRows = (asistMatrix && asistMatrix.length) ? asistMatrix.slice(1).filter(r=>r[ASIST.jugador] && r[ASIST.jugador].length>0) : [];
   videoRows = (videosMatrix && videosMatrix.length) ? videosMatrix.slice(1).filter(r=>r[VID.alumno] && r[VID.alumno].length>0 && r[VID.link] && r[VID.link].length>0) : [];
+  adultRows = (adultsMatrix && adultsMatrix.length) ? adultsMatrix.slice(1).filter(r=>r[ADULT.alumno] && r[ADULT.alumno].length>0) : [];
+  matchRows = (matchesMatrix && matchesMatrix.length) ? matchesMatrix.slice(1).filter(r=>(r[MATCH.jugadorA]&&r[MATCH.jugadorA].length>0)&&(r[MATCH.jugadorB]&&r[MATCH.jugadorB].length>0)) : [];
+  eventRows = (eventsMatrix && eventsMatrix.length) ? eventsMatrix.slice(1).filter(r=>r[EV.nombre] && r[EV.nombre].length>0) : [];
 }
+function getAdultInfo(name){ return adultRows.find(r=>r[ADULT.alumno]?.trim()===name.trim())||null; }
 function renderPlayers(){
-  const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
   const grid=document.getElementById('player-grid');
   if(!grid) return;
+  const SIN='Sin categoría';
+  if(appMode==='torneos'){
+    const players=adultRows.map(r=>(r[ADULT.alumno]||'').trim()).filter(Boolean);
+    if(!players.length){ grid.innerHTML='<div class="loading-state">No hay jugadores de torneos cargados.<br><span style="font-size:11px;">(revisá la hoja «informacion adultos»)</span></div>'; return; }
+    const catOf=p=>{ const i=getAdultInfo(p); return i?(i[ADULT.categoria]||'').trim():''; };
+    const groups={};
+    players.forEach(p=>{ const c=catOf(p)||SIN; (groups[c]=groups[c]||[]).push(p); });
+    const cats=Object.keys(groups).sort((a,b)=>{ if(a===SIN)return 1; if(b===SIN)return -1; return a.localeCompare(b,'es',{sensitivity:'base',numeric:true}); });
+    const btn=name=>{
+      const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const color=avatarColor(name);
+      const np=playerMatches(name).length;
+      return `<button class="player-btn" onclick="selectPlayer('${name.replace(/'/g,"\\'")}')">
+        <div class="pb-avatar" style="background:${color};">${ini}</div>
+        <div><div class="pb-name">${name}</div><div class="pb-meta">${np} partido${np!==1?'s':''}</div></div>
+      </button>`;
+    };
+    grid.innerHTML=cats.map(c=>{
+      const list=groups[c].slice().sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base',numeric:true}));
+      const dotColor=c===SIN?'var(--hint)':catColor(c);
+      return `<div class="acc player-acc">
+        <div class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-title"><span class="player-cat-dot" style="background:${dotColor};"></span>${c}</span>
+          <span class="acc-right"><span class="player-cat-count">${list.length}</span><span class="acc-chevron">▾</span></span>
+        </div>
+        <div class="acc-body"><div class="acc-body-inner"><div class="player-grid">${list.map(btn).join('')}</div></div></div>
+      </div>`;
+    }).join('');
+    return;
+  }
+  const players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean);
   if(!players.length){ grid.innerHTML='<div class="loading-state">No hay jugadores cargados.</div>'; return; }
   const catOf=p=>{ const i=getInfo(p); return i?(i[INFO.categoria]||'').trim():''; };
-  const SIN='Sin categoría';
   // Agrupar por categoría
   const groups={};
   players.forEach(p=>{ const c=catOf(p)||SIN; (groups[c]=groups[c]||[]).push(p); });
@@ -1387,20 +1532,23 @@ async function init(){
   // 1) Cache para pintado instantáneo
   try{
     const raw=localStorage.getItem(CACHE_KEY);
-    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[], cc.asist||[], cc.videos||[]); renderPlayers(); setUpdated(cc.ts); } }
+    if(raw){ const cc=JSON.parse(raw); if(cc && cc.data){ applyData(cc.data, cc.info||[], cc.asist||[], cc.videos||[], cc.adults||[], cc.matches||[], cc.events||[]); renderPlayers(); setUpdated(cc.ts); } }
   }catch(e){}
   // 2) Refresco en vivo desde el Sheet
   try{
-    const [dataMatrix, infoMatrix, asistMatrix, videosMatrix] = await Promise.all([
+    const [dataMatrix, infoMatrix, asistMatrix, videosMatrix, adultsMatrix, matchesMatrix, eventsMatrix] = await Promise.all([
       fetchSheet(DATA_SHEET),
       fetchSheet(INFO_SHEET).catch(()=>[]),
       fetchSheet(ASIST_SHEET).catch(()=>[]),
-      fetchVideosSheet().catch(()=>[])
+      fetchVideosSheet().catch(()=>[]),
+      fetchByNames([ADULTS_SHEET,'informacion adultos','Informacion Adultos','información adultos']).catch(()=>[]),
+      fetchByNames([MATCHES_SHEET,'Partidos Torneos','partidos torneos','Partidos','partidos']).catch(()=>[]),
+      fetchByNames([EVENTS_SHEET,'Torneos','torneos']).catch(()=>[])
     ]);
-    applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix);
+    applyData(dataMatrix, infoMatrix, asistMatrix, videosMatrix, adultsMatrix, matchesMatrix, eventsMatrix);
     renderPlayers();
     const ts=Date.now(); setUpdated(ts);
-    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix, asist:asistMatrix, videos:videosMatrix})); }catch(e){}
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts, data:dataMatrix, info:infoMatrix, asist:asistMatrix, videos:videosMatrix, adults:adultsMatrix, matches:matchesMatrix, events:eventsMatrix})); }catch(e){}
   }catch(e){
     if(!allRows.length){
       const g=document.getElementById('player-grid');
@@ -1414,8 +1562,9 @@ async function init(){
 // ══════════════════════════════════════
 let __pendingPlayer=null, __pinMode='player';
 function selectPlayer(name){
-  const info=getInfo(name);
-  const pin=(info && info[INFO.pin]!=null) ? String(info[INFO.pin]).trim() : '';
+  const info = appMode==='torneos' ? getAdultInfo(name) : getInfo(name);
+  const pinCol = appMode==='torneos' ? ADULT.pin : INFO.pin;
+  const pin=(info && info[pinCol]!=null) ? String(info[pinCol]).trim() : '';
   if(pin){
     __pendingPlayer=name; __pinMode='player';
     document.getElementById('pin-sub').textContent='Ingresá el PIN de '+name;
@@ -1441,28 +1590,44 @@ function submitPin(){
   if(val===pin){ document.getElementById('pin-overlay').classList.remove('show'); __pendingPlayer=null; openPlayer(name); }
   else { document.getElementById('pin-err').textContent='PIN incorrecto. Probá de nuevo.'; }
 }
+function setupTabsForMode(){
+  const esc=document.getElementById('tabs-escuela'), tor=document.getElementById('tabs-torneos');
+  if(appMode==='torneos'){ if(esc)esc.style.display='none'; if(tor)tor.style.display=''; }
+  else { if(esc)esc.style.display=''; if(tor)tor.style.display='none'; }
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+  const firstTab = appMode==='torneos' ? 'partidos' : 'resumen';
+  const navId = appMode==='torneos' ? 'tabs-torneos' : 'tabs-escuela';
+  const fb=document.querySelector('#'+navId+' .tab-btn'); if(fb) fb.classList.add('active');
+  const fv=document.getElementById('tab-'+firstTab); if(fv) fv.classList.add('active');
+}
 function openPlayer(name){
   currentPlayer=name;
   selectedMonth='all';
-  playerSessions=allRows
-    .filter(r=>r[COL.alumno]===name)
-    .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
-  const idx=[...new Set(allRows.map(r=>r[COL.alumno]))].sort().indexOf(name);
   const color=avatarColor(name);
   const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const info=getInfo(name);
-  document.getElementById('h-avatar').style.background=color;
-  document.getElementById('h-avatar').innerHTML=ini+champMedal(name);
-  document.getElementById('h-name').textContent=name;
-  document.getElementById('h-meta').textContent=info
-    ?[info[INFO.edad]?info[INFO.edad]+' años':'',info[INFO.categoria]||'',playerSessions.length+' sesiones'].filter(Boolean).join(' · ')
-    :`${playerSessions.length} sesiones`;
+  const av=document.getElementById('h-avatar');
+  if(appMode==='torneos'){
+    playerSessions=[];
+    const info=getAdultInfo(name);
+    const np=playerMatches(name).length;
+    av.style.background=color; av.innerHTML=ini;
+    document.getElementById('h-name').textContent=name;
+    document.getElementById('h-meta').textContent=[info&&info[ADULT.edad]?info[ADULT.edad]+' años':'', info?info[ADULT.categoria]||'':'', np+' partido'+(np!==1?'s':'')].filter(Boolean).join(' · ');
+  } else {
+    playerSessions=allRows
+      .filter(r=>r[COL.alumno]===name)
+      .sort((a,b)=>new Date(parseDate(a[COL.fecha]))-new Date(parseDate(b[COL.fecha])));
+    const info=getInfo(name);
+    av.style.background=color; av.innerHTML=ini+champMedal(name);
+    document.getElementById('h-name').textContent=name;
+    document.getElementById('h-meta').textContent=info
+      ?[info[INFO.edad]?info[INFO.edad]+' años':'',info[INFO.categoria]||'',playerSessions.length+' sesiones'].filter(Boolean).join(' · ')
+      :`${playerSessions.length} sesiones`;
+  }
   document.getElementById('landing').style.display='none';
   document.getElementById('app').classList.add('visible');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.tab-btn').classList.add('active');
-  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('tab-resumen').classList.add('active');
+  setupTabsForMode();
   rebuildAll();
 }
 function goBack(){
@@ -1670,6 +1835,22 @@ function coachPin(){
   for(const r of infoRows){ const nm=(r[INFO.alumno]||'').toLowerCase(); if(/profe|coach|entrenad|admin/.test(nm)){ const p=r[INFO.pin]!=null?String(r[INFO.pin]).trim():''; if(p) return p; } }
   return COACH_PIN_FALLBACK;
 }
+function setMode(m){
+  appMode=m;
+  document.getElementById('mode-escuela').classList.toggle('active', m==='escuela');
+  document.getElementById('mode-torneos').classList.toggle('active', m==='torneos');
+  const lbl=document.getElementById('select-label');
+  const btn=document.getElementById('entry-btn');
+  if(m==='torneos'){
+    if(lbl) lbl.textContent='Seleccioná un jugador por categoría';
+    if(btn) btn.innerHTML='🎾 Circuito interno';
+  } else {
+    if(lbl) lbl.textContent='Seleccioná un jugador por categoría';
+    if(btn) btn.innerHTML='🧢 Modo Profe';
+  }
+  renderPlayers();
+}
+function openEntry(){ if(appMode==='torneos') openCircuito(); else openCoach(); }
 function openCoach(){
   const pin=coachPin();
   if(pin){ __pinMode='coach'; document.getElementById('pin-sub').textContent='Ingresá el PIN de profe'; const inp=document.getElementById('pin-input'); inp.value=''; document.getElementById('pin-err').textContent=''; document.getElementById('pin-overlay').classList.add('show'); setTimeout(()=>{try{inp.focus();}catch(e){}},60); return; }
@@ -1685,6 +1866,130 @@ function openCoachView(){
 function closeCoach(){ document.getElementById('coach').classList.remove('visible'); document.getElementById('landing').style.display=''; }
 function setMonthCoach(m){ selectedMonth=m; buildCoach(); }
 function setCatCoach(c){ coachCat=c; buildCoach(); }
+// ══════════════════════════════════════
+// TORNEOS INTERNOS — partidos, ranking, calendario, circuito
+// ══════════════════════════════════════
+function normCat(c){ return (c||'').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function sameName(a,b){ return (a||'').toString().trim().toLowerCase()===(b||'').toString().trim().toLowerCase(); }
+function matchWinner(m){ return (m[MATCH.ganador]||'').toString().trim(); }
+function playerMatches(name){ return matchRows.filter(m=> sameName(m[MATCH.jugadorA],name)||sameName(m[MATCH.jugadorB],name)); }
+function playerRecord(name,cat){
+  let w=0,l=0,tot=0;
+  matchRows.forEach(m=>{
+    if(cat && normCat(m[MATCH.categoria])!==normCat(cat)) return;
+    if(!sameName(m[MATCH.jugadorA],name) && !sameName(m[MATCH.jugadorB],name)) return;
+    tot++;
+    const win=matchWinner(m);
+    if(win){ if(sameName(win,name)) w++; else l++; }
+  });
+  return {w,l,p:tot,dec:w+l,pts:w*MATCH_WIN_PTS};
+}
+function rankingForCat(cat){
+  const names=new Set();
+  adultRows.forEach(r=>{ if(normCat(r[ADULT.categoria])===normCat(cat)) names.add((r[ADULT.alumno]||'').trim()); });
+  matchRows.forEach(m=>{ if(normCat(m[MATCH.categoria])===normCat(cat)){ if(m[MATCH.jugadorA]) names.add(m[MATCH.jugadorA].trim()); if(m[MATCH.jugadorB]) names.add(m[MATCH.jugadorB].trim()); } });
+  const arr=[...names].filter(Boolean).map(n=>({name:n,...playerRecord(n,cat)}));
+  arr.sort((x,y)=> y.pts-x.pts || y.w-x.w || x.l-y.l || x.name.localeCompare(y.name,'es'));
+  return arr;
+}
+function buildPartidos(){
+  const el=document.getElementById('content-partidos'), ld=document.getElementById('loading-partidos');
+  const ms=playerMatches(currentPlayer).slice().sort((a,b)=>(parseDate(b[MATCH.fecha])||'').localeCompare(parseDate(a[MATCH.fecha])||''));
+  const rec=playerRecord(currentPlayer);
+  const winPct=rec.dec?Math.round(rec.w/rec.dec*100):0;
+  const summary=`<div class="card"><div class="card-title">Mi resumen en torneos</div>
+    <div class="rec-row">
+      <div class="rec-item"><div class="rec-val">${rec.w}-${rec.l}</div><div class="rec-lbl">Récord G-P</div></div>
+      <div class="rec-item"><div class="rec-val">${rec.p}</div><div class="rec-lbl">Partidos</div></div>
+      <div class="rec-item"><div class="rec-val">${winPct}%</div><div class="rec-lbl">Victorias</div></div>
+      <div class="rec-item"><div class="rec-val">${rec.pts}</div><div class="rec-lbl">Puntos</div></div>
+    </div></div>`;
+  const list=ms.map(m=>{
+    const opp=sameName(m[MATCH.jugadorA],currentPlayer)?(m[MATCH.jugadorB]||''):(m[MATCH.jugadorA]||'');
+    const win=matchWinner(m); const decided=!!win; const won=decided&&sameName(win,currentPlayer);
+    const cls=!decided?'tie':(won?'win':'loss'); const badge=!decided?'·':(won?'G':'P');
+    const res=(m[MATCH.resultado]||'').trim();
+    const meta=[(m[MATCH.torneo]||'').trim(), m[MATCH.fecha]?fmtDate(m[MATCH.fecha]):''].filter(Boolean).join(' · ');
+    return `<div class="match-row ${cls}"><div class="match-badge">${badge}</div>
+      <div class="match-mid"><div class="match-opp">vs ${opp||'—'}</div><div class="match-meta">${meta}</div></div>
+      <div class="match-res">${res||'—'}</div></div>`;
+  }).join('');
+  el.innerHTML=summary+(ms.length?`<div class="match-list">${list}</div>`:'<div class="empty">Todavía no tenés partidos cargados.</div>');
+  ld.style.display='none'; el.style.display='block';
+}
+function buildRankingTab(){
+  const el=document.getElementById('content-ranking'), ld=document.getElementById('loading-ranking');
+  const info=getAdultInfo(currentPlayer); const cat=(info?info[ADULT.categoria]:'')||'';
+  const arr=cat?rankingForCat(cat):[];
+  const rows=arr.map((p,i)=>`<div class="rank-row ${sameName(p.name,currentPlayer)?'me':''}">
+     <span class="rank-pos">${i+1}</span>
+     <div class="rank-name"><div class="rank-nm">${p.name}${sameName(p.name,currentPlayer)?' <span class="rank-you">VOS</span>':''}</div><div class="rank-rec">${p.w}-${p.l} · ${p.p} jugados</div></div>
+     <span class="rank-pts">${p.pts}<small>pts</small></span></div>`).join('');
+  el.innerHTML=`<div class="nota">Ranking por <strong>récord de victorias</strong>: +${MATCH_WIN_PTS} puntos por cada partido ganado, dentro de tu categoría.</div>
+    <div class="card"><div class="card-title">Ranking · ${cat||'Sin categoría'}</div>
+    <div class="rank-list">${rows||'<div class="empty">Sin partidos en esta categoría aún.</div>'}</div></div>`;
+  ld.style.display='none'; el.style.display='block';
+}
+function buildCalendario(){
+  const el=document.getElementById('content-calendario'), ld=document.getElementById('loading-calendario');
+  const cat=(getAdultInfo(currentPlayer)?.[ADULT.categoria]||'');
+  const card=(t)=>`<div class="ev-row"><div class="ev-date"><b>${t.fecha?fmtDate(t.fecha):'—'}</b></div>
+    <div class="ev-mid"><div class="ev-name">${t.nombre}</div><div class="ev-meta">${[t.cat,t.estado].filter(Boolean).join(' · ')||(t.n?t.n+' partidos':'')}</div></div></div>`;
+  let html='';
+  if(eventRows.length){
+    const today=new Date().toISOString().slice(0,10);
+    const evs=eventRows.filter(e=>!cat||normCat(e[EV.categoria])===normCat(cat)||!(e[EV.categoria]||'').trim())
+      .map(e=>({nombre:(e[EV.nombre]||'').trim(),cat:(e[EV.categoria]||'').trim(),fecha:parseDate(e[EV.fecha])||'',estado:(e[EV.estado]||'').trim()}));
+    const up=evs.filter(e=>e.fecha>=today).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+    const past=evs.filter(e=>e.fecha<today).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+    html=`<div class="card"><div class="card-title">Próximos torneos</div>${up.length?up.map(card).join(''):'<div class="empty">Sin próximos eventos.</div>'}</div>`
+       +`<div class="card"><div class="card-title">Torneos pasados</div>${past.length?past.map(card).join(''):'<div class="empty">Sin eventos pasados.</div>'}</div>`;
+  } else {
+    const tmap={};
+    matchRows.filter(m=>!cat||normCat(m[MATCH.categoria])===normCat(cat)).forEach(m=>{
+      const t=(m[MATCH.torneo]||'').trim()||'Torneo interno'; const d=parseDate(m[MATCH.fecha])||'';
+      if(!tmap[t]) tmap[t]={nombre:t,cat:(m[MATCH.categoria]||'').trim(),fecha:d,n:0,estado:''};
+      tmap[t].n++; if(d>tmap[t].fecha) tmap[t].fecha=d;
+    });
+    const arr=Object.values(tmap).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+    html=`<div class="nota">Mostrando torneos ya jugados (desde tus partidos). Para ver <strong>próximos eventos</strong>, se puede agregar una hoja «Torneos».</div>
+      <div class="card"><div class="card-title">Torneos jugados</div>${arr.length?arr.map(card).join(''):'<div class="empty">Sin torneos registrados.</div>'}</div>`;
+  }
+  el.innerHTML=html; ld.style.display='none'; el.style.display='block';
+}
+function openCircuito(){
+  circuitoCat='all';
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('circuito').classList.add('visible');
+  try{ buildCircuito(); }catch(e){ const el=document.getElementById('circuito-content'); if(el) el.innerHTML='<div class="err-box"><strong>No se pudo construir Circuito interno.</strong>'+(e&&e.message?e.message:e)+'</div>'; }
+}
+function closeCircuito(){ document.getElementById('circuito').classList.remove('visible'); document.getElementById('landing').style.display=''; }
+function setCatCircuito(c){ circuitoCat=c; buildCircuito(); }
+function buildCircuito(){
+  const el=document.getElementById('circuito-content');
+  const cats=[...new Set([...adultRows.map(r=>(r[ADULT.categoria]||'').trim()), ...matchRows.map(m=>(m[MATCH.categoria]||'').trim())].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+  if(!cats.length){ el.innerHTML='<div class="empty">No hay categorías de torneos cargadas todavía.</div>'; return; }
+  const chips=`<div class="cz-cats">`+['all',...cats].map(c=>`<button class="cz-cat${circuitoCat===c?' active':''}" onclick="setCatCircuito('${c==='all'?'all':c.replace(/'/g,"\\'")}')">${c==='all'?'Todas':c}</button>`).join('')+`</div>`;
+  const shown=circuitoCat==='all'?cats:[circuitoCat];
+  const today=new Date().toISOString().slice(0,10);
+  const blocks=shown.map(cat=>{
+    const rank=rankingForCat(cat);
+    const inCat=matchRows.filter(m=>normCat(m[MATCH.categoria])===normCat(cat));
+    const nT=new Set(inCat.map(m=>(m[MATCH.torneo]||'').trim()).filter(Boolean)).size;
+    const nM=inCat.length;
+    let proxLbl=eventRows.length?'próx. evento':'última fecha', prox='—';
+    if(eventRows.length){ const up=eventRows.filter(e=>normCat(e[EV.categoria])===normCat(cat)||!(e[EV.categoria]||'').trim()).map(e=>parseDate(e[EV.fecha])||'').filter(d=>d>=today).sort(); if(up.length) prox=fmtDate(up[0]); }
+    else { const ds=inCat.map(m=>parseDate(m[MATCH.fecha])||'').filter(Boolean).sort(); if(ds.length) prox=fmtDate(ds[ds.length-1]); }
+    const top=rank.slice(0,5);
+    return `<div class="card"><div class="card-title"><span class="player-cat-dot" style="background:${catColor(cat)};display:inline-block;margin-right:6px;vertical-align:middle;"></span>${cat}</div>
+      <div class="cz-stats"><div><b>${nT}</b><span>torneos</span></div><div><b>${nM}</b><span>partidos</span></div><div><b style="font-size:13px;">${prox}</b><span>${proxLbl}</span></div></div>
+      <div class="rank-list">${top.length?top.map((p,i)=>`<div class="rank-row"><span class="rank-pos">${i+1}</span><div class="rank-name"><div class="rank-nm">${p.name}</div><div class="rank-rec">${p.w}-${p.l} · ${p.p} jug.</div></div><span class="rank-pts">${p.pts}<small>pts</small></span></div>`).join(''):'<div class="empty">Sin partidos aún.</div>'}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML=chips+blocks;
+}
+
 function buildCoach(){
   const el=document.getElementById('coach-content');
   let players=[...new Set(allRows.map(r=>r[COL.alumno]))].filter(Boolean).sort();
@@ -1895,7 +2200,10 @@ function catColor(cat){
 }
 function rebuildAll(){
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}}); charts={};
-  [['resumen',buildResumen],['rubrica',buildRubrica],['historial',buildHistorial],['liga',buildLiga]].forEach(([id,fn])=>{ try{ fn(); }catch(err){ const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id); if(ld) ld.style.display='none'; if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; } } });
+  const tabs = appMode==='torneos'
+    ? [['partidos',buildPartidos],['ranking',buildRankingTab],['calendario',buildCalendario]]
+    : [['resumen',buildResumen],['rubrica',buildRubrica],['historial',buildHistorial],['liga',buildLiga]];
+  tabs.forEach(([id,fn])=>{ try{ fn(); }catch(err){ const ld=document.getElementById('loading-'+id), ct=document.getElementById('content-'+id); if(ld) ld.style.display='none'; if(ct){ ct.style.display='block'; ct.innerHTML='<div class="err-box"><strong>No se pudo construir esta vista.</strong>'+(err&&err.message?err.message:err)+'</div>'; } } });
 }
 function setMonth(m){ selectedMonth=m; rebuildAll(); }
 function filterByMonth(list){ if(selectedMonth==='all') return list; const f=list.filter(s=>monthKey(s)===selectedMonth); return f.length?f:list; }
