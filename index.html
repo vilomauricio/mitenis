@@ -1097,6 +1097,11 @@ const BALL_COLORS=['#c8d42b','#22b16c','#ff5d5d','#ff9f43','#8e5cff','#17b890','
 const COACH_PIN_FALLBACK='';
 function avatarStore(){ try{ return JSON.parse(localStorage.getItem('mitenis_avatar')||'{}'); }catch(e){ return {}; } }
 function avatarColor(name){
+  // En Torneos internos, el color del avatar = color de la categoría asignada (hoja de adultos)
+  if(appMode==='torneos'){
+    const ai=getAdultInfo(name);
+    if(ai) return catColor(ai[ADULT.categoria]||'');
+  }
   const info=getInfo(name);
   if(info){ const c=catColor(info[INFO.categoria]||''); if(c) return c; }
   const i=[...new Set(allRows.map(r=>r[COL.alumno]))].sort().indexOf(name);
