@@ -673,6 +673,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mode-toggle{display:flex;gap:6px;background:rgba(255,255,255,.18);padding:5px;border-radius:14px;margin-bottom:14px;width:100%;}
 .mode-btn{flex:1;border:none;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:background .15s,color .15s;}
 .mode-btn.active{background:#fff;color:var(--blue);}
+.mode-info{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;line-height:1;margin-left:6px;vertical-align:middle;cursor:pointer;background:rgba(255,255,255,.28);transition:transform .12s,background .15s;}
+.mode-info:hover{transform:scale(1.15);}
+.mode-info:focus-visible{outline:2px solid #fff;outline-offset:1px;}
+.mode-btn.active .mode-info{background:rgba(34,177,108,.14);}
 .rec-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
 .rec-item{flex:1;min-width:64px;text-align:center;background:var(--surf2);border-radius:12px;padding:10px 6px;}
 .rec-val{font-size:20px;font-weight:800;color:var(--text);}
@@ -703,6 +707,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ev-name{font-weight:700;color:var(--text);font-size:14px;}
 .ev-meta{font-size:11px;color:var(--muted);}
 .cz-cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.cz-filter{margin-bottom:16px;}
+.cz-filter-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:9px;letter-spacing:.01em;}
+.cz-filter .cz-cats{margin-bottom:0;}
+.cz-kpis{margin-bottom:16px;}
+.cz-rank-acc .acc-sub{font-size:13px;font-weight:500;color:var(--muted);margin-left:4px;}
+.cz-rank-acc .acc-body-inner{padding:2px 14px 14px;}
+.cz-rank-acc .cz-rank-scroll{max-height:360px;margin-top:0;}
 .cz-cat{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font-weight:600;font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;}
 .cz-cat.active{background:#fff;color:var(--blue);border-color:#fff;}
 .cz-stats{display:flex;gap:10px;margin:4px 0 12px;}
@@ -803,10 +814,10 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(34,1
   <div class="landing-content">
     <div class="logo-ball"><div class="logo-emoji">👍</div></div>
     <div class="landing-title"><span>mi</span> tenis</div>
-    <div class="landing-sub">sistema de seguimiento y desarrollo para jugadores de tenis <button class="info-i" onclick="openAppInfo()" aria-label="Más información">i</button></div>
+    <div class="landing-sub">sistema de seguimiento y desarrollo para jugadores de tenis</div>
     <div class="mode-toggle">
-      <button class="mode-btn active" id="mode-escuela" onclick="setMode('escuela')">Escuela de Tenis</button>
-      <button class="mode-btn" id="mode-torneos" onclick="setMode('torneos')">Torneos internos</button>
+      <button class="mode-btn active" id="mode-escuela" onclick="setMode('escuela')">Escuela de Tenis<span class="mode-info" role="button" tabindex="0" aria-label="Qué incluye Escuela de Tenis" onclick="event.stopPropagation();openAppInfo()">🎾</span></button>
+      <button class="mode-btn" id="mode-torneos" onclick="setMode('torneos')">Torneos internos<span class="mode-info" role="button" tabindex="0" aria-label="Qué incluye Torneos internos" onclick="event.stopPropagation();openTorneosInfo()">🏆</span></button>
     </div>
     <div class="select-card">
       <div class="select-label" id="select-label">Seleccioná un jugador por categoría</div>
@@ -931,7 +942,7 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(34,1
 
 <div class="pin-overlay" id="app-info-overlay">
   <div class="pin-modal" style="max-width:380px;">
-    <div class="pin-title">👍 mi tenis</div>
+    <div class="pin-title">🎾 Escuela de Tenis</div>
     <div style="font-size:14px;color:var(--text);line-height:1.7;text-align:left;margin-top:2px;">
       <p style="margin-bottom:10px;font-weight:600;">Con <strong>mi tenis</strong> vas a poder:</p>
       <ul style="margin:0;padding:0;list-style:none;">
@@ -942,6 +953,21 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(34,1
       </ul>
     </div>
     <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeAppInfo()">Entendido</button></div>
+  </div>
+</div>
+
+<div class="pin-overlay" id="torneos-info-overlay" onclick="if(event.target===this)closeTorneosInfo()">
+  <div class="pin-modal" style="max-width:380px;">
+    <div class="pin-title">🏆 Torneos internos</div>
+    <div style="font-size:14px;color:var(--text);line-height:1.7;text-align:left;margin-top:2px;">
+      <p style="margin-bottom:10px;font-weight:600;">Con <strong>mi tenis</strong> vas a poder:</p>
+      <ul style="margin:0;padding:0;list-style:none;">
+        <li style="margin-bottom:8px;">🎾 ver tus resultados</li>
+        <li style="margin-bottom:8px;">🏆 conocer el Ranking interno</li>
+        <li>📈 tener un historial de partidos</li>
+      </ul>
+    </div>
+    <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeTorneosInfo()">Entendido</button></div>
   </div>
 </div>
 
@@ -1663,6 +1689,8 @@ function openCoachInfo(){
 function closeCoachInfo(){ const ov=document.getElementById('coach-info-overlay'); if(ov) ov.classList.remove('show'); }
 function openAppInfo(){ const ov=document.getElementById('app-info-overlay'); if(ov) ov.classList.add('show'); }
 function closeAppInfo(){ const ov=document.getElementById('app-info-overlay'); if(ov) ov.classList.remove('show'); }
+function openTorneosInfo(){ const ov=document.getElementById('torneos-info-overlay'); if(ov) ov.classList.add('show'); }
+function closeTorneosInfo(){ const ov=document.getElementById('torneos-info-overlay'); if(ov) ov.classList.remove('show'); }
 function openRendInfo(){ const ov=document.getElementById('rendimiento-info-overlay'); if(ov) ov.classList.add('show'); }
 function closeRendInfo(){ const ov=document.getElementById('rendimiento-info-overlay'); if(ov) ov.classList.remove('show'); }
 function openRegistroInfo(){ const ov=document.getElementById('registro-info-overlay'); if(ov) ov.classList.add('show'); }
@@ -1870,6 +1898,10 @@ function setCatCoach(c){ coachCat=c; buildCoach(); }
 // TORNEOS INTERNOS — partidos, ranking, calendario, circuito
 // ══════════════════════════════════════
 function normCat(c){ return (c||'').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+// Etiqueta de categoría para botones: antepone "Cat." salvo que ya empiece con Cat o Sub
+function catLabel(c){ const t=(c||'').toString().trim(); if(!t) return t; return /^(cat\.?|sub)\b/i.test(t) ? t : 'Cat. '+t; }
+// Mes (YYYY-MM) de un partido
+function matchMonthKey(m){ const d=parseDate(m[MATCH.fecha])||''; return d?d.slice(0,7):''; }
 function sameName(a,b){ return (a||'').toString().trim().toLowerCase()===(b||'').toString().trim().toLowerCase(); }
 function matchWinner(m){ return (m[MATCH.ganador]||'').toString().trim(); }
 function playerMatches(name){ return matchRows.filter(m=> sameName(m[MATCH.jugadorA],name)||sameName(m[MATCH.jugadorB],name)); }
@@ -1970,24 +2002,66 @@ function buildCircuito(){
   const el=document.getElementById('circuito-content');
   const cats=[...new Set([...adultRows.map(r=>(r[ADULT.categoria]||'').trim()), ...matchRows.map(m=>(m[MATCH.categoria]||'').trim())].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
   if(!cats.length){ el.innerHTML='<div class="empty">No hay categorías de torneos cargadas todavía.</div>'; return; }
-  const chips=`<div class="cz-cats">`+['all',...cats].map(c=>`<button class="cz-cat${circuitoCat===c?' active':''}" onclick="setCatCircuito('${c==='all'?'all':c.replace(/'/g,"\\'")}')">${c==='all'?'Todas':c}</button>`).join('')+`</div>`;
-  const shown=circuitoCat==='all'?cats:[circuitoCat];
-  const today=new Date().toISOString().slice(0,10);
-  const blocks=shown.map(cat=>{
-    const rank=rankingForCat(cat);
-    const inCat=matchRows.filter(m=>normCat(m[MATCH.categoria])===normCat(cat));
-    const nT=new Set(inCat.map(m=>(m[MATCH.torneo]||'').trim()).filter(Boolean)).size;
-    const nM=inCat.length;
-    let proxLbl=eventRows.length?'próx. evento':'última fecha', prox='—';
-    if(eventRows.length){ const up=eventRows.filter(e=>normCat(e[EV.categoria])===normCat(cat)||!(e[EV.categoria]||'').trim()).map(e=>parseDate(e[EV.fecha])||'').filter(d=>d>=today).sort(); if(up.length) prox=fmtDate(up[0]); }
-    else { const ds=inCat.map(m=>parseDate(m[MATCH.fecha])||'').filter(Boolean).sort(); if(ds.length) prox=fmtDate(ds[ds.length-1]); }
-    const top=rank.slice(0,5);
-    return `<div class="card"><div class="card-title"><span class="player-cat-dot" style="background:${catColor(cat)};display:inline-block;margin-right:6px;vertical-align:middle;"></span>${cat}</div>
-      <div class="cz-stats"><div><b>${nT}</b><span>torneos</span></div><div><b>${nM}</b><span>partidos</span></div><div><b style="font-size:13px;">${prox}</b><span>${proxLbl}</span></div></div>
-      <div class="rank-list">${top.length?top.map((p,i)=>`<div class="rank-row"><span class="rank-pos">${i+1}</span><div class="rank-name"><div class="rank-nm">${p.name}</div><div class="rank-rec">${p.w}-${p.l} · ${p.p} jug.</div></div><span class="rank-pts">${p.pts}<small>pts</small></span></div>`).join(''):'<div class="empty">Sin partidos aún.</div>'}</div>
-    </div>`;
+
+  // ── Filtro de categoría (con título) ──
+  const chips=`<div class="cz-filter">
+    <div class="cz-filter-title">Seleccioná una categoría</div>
+    <div class="cz-cats">`+['all',...cats].map(c=>`<button class="cz-cat${circuitoCat===c?' active':''}" onclick="setCatCircuito('${c==='all'?'all':c.replace(/'/g,"\\'")}')">${c==='all'?'Todas':catLabel(c)}</button>`).join('')+`</div>
+  </div>`;
+
+  // ── Partidos según filtro (todos, o de la categoría elegida) ──
+  const sel = circuitoCat==='all' ? matchRows : matchRows.filter(m=>normCat(m[MATCH.categoria])===normCat(circuitoCat));
+  const playersOf = list => new Set([].concat(...list.map(m=>[(m[MATCH.jugadorA]||'').trim(),(m[MATCH.jugadorB]||'').trim()])).filter(Boolean));
+
+  // KPIs totales (suma de todos los torneos jugados del filtro)
+  const totT = new Set(sel.map(m=>(m[MATCH.torneo]||'').trim()).filter(Boolean)).size;
+  const totM = sel.length;
+  const totP = playersOf(sel).size;
+
+  // ── Variación mensual: últimos dos meses con actividad ──
+  const months=[...new Set(sel.map(matchMonthKey).filter(Boolean))].sort();
+  const curM = months[months.length-1]||'';
+  const prevM = months.length>1 ? months[months.length-2] : null;
+  const inMonth = mk => sel.filter(m=>matchMonthKey(m)===mk);
+  const kT = mk => new Set(inMonth(mk).map(m=>(m[MATCH.torneo]||'').trim()).filter(Boolean)).size;
+  const kM = mk => inMonth(mk).length;
+  const kP = mk => playersOf(inMonth(mk)).size;
+  const prevLbl = prevM ? monthLabel(prevM).replace(/\s+\d{4}$/,'') : '';
+  const delta = (cur,prev) => {
+    if(prevM===null) return '<div class="mc-delta flat">Sin mes anterior</div>';
+    const d=cur-prev;
+    if(d>0) return `<div class="mc-delta up">↑ +${d} vs ${prevLbl}</div>`;
+    if(d<0) return `<div class="mc-delta down">↓ ${d} vs ${prevLbl}</div>`;
+    return `<div class="mc-delta flat">= vs ${prevLbl}</div>`;
+  };
+
+  const cards = `<div class="metrics-row cz-kpis">
+    <div class="metric-card"><div class="mc-label">🏆 Torneos disputados</div><div class="mc-value">${totT}</div>${delta(kT(curM),prevM?kT(prevM):0)}</div>
+    <div class="metric-card"><div class="mc-label">🎾 Partidos jugados</div><div class="mc-value">${totM}</div>${delta(kM(curM),prevM?kM(prevM):0)}</div>
+    <div class="metric-card"><div class="mc-label">👥 Jugadores activos</div><div class="mc-value">${totP}</div>${delta(kP(curM),prevM?kP(prevM):0)}</div>
+  </div>`;
+
+  // ── Ranking de jugadores (combinado si es "Todas", o por categoría) ──
+  let rank;
+  if(circuitoCat==='all'){
+    const names=[...playersOf(sel)];
+    rank=names.map(n=>({name:n,...playerRecord(n)})).sort((x,y)=> y.pts-x.pts || y.w-x.w || x.l-y.l || x.name.localeCompare(y.name,'es'));
+  } else {
+    rank=rankingForCat(circuitoCat);
+  }
+  const rankRows = rank.map((p,i)=>{
+    const medal = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':''));
+    return `<div class="rank-row"><span class="rank-pos">${medal||(i+1)}</span>
+      <div class="rank-name"><div class="rank-nm">${p.name}</div><div class="rank-rec">${p.w}-${p.l} · ${p.p} jugados</div></div>
+      <span class="rank-pts">${p.pts}<small>pts</small></span></div>`;
   }).join('');
-  el.innerHTML=chips+blocks;
+  const rankScope = circuitoCat==='all' ? 'General' : catLabel(circuitoCat);
+  const rankAcc = `<div class="acc open cz-rank-acc">
+    <div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">🏅 Ranking de jugadores <span class="acc-sub">· ${rankScope}</span></span><span class="acc-chevron">▾</span></div>
+    <div class="acc-body"><div class="acc-body-inner"><div class="cz-rank-scroll">${rankRows||'<div class="empty">Sin partidos jugados todavía.</div>'}</div></div></div>
+  </div>`;
+
+  el.innerHTML = chips + cards + rankAcc;
 }
 
 function buildCoach(){
