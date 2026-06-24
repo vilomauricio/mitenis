@@ -770,7 +770,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-head .mc-label{margin-bottom:0;}
 .mc-info{position:relative;display:inline-block;}
 #coach .metric-card:hover{z-index:30;}
-.cz-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px;}
+.cz-pair{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px;}
+.cz-act-body{display:flex;align-items:center;gap:12px;}
 .cz-pair .coach-badge,.cz-pair>.card{margin-bottom:0;}
 @media(max-width:600px){.cz-pair{grid-template-columns:1fr;}}
 .mc-info-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;padding:0;line-height:16px;font-family:'Inter',sans-serif;}
@@ -2579,12 +2580,14 @@ function buildCoach(){
     const lv=cur?avgLvlKeys(cur,['Actitud']):0;
     if(lv>actMax){ actMax=lv; actLeader=d.p; }
   });
-  const badgeHTML = (actLeader && actMax>0) ? `<div class="coach-badge">
-    <div class="cb-av" style="background:${avatarColor(actLeader)};color:${idealText(avatarColor(actLeader))};">${iniOf(actLeader)}</div>
-    <div class="cb-tx">
-      <div class="cb-lbl">🏅 Jugador con más actitud del mes</div>
-      <div class="cb-name">${actLeader}</div>
-      <div class="cb-sub">${curMonth?mLabelFull(curMonth):''}</div>
+  const badgeHTML = (actLeader && actMax>0) ? `<div class="card cz-act-card">
+    <div class="card-title">🏅 Jugador con más actitud del mes</div>
+    <div class="cz-act-body">
+      <div class="cb-av" style="background:${avatarColor(actLeader)};color:${idealText(avatarColor(actLeader))};">${iniOf(actLeader)}</div>
+      <div class="cb-tx">
+        <div class="cb-name">${actLeader}</div>
+        <div class="cb-sub">${curMonth?mLabelFull(curMonth):''}</div>
+      </div>
     </div>
   </div>` : '';
 
@@ -2606,7 +2609,7 @@ function buildCoach(){
       })();
 
   const asistCard = `<div class="card"><div class="card-title">Asistencia del mes</div>${withAt.length?`<div class="cz-asist"><div class="cz-stat"><div class="cz-stat-val">${genPct}%</div><div class="cz-stat-lbl">Asistencia general</div></div><div class="cz-stat"><div class="cz-stat-val">${metN}<span> / ${withAt.length}</span></div><div class="cz-stat-lbl">Cumplieron su objetivo</div></div></div>`:'<div class="nota" style="margin:0;">Sin datos de asistencia para este mes.</div>'}</div>`;
-  const pairHTML = badgeHTML ? `<div class="cz-pair">${badgeHTML}${asistCard}</div>` : asistCard;
+  const pairHTML = badgeHTML ? `<div class="cz-pair">${asistCard}${badgeHTML}</div>` : asistCard;
   el.innerHTML = `<div class="cz-filters">${monthChips}${catChips}</div>`
     + `<div class="cz-h">Promedio total${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
@@ -3655,8 +3658,10 @@ function scorePlayer(name, period){
   // +1 por cada torneo jugado en los meses del período
   let torneos=0;
   aMonths.forEach(mk=>{ torneos+=tournamentsForMonth(name,mk)*LG.TORNEO; });
-  // +3 si la Actitud es Excelente
-  const actitud = actitudExcelente(name, period) ? LG.ACTITUD : 0;
+  // +3 por CADA mes (con sesiones) cuya Actitud sea Excelente — acumulativo en el anual
+  const sessMonths=[...new Set(sessScope.map(monthKey).filter(Boolean))];
+  let actitud=0;
+  sessMonths.forEach(mk=>{ if(actitudExcelente(name, mk)) actitud+=LG.ACTITUD; });
   return {name, asistencia, actitud, torneos, sesiones:sessScope.length, total:asistencia+actitud+torneos};
 }
 
