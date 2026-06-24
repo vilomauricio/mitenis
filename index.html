@@ -580,7 +580,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-mini{display:inline-block;margin-top:9px;font-size:11px;font-weight:700;color:var(--blue);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:3px 10px;}
 .cz-h{color:#fff;font-weight:700;font-size:14px;margin:4px 2px 10px;}
 /* Insignia: jugador con más actitud del mes */
-.coach-badge{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#fffbe0,#ffde59);border:1px solid #e8c23e;border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:0 8px 22px rgba(243,254,118,.45);}
+.coach-badge{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:0 8px 22px rgba(243,254,118,.45);}
 .cb-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:inset 0 3px 6px rgba(255,255,255,.32),inset 0 -4px 8px rgba(0,0,0,.16);}
 .cb-tx{min-width:0;}
 .cb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7a6f00;}
@@ -769,6 +769,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .mc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
 .mc-head .mc-label{margin-bottom:0;}
 .mc-info{position:relative;display:inline-block;}
+#coach .metric-card:hover{z-index:30;}
+.cz-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin-bottom:14px;}
+.cz-pair .coach-badge,.cz-pair>.card{margin-bottom:0;}
+@media(max-width:600px){.cz-pair{grid-template-columns:1fr;}}
 .mc-info-btn{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;padding:0;line-height:16px;font-family:'Inter',sans-serif;}
 .mc-info-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 .mc-tip{position:absolute;top:calc(100% + 6px);right:0;background:#20223a;color:#fff;font-size:11px;font-weight:500;padding:9px 11px;border-radius:8px;width:max-content;max-width:240px;box-shadow:0 10px 26px rgba(32,34,58,.32);opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .15s;z-index:60;line-height:1.45;text-align:left;}
@@ -2541,8 +2545,8 @@ function buildCoach(){
   const sparkArea = {}; areas.forEach(a=>sparkArea[a]=sparkSVG(series.map(s=>s.ca[a])));
 
   const obsCard=`<div class="metric-card"><div class="mc-head"><div class="mc-label">Alumnos</div>${tipBtn('Cantidad de alumnos registrados (según el filtro de categoría).')}</div><div class="mc-value">${players.length}</div>${newKpi}</div>`;
-  const areaCards=areas.map(a=>`<div class="metric-card">${sparkArea[a]}<div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
-  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio clase</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}<div class="mc-cat">${players.length} alumnos</div></div>`;
+  const areaCards=areas.map(a=>`<div class="metric-card"><div class="mc-head"><div class="mc-label">${AREA_META[a].emoji} ${meta[a]}</div>${tipBtn(TIPS[a])}</div><div class="mc-value">${cAvg[a]>0?cAvg[a].toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cAvg[a],pAvg[a]||0)}</div>`).join('');
+  const totCard=`<div class="metric-card mc-hl"><div class="mc-head"><div class="mc-label">Promedio Total</div>${tipBtn('Promedio general de las 4 áreas (Técnica, Táctica, Físico y Mental).')}</div><div class="mc-value">${cTot>0?cTot.toFixed(1):'—'}<span class="mc-max"> / 3</span></div>${dPts(cTot,pTot)}</div>`;
 
   const studRows=data.slice().sort((a,b)=>b.overall-a.overall).map((d,i)=>{
     const a=d.at;
@@ -2601,11 +2605,12 @@ function buildCoach(){
         return `<div class="coach-dl-wrap">${inner}</div>`;
       })();
 
+  const asistCard = `<div class="card"><div class="card-title">Asistencia del mes</div>${withAt.length?`<div class="cz-asist"><div class="cz-stat"><div class="cz-stat-val">${genPct}%</div><div class="cz-stat-lbl">Asistencia general</div></div><div class="cz-stat"><div class="cz-stat-val">${metN}<span> / ${withAt.length}</span></div><div class="cz-stat-lbl">Cumplieron su objetivo</div></div></div>`:'<div class="nota" style="margin:0;">Sin datos de asistencia para este mes.</div>'}</div>`;
+  const pairHTML = badgeHTML ? `<div class="cz-pair">${badgeHTML}${asistCard}</div>` : asistCard;
   el.innerHTML = `<div class="cz-filters">${monthChips}${catChips}</div>`
-    + `<div class="cz-h">Promedio de la clase${curMonth?' · '+mLabelFull(curMonth):''}</div>`
+    + `<div class="cz-h">Promedio total${curMonth?' · '+mLabelFull(curMonth):''}</div>`
     + `<div class="metrics-row">${obsCard}${areaCards}${totCard}</div>`
-    + badgeHTML
-    + `<div class="card"><div class="card-title">Asistencia del mes</div>${withAt.length?`<div class="cz-asist"><div class="cz-stat"><div class="cz-stat-val">${genPct}%</div><div class="cz-stat-lbl">Asistencia general</div></div><div class="cz-stat"><div class="cz-stat-val">${metN}<span> / ${withAt.length}</span></div><div class="cz-stat-lbl">Cumplieron su objetivo</div></div></div>`:'<div class="nota" style="margin:0;">Sin datos de asistencia para este mes.</div>'}</div>`
+    + pairHTML
     + `<div class="cz-bottom">
         <div class="card cz-radar"><div class="card-title">Comparación por categoría${curMonth?' · '+mLabelFull(curMonth):''}</div><div class="chart-wrap" style="height:320px;margin-top:10px;"><canvas id="ch-coach-radar"></canvas></div></div>
         <div class="card cz-rank-card"><div class="card-title">Ranking de alumnos · ${players.length}</div><div class="cz-rank-scroll">${studRows||'<div class="empty" style="color:var(--muted);">Sin alumnos en este filtro.</div>'}</div></div>
