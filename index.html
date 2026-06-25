@@ -1456,7 +1456,7 @@ const RESUMEN_GROUPS = {
 // ══════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════
-let allRows=[], infoRows=[], asistRows=[], videoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all', coachCat='all';
+let allRows=[], infoRows=[], asistRows=[], videoRows=[], currentPlayer=null, playerSessions=[], charts={}, selectedMonth='all', coachCat=[];
 let appMode='escuela'; // 'escuela' | 'torneos'
 let ligaView='mensual'; // 'mensual' | 'anual' (Mi Ranking)
 let adultRows=[], matchRows=[], eventRows=[], circuitoCat='all';
@@ -1690,9 +1690,9 @@ function restoreNav(){
     else if(s.v==='coach'){
       if(!allRows.length) { __restoringNav=false; return; } // aún sin datos: reintentar tras la red
       openCoachView();
-      if(s.coachCat && s.coachCat!=='all'){ coachCat=s.coachCat; }
+      if(Array.isArray(s.coachCat)){ coachCat=s.coachCat; } else if(s.coachCat && s.coachCat!=='all'){ coachCat=[s.coachCat]; }
       if(s.month && s.month!=='all'){ selectedMonth=s.month; }
-      if((s.coachCat&&s.coachCat!=='all')||(s.month&&s.month!=='all')) buildCoach();
+      if((Array.isArray(s.coachCat)&&s.coachCat.length)||(s.month&&s.month!=='all')) buildCoach();
       if(s.tab && s.tab!=='resumen') activateCoachTab(s.tab);
       __navRestored=true;
     } else if(s.v==='circuito'){
@@ -2194,7 +2194,7 @@ function openCoachView(){
   const _ms=[...new Set(allRows.map(monthKey).filter(Boolean))].sort();
   const _now=new Date(); const _cmk=_now.getFullYear()+'-'+String(_now.getMonth()+1).padStart(2,'0');
   selectedMonth = _ms.includes(_cmk) ? _cmk : (_ms[_ms.length-1]||'all');
-  coachCat='all';
+  coachCat=[];
   planFilters={golpe:'all', categoria:'all', nivel:'all', q:''};
   // Reset a la subpestaña "Mi Resumen"
   document.querySelectorAll('#tabs-coach .tab-btn').forEach((b,i)=>b.classList.toggle('active', i===0));
@@ -2208,7 +2208,12 @@ function openCoachView(){
 }
 function closeCoach(){ document.getElementById('coach').classList.remove('visible'); document.getElementById('landing').style.display=''; resetLanding(); saveNav(); }
 function setMonthCoach(m){ selectedMonth=m; buildCoach(); saveNav(); }
-function setCatCoach(c){ coachCat=c; buildCoach(); saveNav(); }
+function setCatCoach(c){
+  if(c==='all'){ coachCat=[]; }
+  else { const i=coachCat.indexOf(c); if(i>=0) coachCat.splice(i,1); else coachCat.push(c); }
+  buildCoach(); saveNav();
+  const cf=document.getElementById('coach-cat-filter'); if(cf) cf.classList.add('open');
+}
 
 // ── Modo Profe: subpestañas (Mi Resumen / Mi Planificación) ──
 function switchCoachTab(id, btn){
@@ -2563,7 +2568,7 @@ function buildCoach(){
   const catOf=p=>{ const i=getInfo(p); return i?(i[INFO.categoria]||'').trim():''; };
   const cats=[...new Set(players.map(catOf).filter(Boolean))].sort();
   const allPlayersList=players.slice();
-  if(coachCat!=='all') players=players.filter(p=>catOf(p)===coachCat);
+  if(coachCat.length) players=players.filter(p=>coachCat.includes(catOf(p)));
   const allMonths=[...new Set(allRows.map(monthKey).filter(Boolean))].sort();
   const curMonth=(selectedMonth==='all'||allMonths.indexOf(selectedMonth)<0)?(allMonths[allMonths.length-1]||''):selectedMonth;
   const ci=allMonths.indexOf(curMonth); const prevMonth=ci>0?allMonths[ci-1]:null;
@@ -2572,9 +2577,9 @@ function buildCoach(){
     <button class="mf-chip ${selectedMonth==='all'?'active':''}" onclick="setMonthCoach('all')">Todos</button>
     ${allMonths.map(m=>`<button class="mf-chip ${selectedMonth===m?'active':''}" onclick="setMonthCoach('${m}')">${mLabelFull(m)}</button>`).join('')}
   </div></div></div></div>`;
-  const catChips = cats.length?`<div class="acc filter-acc"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">🏷️ Categoría <span class="acc-sub">· ${coachCat==='all'?'Todas':coachCat}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
-    <button class="mf-chip ${coachCat==='all'?'active':''}" onclick="setCatCoach('all')">Todas</button>
-    ${cats.map(ct=>`<button class="mf-chip ${coachCat===ct?'active':''}" onclick="setCatCoach('${ct.replace(/'/g,"\\'")}')">${ct}</button>`).join('')}
+  const catChips = cats.length?`<div class="acc filter-acc" id="coach-cat-filter"><div class="acc-head" onclick="toggleAcc(this)"><span class="acc-title">🏷️ Categoría <span class="acc-sub">· ${coachCat.length?(coachCat.length===1?coachCat[0]:coachCat.length+' seleccionadas'):'Todas'}</span></span><span class="acc-chevron">▾</span></div><div class="acc-body"><div class="acc-body-inner"><div class="month-filter">
+    <button class="mf-chip ${!coachCat.length?'active':''}" onclick="setCatCoach('all')">Todas</button>
+    ${cats.map(ct=>`<button class="mf-chip ${coachCat.includes(ct)?'active':''}" onclick="setCatCoach('${ct.replace(/'/g,"\\'")}')">${ct}</button>`).join('')}
   </div></div></div></div>`:'';
 
   const areas=['tecnica','tactica','fisico','mental'];
@@ -2689,7 +2694,7 @@ function buildCoach(){
   const _cR=46,_cC=2*Math.PI*_cR,_cDash=(_covPct*_cC).toFixed(1);
   const coachHero=`<div class="perfil-hero coach-hero">
     <div class="ph-info">
-      <div class="ph-name">${coachCat==='all'?'Todas las categorías':coachCat}</div>
+      <div class="ph-name">${!coachCat.length?'Todas las categorías':coachCat.join(' · ')}</div>
       <div class="ph-kpis">
         <div class="ph-kpi"><label>Alumnos</label><span>${_alCur}${deltaBadge(prevMonth?_alCur-_alPrev:null)}</span></div>
         <div class="ph-kpi-sep"></div>
