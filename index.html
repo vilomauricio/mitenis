@@ -1152,7 +1152,7 @@ button.cal-cell:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(10,8
   <div class="pin-modal" style="max-width:380px;">
     <div class="pin-title">Cómo funcionan los Informes</div>
     <div style="font-size:14px;color:var(--text);line-height:1.7;text-align:left;margin-top:4px;">
-      <p style="margin:0;">Los días en <span class="hl-azul">azul</span> tienen una sesión registrada — tocalos para ver el detalle. Al finalizar el mes, podés descargar tu registro completo.</p>
+      <p style="margin:0;">Los días en <span class="hl-azul">verde</span> tienen una sesión registrada - tocalos para ver el detalle. Al finalizar el mes, podés descargar tu registro completo.</p>
     </div>
     <div class="pin-actions"><button class="pin-btn pin-ok" onclick="closeRegistroInfo()">Entendido</button></div>
   </div>
@@ -3143,6 +3143,8 @@ function renderHistSession(s){
   const fLvl=Math.round(avgLvlKeys(s,AREA_KEYS.fisico));
   const mLvl=Math.round(avgLvlKeys(s,AREA_KEYS.mental));
   const t=tipo.toLowerCase();
+  const lvlBg={1:'#fde8e8',2:'#fef3c7',3:'#dcfce7'}, lvlTc={1:'#c62828',2:'#b97800',3:'#1b5e20'};
+  const pill=(lbl,lv)=> lv?`<span class="session-pill" style="background:${lvlBg[lv]};color:${lvlTc[lv]};font-weight:700;">${lbl}: ${lvlLabel(lv)}</span>`:'';
   const dot=t.includes('torneo')?'var(--lv1)':t.includes('partido')?'var(--lv2)':t.includes('físic')||t.includes('fisic')?'var(--fis)':t.includes('mental')?'var(--men)':'var(--tec)';
   return `<div class="session-item">
     <div class="session-dot" style="background:${dot};margin-top:6px;"></div>
@@ -3153,12 +3155,8 @@ function renderHistSession(s){
       </div>
       ${s[COL.descripcion]?`<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${s[COL.descripcion]}</div>`:''}
       <div class="session-pills">
-        ${tLvl?`<span class="session-pill pill-tec">Téc: ${lvlLabel(tLvl)}</span>`:''}
-        ${tacLvl?`<span class="session-pill pill-tac">Tác: ${lvlLabel(tacLvl)}</span>`:''}
-        ${fLvl?`<span class="session-pill pill-fis">Fís: ${lvlLabel(fLvl)}</span>`:''}
-        ${mLvl?`<span class="session-pill pill-men">Men: ${lvlLabel(mLvl)}</span>`:''}
+        ${pill('Téc',tLvl)}${pill('Tác',tacLvl)}${pill('Fís',fLvl)}${pill('Men',mLvl)}
       </div>
-      ${s[COL.obs_profe]?`<div class="hist-obs-h">Observación del Profe</div><div class="feedback-block feedback-coach">${s[COL.obs_profe]}</div>`:''}
     </div>
   </div>`;
 }
