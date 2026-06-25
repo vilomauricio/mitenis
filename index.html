@@ -665,13 +665,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .video-modal{background:var(--surf);border-radius:var(--radius);padding:22px;width:100%;max-width:760px;box-shadow:0 20px 60px rgba(32,34,58,.3);max-height:88vh;overflow-y:auto;}
 .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
 @media(max-width:640px){
-  #video-overlay{padding:10px;}
-  #video-overlay .video-modal{max-width:100%;padding:16px 12px;border-radius:16px;max-height:92vh;}
-  .video-grid{grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-  #video-overlay .video-modal{padding:14px 10px;}
-  .video-slot-lbl{font-size:10px;margin-bottom:4px;}
-  #video-overlay .video-frame-wrap{padding-top:100%;width:100%;}
-  #video-overlay .video-note{font-size:11px;margin-top:10px;}
+  #video-overlay{padding:8px;}
+  #video-overlay .video-modal{max-width:100%;padding:12px 10px;border-radius:16px;max-height:96vh;}
+  /* Un video debajo del otro, dimensionados por alto para que entren los 2 sin scroll */
+  .video-grid{grid-template-columns:1fr;gap:8px;margin-top:8px;}
+  .video-slot-lbl{font-size:10px;margin-bottom:3px;}
+  #video-overlay .video-frame-wrap{height:31vh;width:auto;max-width:100%;aspect-ratio:1/1;padding-top:0;margin:0 auto;}
+  #video-overlay .video-note{font-size:10px;margin-top:7px;line-height:1.3;}
 }
 .video-slot{min-width:0;}
 .video-grid{min-width:0;}
@@ -1908,7 +1908,12 @@ function setupTabsForMode(){
 }
 function openPlayer(name){
   currentPlayer=name;
-  selectedMonth='all';
+  // El filtro de mes arranca en el mes en curso (si hay datos), si no en el último mes con datos
+  (function(){
+    const _ms=[...new Set(allRows.filter(r=>r[COL.alumno]===name).map(monthKey).filter(Boolean))].sort();
+    const _now=new Date(); const _cmk=_now.getFullYear()+'-'+String(_now.getMonth()+1).padStart(2,'0');
+    selectedMonth = _ms.includes(_cmk) ? _cmk : (_ms[_ms.length-1]||'all');
+  })();
   const color=avatarColor(name);
   const ini=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const av=document.getElementById('h-avatar');
