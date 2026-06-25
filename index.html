@@ -361,6 +361,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ph-gauge-n{font-size:30px;font-weight:900;line-height:1;color:#fff;}
 .ph-gauge-d{font-size:11px;color:rgba(255,255,255,.55);font-weight:700;}
 .ph-ix-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:8px;text-transform:capitalize;text-align:center;}
+/* Modo Profe hero: título arriba + KPIs separados y más grandes */
+.coach-hero .ph-info{justify-content:flex-start;}
+.ph-kpis{display:flex;align-items:stretch;gap:20px;margin-top:16px;flex-wrap:wrap;}
+.ph-kpi{display:flex;flex-direction:column;justify-content:center;}
+.ph-kpi label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.55);margin-bottom:4px;}
+.ph-kpi span{font-size:19px;font-weight:800;color:#fff;line-height:1;}
+.ph-kpi-sep{width:1px;background:rgba(255,255,255,.2);margin:2px 2px;}
+@media(max-width:560px){ .ph-kpi span{font-size:16px;} .ph-kpis{gap:14px;} }
+
 @media(max-width:560px){
   .perfil-hero{padding:16px;gap:13px;}
   .ph-name{font-size:18px;}
@@ -2657,10 +2666,11 @@ function buildCoach(){
   const coachHero=`<div class="perfil-hero coach-hero">
     <div class="ph-info">
       <div class="ph-name">${coachCat==='all'?'Todas las categorías':coachCat}</div>
-      <div class="ph-grid">
-        <div class="ph-it"><label>Alumnos</label><span>${players.length}</span></div>
-        <div class="ph-it"><label>Asistencia general</label><span>${withAt.length?genPct+'%':'—'}</span></div>
-        <div class="ph-it"><label>Cumplieron objetivo</label><span>${withAt.length?metN+'/'+withAt.length:'—'}</span></div>
+      <div class="ph-kpis">
+        <div class="ph-kpi"><label>Alumnos</label><span>${players.length}</span></div>
+        <div class="ph-kpi-sep"></div>
+        <div class="ph-kpi"><label>Asistencia general</label><span>${withAt.length?genPct+'%':'—'}</span></div>
+        <div class="ph-kpi"><label>Cumplieron objetivo</label><span>${withAt.length?metN+'/'+withAt.length:'—'}</span></div>
       </div>
     </div>
     <div class="ph-ix">
